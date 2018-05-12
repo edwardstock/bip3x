@@ -1,2 +1,4 @@
 # bip39-java
-Bip39 mnemonic implementation for Java (extracted from libwally-core)
+Bip39 mnemonic C++ implementation. Contains java bindings.
+
+
