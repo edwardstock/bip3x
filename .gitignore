@@ -2,3 +2,6 @@
 cmake-build-debug
 .DS_STORE
 venv
+tools/openssl*
+tools/arm*
+tools/OpenSSL_*

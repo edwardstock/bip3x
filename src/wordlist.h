@@ -1,8 +1,7 @@
 #ifndef LIBWALLY_WORDLIST_H
 #define LIBWALLY_WORDLIST_H
 
-#include <stdbool.h>
-#include <stddef.h>
+#include <cstddef>
 
 /**
  * struct words- structure representing a parsed list of words
@@ -30,7 +29,7 @@ struct words {
  *
  * The returned structure contains a copy of @text.
  */
-struct words *wordlist_init(const char *text);
+words *wordlist_init(const char *text);
 
 /**
  * Find a word in a wordlist.
