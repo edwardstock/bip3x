@@ -19,6 +19,7 @@
 
 #include <cassert>
 #include <string>
+#include <cstring>
 
 #include "sha3.h"
 #include "memzero.h"

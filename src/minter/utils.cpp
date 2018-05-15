@@ -6,6 +6,7 @@
  * @link https://github.com/edwardstock
  */
 
+#include <limits>
 #include "utils.h"
 
 std::vector<uint8_t> minter::hexToBytes(const std::string &hex) {

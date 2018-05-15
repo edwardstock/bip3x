@@ -12,8 +12,25 @@ extern "C" {
  * Method:    getLanguages
  * Signature: ()[Ljava/lang/String;
  */
-JNIEXPORT jobjectArray JNICALL Java_network_minter_mintercore_bip39_NativeBip39_getLanguages
-  (JNIEnv *, jclass);
+JNIEXPORT jobjectArray JNICALL Java_network_minter_mintercore_bip39_NativeBip39_bip39GetLanguages
+    (JNIEnv *, jclass);
+
+JNIEXPORT jobjectArray JNICALL
+Java_network_minter_mintercore_bip39_NativeBip39_bip39GetWordsFromLanguage(
+    JNIEnv *env, jclass type, jstring language_);
+
+JNIEXPORT jobject JNICALL
+Java_network_minter_mintercore_bip39_NativeBip39_bip39EncodeBytes(
+    JNIEnv *env, jclass type, jobject input, jstring language_, jint entropy);
+
+JNIEXPORT jboolean JNICALL
+Java_network_minter_mintercore_bip39_NativeBip39_bip39ValidateMnemonic(
+    JNIEnv *env, jclass, jstring mnemonic_, jstring language_);
+
+
+JNIEXPORT jbyteArray JNICALL
+Java_network_minter_mintercore_bip39_NativeBip39_bip39WordsToSeed(
+    JNIEnv *env, jclass type, jstring mnemonic_);
 
 #ifdef __cplusplus
 }

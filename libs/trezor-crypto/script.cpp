@@ -21,6 +21,7 @@
  */
 
 #include <string>
+#include <cstring>
 #include "base58.h"
 #include "script.h"
 

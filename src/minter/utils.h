@@ -15,6 +15,7 @@
 #include <iomanip>
 #include <cassert>
 #include <ripemd160.h>
+#include <cstring>
 #include "base58.h"
 #include "hasher.h"
 #include "crypto/hmac_sha512.h"
@@ -64,6 +65,7 @@ class Data {
     Data(std::size_t size) {
         m_data.resize(size);
     }
+
     Data(const char *hexString) : m_data(hexToBytes(hexString)) { }
     Data(const std::vector<uint8_t> &data) : m_data(data) { }
     Data(std::vector<uint8_t> &&data) : m_data(std::move(data)) { }
@@ -72,6 +74,10 @@ class Data {
         memcpy(this->data(), data, len);
     }
 
+    Data(const Data &other) = default;
+    Data(Data &&other) = default;
+    Data &operator=(const Data &other) = default;
+    Data &operator=(Data &&other) = default;
     const std::vector<uint8_t> cget() const {
         return m_data;
     }
@@ -152,7 +158,7 @@ class Data {
         return *this;
     }
 
-    const std::vector<uint8_t> toHmac512(const char* key) const {
+    const std::vector<uint8_t> toHmac512(const char *key) const {
         return toHmac512(reinterpret_cast<const uint8_t *>(key), strlen(key));
     }
 
@@ -191,7 +197,7 @@ class Data {
 
     void insert(size_t pos, const std::vector<uint8_t> &data) {
         for (int i = 0; i < data.size(); i++) {
-            m_data[pos+i] = data[i];
+            m_data[pos + i] = data[i];
         }
     }
 
@@ -231,9 +237,9 @@ class Data {
 
     void writeUint32BE(size_t pos, uint32_t val) {
         m_data[pos] = val >> 24;
-        m_data[pos+1] = val >> 16;
-        m_data[pos+2] = val >> 8;
-        m_data[pos+3] = val;
+        m_data[pos + 1] = val >> 16;
+        m_data[pos + 2] = val >> 8;
+        m_data[pos + 3] = val;
     }
 
     void writeUint8(size_t pos, uint8_t *ptr, uint8_t val) {
@@ -299,6 +305,9 @@ class FixedData : public Data {
     FixedData(std::vector<uint8_t> &&data) : Data(std::move(data)) { }
     FixedData(const std::vector<uint8_t> &data) : Data(data) { }
 
+    FixedData(const uint8_t *data, size_t len) : Data(data, len) {
+
+    }
     template<size_t NN>
     FixedData<NN> takeFirstData() const {
         return FixedData<NN>(takeFirstBytes(NN));

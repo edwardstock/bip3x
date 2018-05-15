@@ -1,3 +1,4 @@
+#include <cstring>
 #include "internal.h"
 #include "pbkdf2.hpp"
 #include "crypto/sha256.h"

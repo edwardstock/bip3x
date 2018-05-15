@@ -28,6 +28,7 @@
 #include <cassert>
 #include <cstdint>
 #include <cstddef>
+#include <cstring>
 #include "bignum.h"
 #include "memzero.h"
 

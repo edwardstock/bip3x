@@ -33,6 +33,7 @@
 
 #include <cstddef>
 #include <string>
+#include <cstring>
 
 #include "groestl_internal.h"
 #include "groestl.h"

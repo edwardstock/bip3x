@@ -1,10 +1,12 @@
 #include <stdlib.h>
+#include <cstring>
+#include <vector>
 #include "internal.h"
 #include "wordlist.h"
 
 static int bstrcmp(const void *l, const void *r)
 {
-    return strcmp((char*)l, (char*)r);
+    return strcmp(reinterpret_cast<const char*>(l), reinterpret_cast<const char*>(r));
 }
 
 /* https://graphics.stanford.edu/~seander/bithacks.html#IntegerLogObvious */
@@ -68,14 +70,31 @@ words *wordlist_init(const char *words)
     return w;
 }
 
+
+int binary_search_find_index(std::vector<std::string> v, std::string data) {
+    auto it = std::lower_bound(v.begin(), v.end(), data);
+    if (it == v.end() || *it != data) {
+        return -1;
+    } else {
+        std::size_t index = std::distance(v.begin(), it);
+        return index;
+    }
+}
+
 size_t wordlist_lookup_word(const struct words *w, const char *word)
 {
-    const size_t size = sizeof(const char *);
     const char **found = NULL;
 
-    if (w->sorted)
-        found = (const char **)bsearch(word, w->indices, w->len, size, bstrcmp);
-    else {
+
+    if (w->sorted) {
+        const std::vector<std::string> words(&w->indices[0], &w->indices[w->len-1]);
+        int idx = binary_search_find_index(words, word);
+        if(idx != -1) {
+            found = w->indices + idx;
+        }
+    }
+
+    if(!w->sorted || !found) {
         size_t i;
         for (i = 0; i < w->len && !found; ++i)
             if (!strcmp(word, w->indices[i]))

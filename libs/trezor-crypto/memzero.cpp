@@ -1,4 +1,5 @@
 #include <string>
+#include <cstring>
 
 void memzero(void *s, size_t n)
 {

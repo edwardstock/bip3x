@@ -1,4 +1,5 @@
-static inline uint32_t load32( const void *src )
+#include <cstring>
+static inline uint32_t load32(const void *src )
 {
     uint32_t w;
     memcpy(&w, src, sizeof w);

@@ -12,9 +12,8 @@
 #include <cstdint>
 #include <cstring>
 
-#include <machine/endian.h>
-
 #ifdef __APPLE__
+#include <machine/endian.h>
 #include <libkern/OSByteOrder.h>
 
 #define htobe16(x) OSSwapHostToBigInt16(x)
@@ -31,6 +30,8 @@
 #define htole64(x) OSSwapHostToLittleInt64(x)
 #define be64toh(x) OSSwapBigToHostInt64(x)
 #define le64toh(x) OSSwapLittleToHostInt64(x)
+#else
+#include <endian.h>
 #endif
 
 uint16_t static inline ReadLE16(const unsigned char* ptr)

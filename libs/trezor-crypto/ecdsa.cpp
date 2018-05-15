@@ -26,6 +26,7 @@
 #include <cstdlib>
 #include <string>
 #include <cassert>
+#include <cstring>
 
 #include "address.h"
 #include "bignum.h"

@@ -22,6 +22,7 @@
  */
 
 #include <string>
+#include <cstring>
 #include "pbkdf2.hpp"
 #include "hmac.h"
 #include "sha2.hpp"

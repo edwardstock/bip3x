@@ -1,0 +1,28 @@
+language: cpp
+sudo: required
+dist: stretch
+branches:
+  only:
+  - master
+  - ci
+  - coverity_scan
+matrix:
+  include:
+  - os: linux
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        - george-edison55-precise-backports
+        packages:
+        - g++-4.9
+        - cmake
+        - cmake-data
+
+before_install:
+- echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+- git config --global http.lowSpeedTime 600
+- eval "${MATRIX_EVAL}"
+install:
+- sudo apt-get install -y lcov libssl-dev libcurl3 libboost1.55-all-dev
+script: sudo -E ./build.sh

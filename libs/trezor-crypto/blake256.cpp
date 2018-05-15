@@ -13,6 +13,7 @@
 #include "blake256.h"
 
 #include <string>
+#include <cstring>
 
 #define U8TO32_BIG(p)					      \
   (((uint32_t)((p)[0]) << 24) | ((uint32_t)((p)[1]) << 16) |  \

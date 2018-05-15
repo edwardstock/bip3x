@@ -23,6 +23,7 @@
 
 #include <string>
 #include <sys/types.h>
+#include <cstring>
 #include "base58.h"
 #include "sha2.hpp"
 #include "ripemd160.h"
@@ -191,7 +192,7 @@ bool b58enc(char *outb58, size_t *b58sz, const uint8_t *data, size_t binsz)
 	return true;
 }
 
-int base58_encode_check(const uint8_t *data, int datalen, HasherType hasher_type, char *str, int strsize)
+int base58_encode_check(const uint8_t *data, size_t datalen, HasherType hasher_type, char *str, size_t strsize)
 {
 	if (datalen > 128) {
 		return 0;

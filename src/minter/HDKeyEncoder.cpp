@@ -42,6 +42,9 @@ minter::Data64 minter::HDKeyEncoder::makeBip39Seed(const std::vector<std::string
     return makeBip39Seed(glueStrings(mnemonicWords, " "));
 }
 
+minter::HDKey minter::HDKeyEncoder::makeBip32RootKey(const char *mnemonic, minter::BTCNetwork net) {
+    return makeBip32RootKey(makeBip39Seed(mnemonic), net);
+}
 
 minter::HDKey minter::HDKeyEncoder::makeBip32RootKey(const minter::Data64 &seed, minter::BTCNetwork net) {
     HDKey out;
@@ -165,6 +168,7 @@ void minter::HDKeyEncoder::derivePathN(HDKey &key, const std::string &path, bool
             if (isPrivateKey) {
                 derive(key, index);
             } else {
+                //@TODO
 //                hdnode_public_ckd(node, index);
             }
         }
@@ -205,11 +209,11 @@ void minter::HDKeyEncoder::serialize(minter::HDKey &key, uint32_t fingerprint, u
     Bip32Key *outKey;
     if (publicKey) {
         data.write(45, key.publicKey.cdata(), 33);
-        outKey = &key.bipPublicKey;
+        outKey = &key.extPublicKey;
     } else {
         data.write(45, (uint8_t) 0);
         data.write(46, key.privateKey.cdata(), 32);
-        outKey = &key.bipPrivateKey;
+        outKey = &key.extPrivateKey;
     }
 
     outKey->clearReset();

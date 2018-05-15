@@ -52,19 +52,15 @@ class HDKey {
         publicKey.clear();
         privateKey.clear();
         chainCode.clear();
-        bipPrivateKey.clear();
-        bipPublicKey.clear();
-    }
-
-    std::string getAddress() {
-        return std::string();
+        extPrivateKey.clear();
+        extPublicKey.clear();
     }
 
     FixedData<33> publicKey;
     FixedData<32> privateKey;
     FixedData<32> chainCode;
-    Bip32Key bipPrivateKey;
-    Bip32Key bipPublicKey;
+    Bip32Key extPrivateKey;
+    Bip32Key extPublicKey;
     BTCNetwork net;
     uint8_t depth;
     uint32_t index;
@@ -84,6 +80,7 @@ class HDKeyEncoder {
 
     static Data64 makeBip39Seed(const std::string &mnemonicWords);
     static Data64 makeBip39Seed(const std::vector<std::string> &mnemonicWords);
+    static HDKey makeBip32RootKey(const char* mnemonic, BTCNetwork net = MainNet);
     static HDKey makeBip32RootKey(const Data64 &seed, BTCNetwork net = MainNet);
     static HDKey makeExtendedKey(const HDKey &rootKey, const Derivation &derivation);
 

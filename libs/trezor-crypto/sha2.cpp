@@ -30,6 +30,7 @@
 
 #include <string>
 #include <cstdint>
+#include <cstring>
 #include "sha2.hpp"
 #include "memzero.h"
 

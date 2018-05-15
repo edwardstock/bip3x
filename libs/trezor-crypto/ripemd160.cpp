@@ -26,6 +26,7 @@
  */
 
 #include <string>
+#include <cstring>
 
 #include "ripemd160.h"
 #include "memzero.h"

@@ -1,3 +1,4 @@
+#include <cstring>
 #include "internal.h"
 #include "mnemonic.h"
 #include "wordlist.h"

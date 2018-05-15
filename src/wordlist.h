@@ -2,6 +2,8 @@
 #define LIBWALLY_WORDLIST_H
 
 #include <cstddef>
+#include <vector>
+#include <string>
 
 /**
  * struct words- structure representing a parsed list of words
@@ -30,6 +32,11 @@ struct words {
  * The returned structure contains a copy of @text.
  */
 words *wordlist_init(const char *text);
+
+/**
+ * Search word in words
+ */
+int binary_search_find_index(std::vector<std::string> v, std::string data);
 
 /**
  * Find a word in a wordlist.

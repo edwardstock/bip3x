@@ -1,4 +1,5 @@
 #include <pbkdf2.hpp>
+#include <cstring>
 #include "internal.h"
 #include "mnemonic.h"
 #include "wordlist.h"

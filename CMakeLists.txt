@@ -51,17 +51,16 @@ set(SOURCES
     src/minter/uint256_t.hpp
 )
 
-
-
 include_directories(libs/trezor-crypto)
 
 set(JNI_SOURCES
     src/java/network_minter_mintercore_bip39_NativeBip39.h
     src/java/network_minter_mintercore_bip39_NativeBip39.cpp
+    src/java/network_minter_mintercore_bip39_NativeHDKeyEncoder.h
+    src/java/network_minter_mintercore_bip39_NativeHDKeyEncoder.cpp
     )
 
 include_directories(src/)
-#include_directories(src/ccan)
 include_directories(libs/uint256_t)
 
 
@@ -69,10 +68,6 @@ add_library(${PROJECT_NAME}_core SHARED ${SOURCES})
 target_compile_options(${PROJECT_NAME}_core PUBLIC -Wno-shift-count-overflow)
 add_subdirectory(libs/trezor-crypto)
 target_link_libraries(${PROJECT_NAME}_core trezor_crypto)
-#target_link_libraries(${PROJECT_NAME}_core ${OPENSSL_LIBRARIES})
-
-#add_subdirectory(libs/trezor-crypto)
-#target_link_libraries(${PROJECT_NAME}_core trezor_crypto)
 
 
 if (ANDROID_PLATFORM)
@@ -80,16 +75,6 @@ if (ANDROID_PLATFORM)
 	add_library(${PROJECT_NAME}_jni SHARED ${JNI_SOURCES})
 	target_link_libraries(${PROJECT_NAME}_jni ${PROJECT_NAME}_core)
 endif ()
-
-#if (ANDROID_PLATFORM)
-#	set(OPENSSL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/openssl/include)
-#	target_link_libraries(${PROJECT_NAME}_core crypto)
-#	target_link_libraries(${PROJECT_NAME}_core ssl)
-#else ()
-#	find_package(OpenSSL REQUIRED)
-#	target_link_libraries(${PROJECT_NAME}_core ${OPENSSL_LIBRARIES})
-#endif ()
-#include_directories(${OPENSSL_INCLUDE_DIR})
 
 if (RUN)
 	add_executable(bip39test src/main.cpp)

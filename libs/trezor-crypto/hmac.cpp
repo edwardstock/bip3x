@@ -22,6 +22,7 @@
  */
 
 #include <string>
+#include <cstring>
 
 #include "hmac.h"
 #include "options.h"
