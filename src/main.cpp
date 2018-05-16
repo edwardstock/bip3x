@@ -13,51 +13,9 @@
 #include "minter/utils.h"
 #include "minter/Bip39Mnemonic.h"
 #include <minter/HDKeyEncoder.h>
-
-inline constexpr unsigned char operator "" _uc(unsigned long long arg) noexcept {
-    return static_cast< unsigned char >( arg );
-}
-
-/*
-   * FixedData<78> buffer;
-  btcnetwork net = networks[0];
-//    memcpy(buffer.data(), privKey.data(), privKey.size());
-  size_t off = 0;
-
-  // version net.bip32[1] = private hash, [0] public script hash
-  uint32PtrBE(&off, buffer.data(), net.bip32[1]);
-  std::cout << "Off1:" << off << std::endl;
-  // depth uint8_t
-  uint8Ptr(&off, buffer.data(), 3u);
-  std::cout << "Off2:" << off << std::endl;
-  // parent fingerprint 0xFFFFFF; 4 bytes uint32_t big endian
-  uint32PtrBE(&off, buffer.data(), 3935639562);
-  std::cout << "Off3:" << off << std::endl;
-  // idx uint32_t 4 bytes
-  uint32PtrBE(&off, buffer.data(), 2147483648);
-  std::cout << "Off4:" << off << std::endl;
-  // copy chain code (32 bytes) into buffer[13]
-  buffer.insert(13, chainCode.get());
-  //0x00 + k for private keys
-  buffer.data()[45] = 0x00;
-  buffer.insert(46, privKey.get());
-   */
-
-template<typename NumT>
-void numToBytes(const NumT num, std::vector<uint8_t> &out) {
-    static_assert(std::is_integral<NumT>::value, "Only integral types can be passed");
-
-    size_t sz = sizeof(num);
-    for (int i = 0; i < sz; i++) {
-        std::cout << num << " >> " << (i * 8) << " = " << (num >> (i * 8)) << std::endl;
-        std::cout << "write " << i << " to position: " << ((out.size() - 1) - i) << std::endl;
-        out[(out.size() - 1) - i] = (num >> (i * 8));
-    }
-}
+using namespace minter;
 
 int main(int argc, char **argv) {
-    using namespace minter;
-
     /*
      * entropy: f0b9c942b9060af6a82d3ac340284d7e
      * words: vague soft expose improve gaze kitten pass point select access battle wish
@@ -80,7 +38,8 @@ int main(int argc, char **argv) {
      */
 
     Data64 entropy("f0b9c942b9060af6a82d3ac340284d7e");
-    Bip39Mnemonic::MnemonicResult encodedMnemonic = Bip39Mnemonic::encodeBytes(entropy.data(), "en", BIP39_ENTROPY_LEN_128);
+    Bip39Mnemonic::MnemonicResult
+        encodedMnemonic = Bip39Mnemonic::encodeBytes(entropy.data(), "en", BIP39_ENTROPY_LEN_128);
 
     HDKey bip32RootKey = HDKeyEncoder::makeBip32RootKey(HDKeyEncoder::makeBip39Seed(encodedMnemonic.words));
     HDKey bip32ExtKey = HDKeyEncoder::makeExtendedKey(bip32RootKey, "m/44'/60'/0'/0");

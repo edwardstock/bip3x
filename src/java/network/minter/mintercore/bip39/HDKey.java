@@ -16,6 +16,10 @@ public final class HDKey {
     public static final int EXT_PUB_KEY_LEN = 112;
     public static final int EXT_PRIV_KEY_LEN = 112;
 
+    private byte depth;
+    private int index;
+    private int fingerprint;
+
     /**
      * 33 bytes
      */

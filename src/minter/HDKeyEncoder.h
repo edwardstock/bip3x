@@ -90,7 +90,7 @@ class HDKeyEncoder {
     static HDKey fromSeed(const Data &seed);
     static HDKey fromSeed(const char *seed);
     static HDKey fromSeed(const uint8_t *seed, size_t seedLength);
-    static void derivePathN(HDKey &key, const std::string &path, bool priv = true);
+    static void derivePath(HDKey &key, const std::string &path, bool priv = true);
     static uint32_t fetchFingerprint(HDKey &key);
     static void fillPublicKey(HDKey &key);
     static void serialize(HDKey &key, uint32_t fingerprint, uint32_t version, bool publicKey = false);

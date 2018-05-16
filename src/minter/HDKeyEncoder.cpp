@@ -61,7 +61,7 @@ minter::HDKey minter::HDKeyEncoder::makeBip32RootKey(const minter::Data64 &seed,
 
 minter::HDKey minter::HDKeyEncoder::makeExtendedKey(const minter::HDKey &rootKey, const Derivation &derivation) {
     HDKey out = rootKey;
-    derivePathN(out, derivation.path, true);
+    derivePath(out, derivation.path, true);
 
     serialize(out, out.fingerprint, out.net.bip32[1], false);
 
@@ -138,7 +138,7 @@ void minter::HDKeyEncoder::derive(minter::HDKey &key, uint32_t index) {
     buff.clear();
 }
 
-void minter::HDKeyEncoder::derivePathN(HDKey &key, const std::string &path, bool priv) {
+void minter::HDKeyEncoder::derivePath(HDKey &key, const std::string &path, bool priv) {
     std::vector<std::string> pathBits = minter::splitString(path, "/");
     for (const auto &bit: pathBits) {
         if (bit == "m" || bit == "'") {

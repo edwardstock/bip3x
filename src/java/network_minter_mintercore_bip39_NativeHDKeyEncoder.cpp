@@ -6,34 +6,9 @@
 #include <minter/Bip39Mnemonic.h>
 #include <minter/HDKeyEncoder.h>
 #include <minter/utils.h>
+#include <type_traits>
 #include "network_minter_mintercore_bip39_NativeHDKeyEncoder.h"
-
-template<size_t N>
-void setByteArray(JNIEnv *env, jclass &hdkeyCls, jobject &hdkey, const char *fname, const minter::FixedData<N> &data) {
-    jsize sz = static_cast<jsize>(data.size());
-    jbyteArray arr = env->NewByteArray(sz);
-    env->SetByteArrayRegion(arr, 0, sz, reinterpret_cast<const jbyte *>(data.cdata()));
-
-    env->SetObjectField(hdkey, env->GetFieldID(hdkeyCls, fname, "[B"), arr);
-}
-
-void setByteArray(JNIEnv *env, jclass &hdkeyCls, jobject &hdkey, const char *fname, const minter::Data &data) {
-    jsize sz = static_cast<jsize>(data.size());
-    jbyteArray arr = env->NewByteArray(sz);
-    env->SetByteArrayRegion(arr, 0, sz, reinterpret_cast<const jbyte *>(data.cdata()));
-    env->SetObjectField(hdkey, env->GetFieldID(hdkeyCls, fname, "[B"), arr);
-}
-
-template<size_t N>
-minter::FixedData<N> readByteArray(JNIEnv *env, jclass &cls, jobject &obj, const char *fname) {
-    jbyteArray tmpArr = readObjectField<jbyteArray >(env, cls, obj, fname, "[B" /*byte[]*/);
-    return minter::FixedData<N>(reinterpret_cast<uint8_t *>(env->GetByteArrayElements(tmpArr, 0)));
-}
-
-template<typename T>
-T readObjectField(JNIEnv *env, jclass &cls, jobject &obj, const char *fname, const char* sig) {
-    return (T) env->GetObjectField(obj, env->GetFieldID(cls, fname, sig));
-}
+#include "nobject.h"
 
 jobject Java_network_minter_mintercore_bip39_NativeHDKeyEncoder_encoderMakeBip32RootKey(
     JNIEnv *env, jclass, jobject seed_buffer, jobject net_) {
@@ -42,73 +17,94 @@ jobject Java_network_minter_mintercore_bip39_NativeHDKeyEncoder_encoderMakeBip32
     minter::BTCNetwork net;
 
     // Convert java BTCNetwork to native minter::BTCNetwork
-    jclass netjClass = env->FindClass("network/minter/mintercore/bip39/BTCNetwork");
-
+    minter::nobject nnet(env, net_);
     // now we're using only version from instance @TODO
-    jintArray ar = readObjectField<jintArray>(env, netjClass, net_, "bip32", "[I" /*int[]*/);
+    jintArray ar = nnet.getFieldObject<jintArray>("bip32", "[I" /*int[]*/);
 
-    uint32_t * nets = reinterpret_cast<uint32_t *>(env->GetIntArrayElements(ar, 0));
+    uint32_t *nets = reinterpret_cast<uint32_t *>(env->GetIntArrayElements(ar, 0));
     net.bip32[0] = nets[0];
     net.bip32[1] = nets[1];
 
     const minter::HDKey bip32RootKey = minter::HDKeyEncoder::makeBip32RootKey(seed, net);
 
     // instancing HDKey
-    jclass hdkeyjClass = env->FindClass("network/minter/mintercore/bip39/HDKey");
-    jobject jkey = env->AllocObject(hdkeyjClass);
+    minter::nobject out(env, "network/minter/mintercore/bip39/HDKey");
 
     // private key
-    setByteArray<32>(env, hdkeyjClass, jkey, "privateKey", bip32RootKey.privateKey);
+    out.setFieldUint8Array<32>("privateKey", bip32RootKey.privateKey);
     // public key
-    setByteArray<33>(env, hdkeyjClass, jkey, "publicKey", bip32RootKey.publicKey);
+    out.setFieldUint8Array<33>("publicKey", bip32RootKey.publicKey);
     // chain code
-    setByteArray<32>(env, hdkeyjClass, jkey, "chainCode", bip32RootKey.chainCode);
+    out.setFieldUint8Array<32>("chainCode", bip32RootKey.chainCode);
     // ext priv key
-    setByteArray<112>(env, hdkeyjClass, jkey, "extPrivateKey", bip32RootKey.extPrivateKey);
+    out.setFieldUint8Array<112>("extPrivateKey", bip32RootKey.extPrivateKey);
     // ext pub key
-    setByteArray<112>(env, hdkeyjClass, jkey, "extPublicKey", bip32RootKey.extPublicKey);
+    out.setFieldUint8Array<112>("extPublicKey", bip32RootKey.extPublicKey);
 
+    out.setField("depth", bip32RootKey.depth);
+    out.setField("index", bip32RootKey.index);
+    out.setField("fingerprint", bip32RootKey.fingerprint);
 
-    return jkey;
+    return out.getObject();
 }
 
 jobject Java_network_minter_mintercore_bip39_NativeHDKeyEncoder_encoderMakeExtendedKey(
     JNIEnv *env,
     jclass,
     jobject _rootHdKey,
+    jobject net_,
     jstring _derivation_path) {
+
+    minter::BTCNetwork net;
+    // Convert java BTCNetwork to native minter::BTCNetwork
+    minter::nobject nnet(env, net_);
+    // now we're using only version from instance @TODO
+    jintArray ar = nnet.getFieldObject<jintArray>("bip32", "[I" /*int[]*/);
+
+    uint32_t *nets = reinterpret_cast<uint32_t *>(env->GetIntArrayElements(ar, 0));
+    net.bip32[0] = nets[0];
+    net.bip32[1] = nets[1];
 
     // instancing native HDKey from java HDKey
     minter::HDKey rootHdKey;
+    minter::nobject rk(env, _rootHdKey);
 
-    jclass keyCls = env->GetObjectClass(_rootHdKey);
+    rootHdKey.net = net;
+    rootHdKey.publicKey = rk.getFieldUint8Array<33>("publicKey");
+    rootHdKey.privateKey = rk.getFieldUint8Array<32>("privateKey");
+    rootHdKey.chainCode = rk.getFieldUint8Array<32>("chainCode");
+    rootHdKey.extPrivateKey = rk.getFieldUint8Array<112>("extPrivateKey");
+    rootHdKey.extPublicKey = rk.getFieldUint8Array<112>("extPublicKey");
+    rootHdKey.depth = rk.getFieldUint8("depth");
+    rootHdKey.index = rk.getFieldUint32("index");
+    rootHdKey.fingerprint = rk.getFieldUint32("fingerprint");
 
-    rootHdKey.publicKey = readByteArray<33>(env, keyCls, _rootHdKey, "publicKey");
-    rootHdKey.privateKey = readByteArray<32>(env, keyCls, _rootHdKey, "privateKey");
-    rootHdKey.chainCode = readByteArray<32>(env, keyCls, _rootHdKey, "chainCode");
-    rootHdKey.extPrivateKey = readByteArray<112>(env, keyCls, _rootHdKey, "extPrivateKey");
-    rootHdKey.extPublicKey = readByteArray<112>(env, keyCls, _rootHdKey, "extPublicKey");
 
     const char *derivation_path = env->GetStringUTFChars(_derivation_path, 0);
     minter::HDKey extHdKey = minter::HDKeyEncoder::makeExtendedKey(rootHdKey, derivation_path);
     env->ReleaseStringUTFChars(_derivation_path, derivation_path);
 
-    // clear root
-    rootHdKey.clear();
-
 
     // instancing java HDKey from native
-    jobject outHDKey = env->AllocObject(keyCls);
-    // private key
-    setByteArray<32>(env, keyCls, outHDKey, "privateKey", extHdKey.privateKey);
-    // public key
-    setByteArray<33>(env, keyCls, outHDKey, "publicKey", extHdKey.publicKey);
-    // chain code
-    setByteArray<32>(env, keyCls, outHDKey, "chainCode", extHdKey.chainCode);
-    // ext private key
-    setByteArray<112>(env, keyCls, outHDKey, "extPrivateKey", extHdKey.extPrivateKey);
-    // ext public key
-    setByteArray<112>(env, keyCls, outHDKey, "extPublicKey", extHdKey.extPublicKey);
+    minter::nobject out(env, env->GetObjectClass(_rootHdKey));
+//    jobject outHDKey = env->AllocObject(keyCls);
 
-    return outHDKey;
+    // private key
+    out.setFieldUint8Array<32>("privateKey", extHdKey.privateKey);
+    // public key
+    out.setFieldUint8Array<33>("publicKey", extHdKey.publicKey);
+    // chain code
+    out.setFieldUint8Array<32>("chainCode", extHdKey.chainCode);
+    // ext private key
+    out.setFieldUint8Array<112>("extPrivateKey", extHdKey.extPrivateKey);
+    // ext public key
+    out.setFieldUint8Array<112>("extPublicKey", extHdKey.extPublicKey);
+
+    out.setField("depth", extHdKey.depth);
+    out.setField("index", extHdKey.index);
+    out.setField("fingerprint", extHdKey.fingerprint);
+
+    // clear root
+    rootHdKey.clear();
+    return out.getObject();
 }
