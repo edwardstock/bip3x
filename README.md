@@ -34,20 +34,20 @@ add_subdirectory(bip39)
 
 ```groovy
 android {
-	...
-	sourceSets {
-		main {
-	        jni.srcDirs = ['src/main/cpp/bip39/src/java']
-	        java.srcDirs = ['src/main/cpp/bip39/src/java']
-	    }
-	}
-	
-	externalNativeBuild {
-		cmake {
-			path 'src/main/cpp/CMakeLists.txt'
-	    }
-	}
-	...
+    ...
+    sourceSets {
+        main {
+            jni.srcDirs = ['src/main/cpp/bip39/src/java']
+            java.srcDirs = ['src/main/cpp/bip39/src/java']
+        }
+    }
+    
+    externalNativeBuild {
+        cmake {
+            path 'src/main/cpp/CMakeLists.txt'
+        }
+    }
+    ...
 }
  ```
  
@@ -56,13 +56,13 @@ android {
 import network.minter.mintercore.bip39.NativeBip39
 
 class Main {
-	public static int main(String[] args) {
-		NativeBip39.init();
-		
-		if(!NativeBip39.isEnabled()) {
-			throw new RuntimeException(NativeBip39.getError());
-		}
-	}
+    public static int main(String[] args) {
+        NativeBip39.init();
+        
+        if(!NativeBip39.isEnabled()) {
+            throw new RuntimeException(NativeBip39.getError());
+        }
+    }
 }
 ```
 
