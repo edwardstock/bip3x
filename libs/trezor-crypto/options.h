@@ -20,6 +20,8 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+// TODO: move these things to cmake configure
+
 #ifndef __OPTIONS_H__
 #define __OPTIONS_H__
 

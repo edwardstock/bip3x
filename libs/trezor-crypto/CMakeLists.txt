@@ -37,6 +37,8 @@ set(SOURCES
     options.h
     pbkdf2.cpp
     pbkdf2.hpp
+    rfc6979.h
+    rfc6979.cpp
     rand.cpp
     rand.h
     ripemd160.cpp
