@@ -6,10 +6,13 @@ set(CMAKE_CXX_STANDARD 14)
 include(cmake/FindSSE.cmake)
 findsse()
 
+#add_definitions(-DUSE_ASM=1)
+
 set(BTC_SRC
     src/crypto/common.h
     src/crypto/sha256.h
     src/crypto/sha256.cpp
+    src/crypto/sha256_sse4.cpp
     src/crypto/hmac_sha256.h
     src/crypto/hmac_sha256.cpp
     src/crypto/hmac_sha512.h
@@ -49,7 +52,7 @@ set(SOURCES
     src/minter/HDKeyEncoder.cpp src/minter/HDKeyEncoder.h
     src/minter/Bip39Mnemonic.cpp src/minter/Bip39Mnemonic.h
     src/minter/uint256_t.hpp
-)
+    )
 
 include_directories(libs/trezor-crypto)
 
@@ -76,11 +79,10 @@ if (ANDROID_PLATFORM)
 	add_definitions(-D__ANDROID__)
 	add_library(${PROJECT_NAME}_jni SHARED ${JNI_SOURCES})
 	target_link_libraries(${PROJECT_NAME}_jni ${PROJECT_NAME}_core)
+	target_link_libraries(${PROJECT_NAME}_jni log)
 endif ()
 
 if (RUN)
 	add_executable(bip39test src/main.cpp)
 	target_link_libraries(bip39test ${PROJECT_NAME}_core)
 endif ()
-
-

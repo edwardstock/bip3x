@@ -32,24 +32,34 @@ public final class NativeBip39 {
 
     private final static String SONAME = "bip39_jni";
     private static NativeBip39 INSTANCE;
-    private boolean mEnabled;
+    private static boolean sEnabled;
+    private static Throwable sError = null;
+    private static ThreadLocal<ByteBuffer> nativeBuffer = new ThreadLocal<>();
 
-    private NativeBip39(boolean isEnabled) {
-        mEnabled = isEnabled;
+    private NativeBip39() {
     }
 
     public static void init() {
         if (INSTANCE == null) {
-            boolean isEnabled = true;
+            sEnabled = true;
             try {
                 System.loadLibrary(SONAME);
             } catch (UnsatisfiedLinkError e) {
                 Timber.e(e, "UnsatisfiedLinkError");
-                isEnabled = false;
+                sError = e;
+                sEnabled = false;
             }
 
-            INSTANCE = new NativeBip39(isEnabled);
+            INSTANCE = new NativeBip39();
         }
+    }
+
+    public static boolean isEnabled() {
+        return sEnabled;
+    }
+
+    public static Throwable getError() {
+        return sError;
     }
 
     public static String[] getLanguages() {
@@ -65,13 +75,11 @@ public final class NativeBip39 {
         return encodeBytes(input, null, ENTROPY_LEN_128);
     }
 
-    private static ThreadLocal<ByteBuffer> nativeBuffer = new ThreadLocal<>();
-
     public static MnemonicResult encodeBytes(@NonNull byte[] input, String language, int entropy) {
         checkNotNull(input, "Input data can't be null");
 
         ByteBuffer buff = nativeBuffer.get();
-        if(buff == null || buff.capacity() < input.length) {
+        if (buff == null || buff.capacity() < input.length) {
             buff = ByteBuffer.allocateDirect(input.length);
             buff.order(ByteOrder.BIG_ENDIAN);
             nativeBuffer.set(buff);
