@@ -6,8 +6,6 @@ set(CMAKE_CXX_STANDARD 14)
 include(cmake/FindSSE.cmake)
 findsse()
 
-#add_definitions(-DUSE_ASM=1)
-
 set(BTC_SRC
     src/crypto/common.h
     src/crypto/sha256.h

@@ -2,7 +2,6 @@ package network.minter.mintercore.bip39;
 
 import network.minter.mintercore.crypto.PrivateKey;
 import network.minter.mintercore.crypto.PublicKey;
-import network.minter.mintercore.helpers.StringHelper;
 
 /**
  * MinterWallet. 2018
@@ -41,6 +40,19 @@ public final class HDKey {
      */
     private byte[] extPrivateKey;
 
+    @SuppressWarnings("SameParameterValue")
+    static String bytesToString(byte[] data, int readLength) {
+        if (data.length < readLength) {
+            throw new ArrayIndexOutOfBoundsException("Read length less than array size: " + String.valueOf(readLength) + " of " + String.valueOf(data.length));
+        }
+        final char[] out = new char[readLength];
+        for (int i = 0; i < readLength; i++) {
+            out[i] = (char) data[i];
+        }
+
+        return new String(out);
+    }
+
     public void clear() {
         clearInternal(publicKey);
         clearInternal(privateKey);
@@ -70,7 +82,7 @@ public final class HDKey {
     }
 
     public String getExtPrivateKeyString() {
-        return StringHelper.bytesToString(getExtPrivateKeyBytes(), 111);
+        return bytesToString(getExtPrivateKeyBytes(), 111);
     }
 
     public PrivateKey getPrivateKey() {
@@ -82,7 +94,7 @@ public final class HDKey {
     }
 
     public String getExtPublicKeyString() {
-        return StringHelper.bytesToString(getExtPublicKeyBytes(), 111);
+        return bytesToString(getExtPublicKeyBytes(), 111);
     }
 
     private void clearInternal(byte[] d) {
