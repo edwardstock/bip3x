@@ -1,7 +1,7 @@
-package network.minter.mintercore.bip39;
+package network.minter.core.bip39;
 
-import network.minter.mintercore.crypto.PrivateKey;
-import network.minter.mintercore.crypto.PublicKey;
+import network.minter.core.crypto.PrivateKey;
+import network.minter.core.crypto.PublicKey;
 
 /**
  * native-bip39. 2018

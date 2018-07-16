@@ -1,11 +1,11 @@
-package network.minter.mintercore.bip39;
+package network.minter.core.bip39;
 
 import android.support.annotation.NonNull;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import static network.minter.mintercore.internal.common.Preconditions.checkNotNull;
+import static network.minter.core.internal.common.Preconditions.checkNotNull;
 
 /**
  * native-bip39. 2018

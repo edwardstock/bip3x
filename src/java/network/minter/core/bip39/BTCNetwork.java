@@ -1,4 +1,4 @@
-package network.minter.mintercore.bip39;
+package network.minter.core.bip39;
 
 /**
  * native-bip39. 2018

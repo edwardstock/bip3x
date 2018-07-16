@@ -1,4 +1,4 @@
-package network.minter.mintercore.bip39;
+package network.minter.core.bip39;
 
 import android.support.annotation.NonNull;
 
@@ -7,8 +7,8 @@ import java.nio.ByteOrder;
 
 import timber.log.Timber;
 
-import static network.minter.mintercore.internal.common.Preconditions.checkNotNull;
-import static network.minter.mintercore.internal.common.Preconditions.firstNonNull;
+import static network.minter.core.internal.common.Preconditions.checkNotNull;
+import static network.minter.core.internal.common.Preconditions.firstNonNull;
 
 /**
  * native-bip39. 2018
