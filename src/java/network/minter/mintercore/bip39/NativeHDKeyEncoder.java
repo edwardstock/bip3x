@@ -31,7 +31,7 @@ public final class NativeHDKeyEncoder {
             (byte) 0xef
     );
 
-    public static final String MINTER_DERIVATION_PATH = "m/44'/60'/0'";
+    public static final String MINTER_DERIVATION_PATH = "m/44'/60'/0'/0/0";
 
     public static HDKey makeBip32RootKey(byte[] seed) {
         return makeBip32RootKey(seed, MAIN_NET);
