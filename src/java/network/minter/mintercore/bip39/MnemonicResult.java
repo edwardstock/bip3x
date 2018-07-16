@@ -1,7 +1,7 @@
 package network.minter.mintercore.bip39;
 
 /**
- * MinterWallet. 2018
+ * native-bip39. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
@@ -9,6 +9,13 @@ public final class MnemonicResult {
     private int status = NativeBip39.MR_OK;
     private String words;
     private int len;
+
+    public MnemonicResult(final String mnemonicPhrase) {
+        if (mnemonicPhrase == null || mnemonicPhrase.isEmpty())
+            throw new IllegalArgumentException("Mnemonic phrase can't be null");
+        words = mnemonicPhrase;
+        len = mnemonicPhrase.split("\\s+").length;
+    }
 
     public String getMnemonic() {
         return words;

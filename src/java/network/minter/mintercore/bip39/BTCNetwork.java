@@ -1,7 +1,7 @@
 package network.minter.mintercore.bip39;
 
 /**
- * MinterWallet. 2018
+ * native-bip39. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */

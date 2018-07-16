@@ -4,7 +4,7 @@ import network.minter.mintercore.crypto.PrivateKey;
 import network.minter.mintercore.crypto.PublicKey;
 
 /**
- * MinterWallet. 2018
+ * native-bip39. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */

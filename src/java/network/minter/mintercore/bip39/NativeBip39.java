@@ -11,7 +11,7 @@ import static network.minter.mintercore.internal.common.Preconditions.checkNotNu
 import static network.minter.mintercore.internal.common.Preconditions.firstNonNull;
 
 /**
- * MinterWallet. 2018
+ * native-bip39. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */

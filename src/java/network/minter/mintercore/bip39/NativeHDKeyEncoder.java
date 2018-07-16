@@ -8,7 +8,7 @@ import java.nio.ByteOrder;
 import static network.minter.mintercore.internal.common.Preconditions.checkNotNull;
 
 /**
- * MinterWallet. 2018
+ * native-bip39. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
