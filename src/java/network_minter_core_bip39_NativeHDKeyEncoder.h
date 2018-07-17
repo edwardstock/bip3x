@@ -5,8 +5,8 @@
 
 #include <jni.h>
 
-#ifndef MINTERWALLET_NETWORK_MINTER_MINTERCORE_BIP39_NATIVEHDKEYENCODER_H
-#define MINTERWALLET_NETWORK_MINTER_MINTERCORE_BIP39_NATIVEHDKEYENCODER_H
+#ifndef MINTERWALLET_NETWORK_MINTER_CORE_BIP39_NATIVEHDKEYENCODER_H
+#define MINTERWALLET_NETWORK_MINTER_CORE_BIP39_NATIVEHDKEYENCODER_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -14,7 +14,7 @@ extern "C" {
 
 
 JNIEXPORT jobject JNICALL
-Java_network_minter_mintercore_bip39_NativeHDKeyEncoder_encoderMakeBip32RootKey(
+Java_network_minter_core_bip39_NativeHDKeyEncoder_encoderMakeBip32RootKey(
     JNIEnv *env,
     jclass type,
     jobject seed_buffer,
@@ -22,7 +22,7 @@ Java_network_minter_mintercore_bip39_NativeHDKeyEncoder_encoderMakeBip32RootKey(
 
 
 JNIEXPORT jobject JNICALL
-Java_network_minter_mintercore_bip39_NativeHDKeyEncoder_encoderMakeExtendedKey(
+Java_network_minter_core_bip39_NativeHDKeyEncoder_encoderMakeExtendedKey(
     JNIEnv *env,
     jclass type,
     jobject _rootHdKey,
@@ -35,4 +35,4 @@ Java_network_minter_mintercore_bip39_NativeHDKeyEncoder_encoderMakeExtendedKey(
 }
 #endif
 
-#endif //MINTERWALLET_NETWORK_MINTER_MINTERCORE_BIP39_NATIVEHDKEYENCODER_H
+#endif //MINTERWALLET_NETWORK_MINTER_CORE_BIP39_NATIVEHDKEYENCODER_H

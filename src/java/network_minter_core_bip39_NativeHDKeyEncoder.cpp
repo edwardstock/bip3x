@@ -7,10 +7,10 @@
 #include <minter/HDKeyEncoder.h>
 #include <minter/utils.h>
 #include <type_traits>
-#include "network_minter_mintercore_bip39_NativeHDKeyEncoder.h"
+#include "network_minter_core_bip39_NativeHDKeyEncoder.h"
 #include "nobject.h"
 
-jobject Java_network_minter_mintercore_bip39_NativeHDKeyEncoder_encoderMakeBip32RootKey(
+jobject Java_network_minter_core_bip39_NativeHDKeyEncoder_encoderMakeBip32RootKey(
     JNIEnv *env, jclass, jobject seed_buffer, jobject net_) {
 
     minter::Data64 seed(static_cast<const uint8_t *>(env->GetDirectBufferAddress(seed_buffer)), 64);
@@ -48,7 +48,7 @@ jobject Java_network_minter_mintercore_bip39_NativeHDKeyEncoder_encoderMakeBip32
     return out.getObject();
 }
 
-jobject Java_network_minter_mintercore_bip39_NativeHDKeyEncoder_encoderMakeExtendedKey(
+jobject Java_network_minter_core_bip39_NativeHDKeyEncoder_encoderMakeExtendedKey(
     JNIEnv *env,
     jclass,
     jobject _rootHdKey,

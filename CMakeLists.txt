@@ -55,10 +55,10 @@ set(SOURCES
 include_directories(libs/trezor-crypto)
 
 set(JNI_SOURCES
-    src/java/network_minter_mintercore_bip39_NativeBip39.h
-    src/java/network_minter_mintercore_bip39_NativeBip39.cpp
-    src/java/network_minter_mintercore_bip39_NativeHDKeyEncoder.h
-    src/java/network_minter_mintercore_bip39_NativeHDKeyEncoder.cpp
+        src/java/network_minter_core_bip39_NativeBip39.h
+        src/java/network_minter_core_bip39_NativeBip39.cpp
+        src/java/network_minter_core_bip39_NativeHDKeyEncoder.h
+        src/java/network_minter_core_bip39_NativeHDKeyEncoder.cpp
     src/java/nobject.h
     src/java/nobject.cpp
     )

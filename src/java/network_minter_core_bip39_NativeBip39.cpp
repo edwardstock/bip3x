@@ -1,6 +1,6 @@
 #include <jni.h>
 #include <minter/Bip39Mnemonic.h>
-#include "network_minter_mintercore_bip39_NativeBip39.h"
+#include "network_minter_core_bip39_NativeBip39.h"
 
 /**
  * bip39. 2018
@@ -10,7 +10,7 @@
  * @link https://github.com/edwardstock
  */
 
-jobjectArray Java_network_minter_mintercore_bip39_NativeBip39_bip39GetLanguages(JNIEnv *env, jclass) {
+jobjectArray Java_network_minter_core_bip39_NativeBip39_bip39GetLanguages(JNIEnv *env, jclass) {
     const auto langs = minter::Bip39Mnemonic::getLanguages();
 
     jobjectArray
@@ -22,7 +22,7 @@ jobjectArray Java_network_minter_mintercore_bip39_NativeBip39_bip39GetLanguages(
     return langArr;
 }
 
-jobjectArray Java_network_minter_mintercore_bip39_NativeBip39_bip39GetWordsFromLanguage(
+jobjectArray Java_network_minter_core_bip39_NativeBip39_bip39GetWordsFromLanguage(
     JNIEnv *env, jclass, jstring language_) {
     const char *language = env->GetStringUTFChars(language_, 0);
 
@@ -38,7 +38,7 @@ jobjectArray Java_network_minter_mintercore_bip39_NativeBip39_bip39GetWordsFromL
     env->ReleaseStringUTFChars(language_, language);
     return wordsArr;
 }
-jboolean Java_network_minter_mintercore_bip39_NativeBip39_bip39ValidateMnemonic(
+jboolean Java_network_minter_core_bip39_NativeBip39_bip39ValidateMnemonic(
     JNIEnv *env,
     jclass,
     jstring mnemonic_,
@@ -53,7 +53,7 @@ jboolean Java_network_minter_mintercore_bip39_NativeBip39_bip39ValidateMnemonic(
     return static_cast<jboolean>(res ? 1 : 0);
 }
 
-jobject Java_network_minter_mintercore_bip39_NativeBip39_bip39EncodeBytes(
+jobject Java_network_minter_core_bip39_NativeBip39_bip39EncodeBytes(
     JNIEnv *env, jclass, jobject input, jstring language_, jint entropy) {
 
     uint8_t *buffer = (uint8_t *) env->GetDirectBufferAddress(input);
@@ -77,7 +77,7 @@ jobject Java_network_minter_mintercore_bip39_NativeBip39_bip39EncodeBytes(
     return mrObj;
 }
 
-jbyteArray Java_network_minter_mintercore_bip39_NativeBip39_bip39WordsToSeed(
+jbyteArray Java_network_minter_core_bip39_NativeBip39_bip39WordsToSeed(
     JNIEnv *env, jclass, jstring mnemonic_) {
     const char *mnemonic = env->GetStringUTFChars(mnemonic_, 0);
 
