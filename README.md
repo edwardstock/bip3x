@@ -53,7 +53,7 @@ android {
  
 * Initialize it
 ```java
-import network.minter.mintercore.bip39.NativeBip39
+import network.minter.core.bip39.NativeBip39
 
 class Main {
     public static int main(String[] args) {
