@@ -28,7 +28,7 @@ jobject Java_network_minter_core_bip39_NativeHDKeyEncoder_encoderMakeBip32RootKe
     const minter::HDKey bip32RootKey = minter::HDKeyEncoder::makeBip32RootKey(seed, net);
 
     // instancing HDKey
-    minter::nobject out(env, "network/minter/mintercore/bip39/HDKey");
+    minter::nobject out(env, "network/minter/core/bip39/HDKey");
 
     // private key
     out.setFieldUint8Array<32>("privateKey", bip32RootKey.privateKey);

@@ -64,7 +64,7 @@ jobject Java_network_minter_core_bip39_NativeBip39_bip39EncodeBytes(
     );
     env->ReleaseStringUTFChars(language_, language);
 
-    jclass mrClass = env->FindClass("network/minter/mintercore/bip39/MnemonicResult");
+    jclass mrClass = env->FindClass("network/minter/core/bip39/MnemonicResult");
     jobject mrObj = env->AllocObject(mrClass);
     env->SetIntField(mrObj, env->GetFieldID(mrClass, "status", "I"), out.status);
     env->SetIntField(mrObj, env->GetFieldID(mrClass, "len", "I"), static_cast<jint>(out.len));
