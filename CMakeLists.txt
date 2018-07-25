@@ -3,9 +3,6 @@ cmake_minimum_required(VERSION 3.4)
 
 set(CMAKE_CXX_STANDARD 14)
 
-include(cmake/FindSSE.cmake)
-findsse()
-
 set(BTC_SRC
     src/crypto/common.h
     src/crypto/sha256.h
@@ -55,10 +52,10 @@ set(SOURCES
 include_directories(libs/trezor-crypto)
 
 set(JNI_SOURCES
-        src/java/network_minter_core_bip39_NativeBip39.h
-        src/java/network_minter_core_bip39_NativeBip39.cpp
-        src/java/network_minter_core_bip39_NativeHDKeyEncoder.h
-        src/java/network_minter_core_bip39_NativeHDKeyEncoder.cpp
+    src/java/network_minter_core_bip39_NativeBip39.h
+    src/java/network_minter_core_bip39_NativeBip39.cpp
+    src/java/network_minter_core_bip39_NativeHDKeyEncoder.h
+    src/java/network_minter_core_bip39_NativeHDKeyEncoder.cpp
     src/java/nobject.h
     src/java/nobject.cpp
     )
@@ -77,7 +74,16 @@ if (ANDROID_PLATFORM)
 	add_definitions(-D__ANDROID__)
 	add_library(${PROJECT_NAME}_jni SHARED ${JNI_SOURCES})
 	target_link_libraries(${PROJECT_NAME}_jni ${PROJECT_NAME}_core)
-	target_link_libraries(${PROJECT_NAME}_jni log)
+else ()
+	find_package(JNI)
+	if (JNI_FOUND)
+		add_library(${PROJECT_NAME}_jni SHARED ${JNI_SOURCES})
+		target_link_libraries(${PROJECT_NAME}_jni ${PROJECT_NAME}_core)
+		target_link_libraries(${PROJECT_NAME}_jni ${JAVA_JVM_LIBRARY})
+		target_include_directories(${PROJECT_NAME}_jni PRIVATE ${JNI_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
+	else ()
+		message(WARN "JNI not found")
+	endif ()
 endif ()
 
 if (RUN)
