@@ -5,8 +5,6 @@ import android.support.annotation.NonNull;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import timber.log.Timber;
-
 import static network.minter.core.internal.common.Preconditions.checkNotNull;
 import static network.minter.core.internal.common.Preconditions.firstNonNull;
 
@@ -45,7 +43,7 @@ public final class NativeBip39 {
             try {
                 System.loadLibrary(SONAME);
             } catch (UnsatisfiedLinkError e) {
-                Timber.e(e, "UnsatisfiedLinkError");
+                System.err.println(String.format("Unable to load %s in %s: %s", SONAME, System.getProperty("java.library.path"), e.getMessage()));
                 sError = e;
                 sEnabled = false;
             }
