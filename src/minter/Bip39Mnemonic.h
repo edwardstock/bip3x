@@ -8,10 +8,11 @@
 #ifndef BIP39_BIP32MNEMONIC_H
 #define BIP39_BIP32MNEMONIC_H
 
-#include "../bip39.h"
-#include "../wordlist.h"
 #include <vector>
 #include <iostream>
+#include <random>
+#include "../bip39.h"
+#include "../wordlist.h"
 #include "utils.h"
 
 namespace minter {
@@ -33,7 +34,10 @@ class Bip39Mnemonic {
 
     static std::vector<char *> getLanguages();
     static std::vector<const char *> getWordsFromLanguage(const char *lang);
-    static MnemonicResult encodeBytes(const uint8_t *src, const char *lang, size_t entropy = BIP39_ENTROPY_LEN_128);
+    static MnemonicResult generate(const char *lang = "en", size_t entropy = BIP39_ENTROPY_LEN_128);
+    static MnemonicResult encodeBytes(const uint8_t *src,
+                                      const char *lang = "en",
+                                      size_t entropy = BIP39_ENTROPY_LEN_128);
     static Data decodeMnemonic(const char *mnemonic, const char *lang, size_t entropy = BIP39_ENTROPY_LEN_128);
     static void wordsToSeed(const char *words, uint8_t *out64, size_t *writtenSz);
     static bool validateWords(const char* lang, const char* mnemonic);

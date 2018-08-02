@@ -7,7 +7,56 @@ Logic almost completely taken from bitcoin-js library for generating mnemonic ph
 [Site](https://iancoleman.io/bip39/) and [github](https://github.com/iancoleman/bip39)
 
 
-## Usage
+## Features
+* Generate random mnemonic ([PCG](http://www.pcg-random.org/) generator)
+* Create root and extended bip* standard keys using some derivation path
+
+## Examples
+### C++
+```c++
+#include "minter/utils.h"
+#include "minter/Bip39Mnemonic.h"
+#include "minter/HDKeyEncoder.h"
+#include <iostream>
+
+using namespace minter;
+
+int main(int argc, char** argv) {
+    // create random words
+    Bip39Mnemonic::MnemonicResult encodedMnemonic = Bip39Mnemonic::generate();
+    std::cout << encodedMnemonic.words << std::endl;
+    
+    // create mnemonic seed
+    Data64 seed = HDKeyEncoder::makeBip39Seed(encodedMnemonic.words);
+    
+    // create root key from mnemonic seed
+    HDKey bip32RootKey = HDKeyEncoder::makeBip32RootKey(seed);
+    
+    // and, finally derive keys
+    HDKey ethereumKey = HDKeyEncoder::makeExtendedKey(bip32RootKey, "m/44'/60'/0'/0");
+
+    // extended private key
+    std::cout << ethereumKey.extPrivateKey.toString() << std::endl;
+    
+    // private key
+    std::cout << ethereumKey.privateKey.toString() << std::endl;
+    
+    // extended public key
+    std::cout << ethereumKey.extPublicKey.toString() << std::endl;
+    
+    // public key
+    std::cout << ethereumKey.publicKey.toString() << std::endl;
+    
+    // et cetera..
+
+    // the end.
+    return 0;
+}
+```
+
+
+### Java
+tbd
 
 ### Android and java bindings
 
@@ -90,6 +139,6 @@ target_link_libraries(bip39_core)
 
 
 ## Documentation
-TBD (see `src/main.cpp` for simple examples)
+TBD (see [src/main.cpp](https://github.com/edwardstock/native-bip39/blob/master/src/main.cpp) for simple examples)
 
 

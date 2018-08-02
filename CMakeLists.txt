@@ -47,7 +47,7 @@ set(SOURCES
     src/minter/HDKeyEncoder.cpp src/minter/HDKeyEncoder.h
     src/minter/Bip39Mnemonic.cpp src/minter/Bip39Mnemonic.h
     src/minter/uint256_t.hpp
-    )
+    src/minter/PCGRand.hpp)
 
 include_directories(libs/trezor-crypto)
 
@@ -70,19 +70,21 @@ add_subdirectory(libs/trezor-crypto)
 target_link_libraries(${PROJECT_NAME}_core trezor_crypto)
 
 
-if (ANDROID_PLATFORM)
-	add_definitions(-D__ANDROID__)
-	add_library(${PROJECT_NAME}_jni SHARED ${JNI_SOURCES})
-	target_link_libraries(${PROJECT_NAME}_jni ${PROJECT_NAME}_core)
-else ()
-	find_package(JNI)
-	if (JNI_FOUND)
+if (NOT DISABLE_JNI)
+	if (ANDROID_PLATFORM)
+		add_definitions(-D__ANDROID__)
 		add_library(${PROJECT_NAME}_jni SHARED ${JNI_SOURCES})
 		target_link_libraries(${PROJECT_NAME}_jni ${PROJECT_NAME}_core)
-		target_link_libraries(${PROJECT_NAME}_jni ${JAVA_JVM_LIBRARY})
-		target_include_directories(${PROJECT_NAME}_jni PRIVATE ${JNI_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
 	else ()
-		message(WARN "JNI not found")
+		find_package(JNI)
+		if (JNI_FOUND)
+			add_library(${PROJECT_NAME}_jni SHARED ${JNI_SOURCES})
+			target_link_libraries(${PROJECT_NAME}_jni ${PROJECT_NAME}_core)
+			target_link_libraries(${PROJECT_NAME}_jni ${JAVA_JVM_LIBRARY})
+			target_include_directories(${PROJECT_NAME}_jni PRIVATE ${JNI_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
+		else ()
+			message(WARN "JNI not found")
+		endif ()
 	endif ()
 endif ()
 

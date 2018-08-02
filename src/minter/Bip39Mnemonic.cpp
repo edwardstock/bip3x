@@ -6,6 +6,8 @@
  */
 
 #include "Bip39Mnemonic.h"
+#include "PCGRand.hpp"
+
 std::vector<char *> minter::Bip39Mnemonic::getLanguages() {
     int sz = bip39_get_languages_size();
     std::vector<char *> languages(static_cast<size_t>(sz));
@@ -27,6 +29,20 @@ std::vector<const char *> minter::Bip39Mnemonic::getWordsFromLanguage(const char
 
     return wordsList;
 }
+
+minter::Bip39Mnemonic::MnemonicResult minter::Bip39Mnemonic::generate(const char *lang, size_t entropy) {
+    std::random_device dev;
+    PCGRand rand(dev);
+    std::uniform_int_distribution<> udist(0, 255);
+
+    Data bts(entropy);
+    for (size_t i = 0; i < entropy; ++i) {
+        bts.write(i, (uint8_t) udist(rand));
+    }
+
+    return encodeBytes(bts.cdata(), lang, entropy);
+}
+
 minter::Bip39Mnemonic::MnemonicResult minter::Bip39Mnemonic::encodeBytes(const uint8_t *src,
                                                                          const char *lang,
                                                                          size_t entropy) {

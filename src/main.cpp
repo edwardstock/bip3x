@@ -37,10 +37,13 @@ int main(int argc, char **argv) {
      *
      */
 
+    /*
     Data64 entropy("f0b9c942b9060af6a82d3ac340284d7e");
     Bip39Mnemonic::MnemonicResult
         encodedMnemonic = Bip39Mnemonic::encodeBytes(entropy.data(), "en", BIP39_ENTROPY_LEN_128);
+    */
 
+    Bip39Mnemonic::MnemonicResult encodedMnemonic = Bip39Mnemonic::generate();
     HDKey bip32RootKey = HDKeyEncoder::makeBip32RootKey(HDKeyEncoder::makeBip39Seed(encodedMnemonic.words));
     HDKey bip32ExtKey = HDKeyEncoder::makeExtendedKey(bip32RootKey, "m/44'/60'/0'/0");
     HDKey bip44ExtKey = HDKeyEncoder::makeExtendedKey(bip32RootKey, "m/44'/60'/0'");
