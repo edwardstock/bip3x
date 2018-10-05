@@ -1,9 +1,35 @@
-package network.minter.core.bip39;
+/*
+ * Copyright (C) by MinterTeam. 2018
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
+ *
+ * The MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
-import android.support.annotation.NonNull;
+package network.minter.core.bip39;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+
+import javax.annotation.Nonnull;
 
 import static network.minter.core.internal.common.Preconditions.checkNotNull;
 import static network.minter.core.internal.common.Preconditions.firstNonNull;
@@ -64,16 +90,28 @@ public final class NativeBip39 {
         return bip39GetLanguages();
     }
 
-    public static String[] getWordsFromLanguage(@NonNull String lang) {
+    public static String[] getWordsFromLanguage(@Nonnull String lang) {
         checkNotNull(lang, "Language required");
         return bip39GetWordsFromLanguage(lang);
     }
 
-    public static MnemonicResult encodeBytes(@NonNull byte[] input) {
-        return encodeBytes(input, null, ENTROPY_LEN_128);
+    public static MnemonicResult encodeBytes(@Nonnull byte[] input) {
+        return encodeBytes(input, LANG_DEFAULT, ENTROPY_LEN_128);
     }
 
-    public static MnemonicResult encodeBytes(@NonNull byte[] input, String language, int entropy) {
+    /**
+     * Generates random mnemonic with PCGRandom for english language and entropy: 16 bytes
+     * @return
+     */
+    public static MnemonicResult generate() {
+        return generate(LANG_DEFAULT, ENTROPY_LEN_128);
+    }
+
+    public static MnemonicResult generate(String language, int entropy) {
+        return (MnemonicResult) bip39Generate(language, entropy);
+    }
+
+    public static MnemonicResult encodeBytes(@Nonnull byte[] input, String language, int entropy) {
         checkNotNull(input, "Input data can't be null");
 
         ByteBuffer buff = nativeBuffer.get();
@@ -100,6 +138,8 @@ public final class NativeBip39 {
     public static byte[] mnemonicToBip39Seed(String mnemonic) {
         return bip39WordsToSeed(mnemonic);
     }
+
+    private static native Object bip39Generate(String language, int entropy);
 
     private static native String[] bip39GetLanguages();
 

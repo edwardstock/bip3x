@@ -14,7 +14,9 @@ jobjectArray Java_network_minter_core_bip39_NativeBip39_bip39GetLanguages(JNIEnv
     const auto langs = minter::Bip39Mnemonic::getLanguages();
 
     jobjectArray
-        langArr = env->NewObjectArray(static_cast<jsize>(langs.size()), env->FindClass("java/lang/String"), NULL);
+        langArr = env->NewObjectArray(static_cast<jsize>(langs.size()),
+                                      env->FindClass("java/lang/String"),
+                                      NULL);
     for (int i = 0; i < langs.size(); i++) {
         env->SetObjectArrayElement(langArr, i, env->NewStringUTF(langs[i]));
     }
@@ -26,9 +28,11 @@ jobjectArray Java_network_minter_core_bip39_NativeBip39_bip39GetWordsFromLanguag
     JNIEnv *env, jclass, jstring language_) {
     const char *language = env->GetStringUTFChars(language_, 0);
 
-    const std::vector<const char*> words = minter::Bip39Mnemonic::getWordsFromLanguage(language);
+    const std::vector<const char *> words = minter::Bip39Mnemonic::getWordsFromLanguage(language);
 
-    jobjectArray wordsArr = env->NewObjectArray(static_cast<jsize>(words.size()), env->FindClass("java/lang/String"), NULL);
+    jobjectArray wordsArr = env->NewObjectArray(static_cast<jsize>(words.size()),
+                                                env->FindClass("java/lang/String"),
+                                                NULL);
     for (size_t i = 0; i < words.size(); i++) {
         jstring s = env->NewStringUTF(words[i]);
         env->SetObjectArrayElement(wordsArr, static_cast<jsize>(i), s);
@@ -62,6 +66,30 @@ jobject Java_network_minter_core_bip39_NativeBip39_bip39EncodeBytes(
     const minter::Bip39Mnemonic::MnemonicResult out = minter::Bip39Mnemonic::encodeBytes(
         buffer, language, static_cast<size_t>(entropy)
     );
+    env->ReleaseStringUTFChars(language_, language);
+
+    jclass mrClass = env->FindClass("network/minter/core/bip39/MnemonicResult");
+    jobject mrObj = env->AllocObject(mrClass);
+    env->SetIntField(mrObj, env->GetFieldID(mrClass, "status", "I"), out.status);
+    env->SetIntField(mrObj, env->GetFieldID(mrClass, "len", "I"), static_cast<jint>(out.len));
+    env->SetObjectField(
+        mrObj,
+        env->GetFieldID(mrClass, "words", "Ljava/lang/String;"),
+        env->NewStringUTF(out.raw.c_str())
+    );
+
+    return mrObj;
+}
+
+jobject Java_network_minter_core_bip39_NativeBip39_bip39Generate(
+    JNIEnv *env,
+    jclass type,
+    jstring language_,
+    jint entropy) {
+    const char *language = env->GetStringUTFChars(language_, 0);
+    const minter::Bip39Mnemonic::MnemonicResult
+        out = minter::Bip39Mnemonic::generate(language, static_cast<size_t>(entropy));
+
     env->ReleaseStringUTFChars(language_, language);
 
     jclass mrClass = env->FindClass("network/minter/core/bip39/MnemonicResult");
