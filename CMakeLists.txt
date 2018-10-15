@@ -16,7 +16,7 @@ set(BTC_SRC
     src/crypto/sha512.cpp
     )
 
-if(WIN32 OR CMAKE_CROSSCOMPILING)
+if (WIN32)
 	set(BTC_SRC "${BTC_SRC} src/crypto/win_endian.h src/crypto/win_endian.cpp")
 endif()
 
