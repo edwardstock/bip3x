@@ -16,6 +16,10 @@ set(BTC_SRC
     src/crypto/sha512.cpp
     )
 
+if(WIN32 OR CMAKE_CROSSCOMPILING)
+	set(BTC_SRC "${BTC_SRC} src/crypto/win_endian.h src/crypto/win_endian.cpp")
+endif()
+
 if (SSE41_FOUND OR SSE42_FOUND)
 	set(BTC_SRC ${BTC_SRC} src/crypto/sha256_sse4.cpp)
 else ()

@@ -15,15 +15,20 @@
 #ifndef MINTER_BIP39_CORE_API
 # if defined(_WIN32)
 #  ifdef WALLY_CORE_BUILD
-#   define BIP39_CORE_API __declspec(dllexport)
+#   define MINTER_BIP39_CORE_API __declspec(dllexport)
 #  else
-#   define BIP39_CORE_API
+#   define MINTER_BIP39_CORE_API
 #  endif
 # elif defined(__GNUC__) && defined(WALLY_CORE_BUILD)
-#  define BIP39_CORE_API __attribute__ ((visibility ("default")))
+#  define MINTER_BIP39_CORE_API __attribute__ ((visibility ("default")))
 # else
 #  define MINTER_BIP39_CORE_API
 # endif
+#endif
+
+#if defined(WIN32) && !defined(bzero)
+#include <cstring>
+#define bzero(d,l) memset(d, 0, l)
 #endif
 
 /** Return codes */

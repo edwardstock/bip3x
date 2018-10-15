@@ -11,6 +11,44 @@ Logic almost completely taken from bitcoin-js library for generating mnemonic ph
 * Generate random mnemonic ([PCG](http://www.pcg-random.org/) generator)
 * Create root and extended bip* standard keys using some derivation path
 
+## Build native JNI libs
+* Install cmake (if not installed yet)
+* Install Oracle JDK or OpenJDK (not tested yet)
+* Set environment variable: JAVA_HOME=/path/to/jdk
+* Build
+```bash
+mkdir build && cd build
+cmake ../ -DCMAKE_BUILD_TYPE=Release
+
+make
+```
+* Pickup lib files:
+  * libbip39_core.[so | dylib] 
+  * libbip39_jni.[so | dylib] 
+  
+### Cross-compile for Windows under mingw64 (MSVC didn't tested yet)
+* Setup mingw64 for linux or macOS
+* Setup Windows JDK (or just copy from windows machine to somewhere path)
+* Build
+```bash
+mkdir build && cd build
+cmake ../ -DCMAKE_BUILD_TYPE=Release \
+-DCMAKE_TOOLCHAIN_FILE=../cmake/mingw-w64.cmake \
+-DCMAKE_SYSROOT=/path/to/mingw \
+-DCROSS_ARCH=[choose i686 or x86_64] \
+-DJAVA_HOME=/path/to/extracted/windows/jdk
+
+make
+```
+* Pickup lib files:
+  * libbip39_core.dll
+  * libbip39_core.dll.a
+  * libbip39_jni.dll
+  * libbip39_jni.dll.a
+  
+Compiling under windows and mingw64 can be successfully, i didn't tested.
+
+
 ## Examples
 ### C++
 ```c++
