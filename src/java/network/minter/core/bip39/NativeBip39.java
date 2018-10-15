@@ -36,7 +36,6 @@ import static network.minter.core.internal.common.Preconditions.firstNonNull;
 
 /**
  * native-bip39. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public final class NativeBip39 {
@@ -54,32 +53,43 @@ public final class NativeBip39 {
     public static final int MR_UNSUPPORTED_ENTROPY = 1;
     public static final int MR_UNKNOWN_ERROR = 2;
 
-    private final static String SONAME = "bip39_jni";
+    public final static String SONAME = "bip39_jni";
+    public final static String[] LIB_FILES = new String[]{"libbip39_jni.so", "libbip39_core.so"};
     private static NativeBip39 INSTANCE;
-    private static boolean sEnabled;
     private static Throwable sError = null;
     private static ThreadLocal<ByteBuffer> nativeBuffer = new ThreadLocal<>();
+    private static boolean sEnabled;
 
-    private NativeBip39() {
+    private NativeBip39(boolean enabled) {
+        sEnabled = enabled;
     }
 
     public static void init() {
         if (INSTANCE == null) {
-            sEnabled = true;
+            boolean enabled;
             try {
                 System.loadLibrary(SONAME);
+                enabled = true;
             } catch (UnsatisfiedLinkError e) {
                 System.err.println(String.format("Unable to load %s in %s: %s", SONAME, System.getProperty("java.library.path"), e.getMessage()));
                 sError = e;
-                sEnabled = false;
+                enabled = false;
             }
 
-            INSTANCE = new NativeBip39();
+            INSTANCE = new NativeBip39(enabled);
         }
     }
 
     public static boolean isEnabled() {
         return sEnabled;
+    }
+
+    /**
+     * Use this carefully, only if you have loaded native libs by yourself
+     * @param enabled
+     */
+    public static void setEnabled(boolean enabled) {
+        sEnabled = enabled;
     }
 
     public static Throwable getError() {
