@@ -31,15 +31,35 @@
 #define be64toh(x) OSSwapBigToHostInt64(x)
 #define le64toh(x) OSSwapLittleToHostInt64(x)
 #elif defined(WIN32)
+#include <stdio.h>
+#include <winsock2.h>
 #include "win_endian.h"
+
+#if BYTE_ORDER == LITTLE_ENDIAN
+#define le16toh(x) (x)
+#define le32toh(x) (x)
+#define le64toh(x) (x)
+#define htole16(x) (x)
+#define htole32(x) (x)
+#define htole64(x) (x)
+#define htobe16(x) __swap16gen(x)
+#define htobe32(x) __swap32gen(x)
+#define htobe64(x) __swap64gen(x)
+#define be16toh(x) __swap16gen(x)
+#define be32toh(x) __swap32gen(x)
+#define be64toh(x) __swap32gen(x)
+#endif
+
 #else
 #include <endian.h>
+
 #endif
 
 uint16_t static inline ReadLE16(const unsigned char* ptr)
 {
     uint16_t x;
     memcpy((char*)&x, ptr, 2);
+
     return le16toh(x);
 }
 

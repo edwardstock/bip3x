@@ -17,7 +17,10 @@ set(BTC_SRC
     )
 
 if (WIN32)
-	set(BTC_SRC "${BTC_SRC} src/crypto/win_endian.h src/crypto/win_endian.cpp")
+	set(BTC_SRC
+	    ${BTC_SRC}
+	    src/crypto/win_endian.h
+	    )
 endif()
 
 if (SSE41_FOUND OR SSE42_FOUND)
@@ -92,7 +95,35 @@ if (NOT DISABLE_JNI)
 	endif ()
 endif ()
 
-if (RUN)
-	add_executable(bip39test src/main.cpp)
-	target_link_libraries(bip39test ${PROJECT_NAME}_core)
+if (${RUN})
+	add_executable(bip39dev src/main.cpp)
+	target_link_libraries(bip39dev ${PROJECT_NAME}_core)
+endif ()
+
+if (${ENABLE_TEST})
+	set(PROJECT_TEST_NAME "bip39_test")
+	enable_testing()
+	add_definitions(-DBIP39_TESTING=1)
+	set(GTEST_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/googletest/googletest)
+
+	include_directories(${GTEST_SOURCE_DIR}/include ${GTEST_SOURCE_DIR})
+	add_subdirectory(${GTEST_SOURCE_DIR})
+
+	if (WIN32)
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")
+	elseif (APPLE)
+		add_definitions(-DGTEST_USE_OWN_TR1_TUPLE)
+		add_definitions(-D__GLIBCXX__)
+	endif ()
+
+	add_executable(
+		${PROJECT_TEST_NAME}
+		tests/minter_mnemonic_test.cpp
+	)
+
+	target_compile_options(${PROJECT_TEST_NAME} PRIVATE -Wno-missing-field-initializers)
+
+	target_link_libraries(${PROJECT_TEST_NAME} ${PROJECT_NAME}_core)
+	target_link_libraries(${PROJECT_TEST_NAME} gtest gtest_main)
+
 endif ()
