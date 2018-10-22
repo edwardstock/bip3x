@@ -1,6 +1,8 @@
 # native-bip39 (with java bindings)
 Bip39 mnemonic C++ implementation. Contains java bindings.
 
+[![Build Status](https://travis-ci.org/edwardstock/native-bip39.svg?branch=master)](https://travis-ci.org/edwardstock/native-bip39)
+
 
 ## Description
 Logic almost completely taken from bitcoin-js library for generating mnemonic phrases.
