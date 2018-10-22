@@ -12,6 +12,8 @@ matrix:
       addons:
         apt:
           sources:
+            # sudo -E apt-add-repository -y "ppa:george-edison55/precise-backports"
+            # sudo -E apt-add-repository -y "ppa:ubuntu-toolchain-r/test"
             - ubuntu-toolchain-r-test
             - george-edison55-precise-backports
           packages:
