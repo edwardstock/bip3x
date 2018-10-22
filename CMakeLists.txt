@@ -72,7 +72,7 @@ include_directories(libs/uint256_t)
 
 
 add_library(${PROJECT_NAME}_core SHARED ${SOURCES})
-target_compile_options(${PROJECT_NAME}_core PUBLIC -Wno-shift-count-overflow)
+target_compile_options(${PROJECT_NAME}_core PUBLIC -Wno-shift-count-overflow -fPIC)
 add_subdirectory(libs/trezor-crypto)
 target_link_libraries(${PROJECT_NAME}_core trezor_crypto)
 
@@ -100,6 +100,7 @@ if (${RUN})
 	target_link_libraries(bip39dev ${PROJECT_NAME}_core)
 endif ()
 
+# yum install java-1.8.0-openjdk java-1.8.0-openjdk-devel
 if (${ENABLE_TEST})
 	set(PROJECT_TEST_NAME "bip39_test")
 	enable_testing()

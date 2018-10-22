@@ -24,7 +24,7 @@
 #ifdef WIN32
 #include <cstring>
 #endif
-#include <string>
+#include <cstring>
 #include "rfc6979.h"
 #include "hmac.h"
 #include "memzero.h"

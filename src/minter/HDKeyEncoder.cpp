@@ -7,6 +7,7 @@
 
 #include "HDKeyEncoder.h"
 #include "uint256_t.hpp"
+#include "ripemd160.h"
 
 const std::string minter::HDKeyEncoder::masterSecret = "Bitcoin seed";
 const minter::BTCNetwork minter::HDKeyEncoder::networks[] = {
