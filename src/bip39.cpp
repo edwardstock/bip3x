@@ -1,11 +1,6 @@
 #include <pbkdf2.hpp>
-#include <cstring>
-#include "internal.h"
 #include "mnemonic.h"
 #include "wordlist.h"
-#include "hmac.h"
-#include "bip39.h"
-#include "crypto/sha256.h"
 
 #include "data/wordlists/chinese_simplified.cpp"
 #include "data/wordlists/chinese_traditional.cpp"
@@ -98,11 +93,13 @@ static size_t len_to_mask(size_t len) {
 }
 
 size_t bip39_checksum(const unsigned char *bytes, size_t bytes_len, size_t mask) {
-    CSHA256 sha256h;
-    sha256h.Write(bytes, bytes_len);
 
     uint8_t out[CSHA256::OUTPUT_SIZE];
-    sha256h.Finalize(out);
+    SHA256_CTX ctx;
+    sha256_Init(&ctx);
+    sha256_Update(&ctx, bytes, bytes_len);
+    sha256_Final(&ctx, out);
+
     size_t ret;
     ret = out[0] | (out[1] << 8);
     return ret & mask;

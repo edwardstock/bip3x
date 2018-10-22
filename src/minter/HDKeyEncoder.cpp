@@ -7,7 +7,6 @@
 
 #include "HDKeyEncoder.h"
 #include "uint256_t.hpp"
-#include <ripemd160.h>
 
 const std::string minter::HDKeyEncoder::masterSecret = "Bitcoin seed";
 const minter::BTCNetwork minter::HDKeyEncoder::networks[] = {
@@ -180,9 +179,10 @@ uint32_t minter::HDKeyEncoder::fetchFingerprint(minter::HDKey &key) {
     uint32_t fingerprint;
     fillPublicKey(key);
 
-    CSHA256 sha256h;
-    sha256h.Write(key.publicKey.cdata(), 33);
-    sha256h.Finalize(digest.data());
+    SHA256_CTX ctx;
+    sha256_Init(&ctx);
+    sha256_Update(&ctx, key.publicKey.cdata(), 33);
+    sha256_Final(&ctx, digest.data());
 
     ripemd160(digest.data(), 32, digest.data());
     fingerprint = digest.to<uint32_t>();

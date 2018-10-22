@@ -21,7 +21,7 @@ if (WIN32)
 	    ${BTC_SRC}
 	    src/crypto/win_endian.h
 	    )
-endif()
+endif ()
 
 if (SSE41_FOUND OR SSE42_FOUND)
 	set(BTC_SRC ${BTC_SRC} src/crypto/sha256_sse4.cpp)

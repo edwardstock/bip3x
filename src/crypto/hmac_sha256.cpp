@@ -4,31 +4,16 @@
 
 #include <crypto/hmac_sha256.h>
 
-#include <string.h>
-
-CHMAC_SHA256::CHMAC_SHA256(const unsigned char* key, size_t keylen)
-{
-    unsigned char rkey[64];
-    if (keylen <= 64) {
-        memcpy(rkey, key, keylen);
-        memset(rkey + keylen, 0, 64 - keylen);
-    } else {
-        CSHA256().Write(key, keylen).Finalize(rkey);
-        memset(rkey + 32, 0, 32);
-    }
-
-    for (int n = 0; n < 64; n++)
-        rkey[n] ^= 0x5c;
-    outer.Write(rkey, 64);
-
-    for (int n = 0; n < 64; n++)
-        rkey[n] ^= 0x5c ^ 0x36;
-    inner.Write(rkey, 64);
+CHMAC_SHA256::CHMAC_SHA256(const unsigned char *key, size_t keylen) : m_ctx() {
+    hmac_sha256_Init(&m_ctx, key, keylen);
 }
 
-void CHMAC_SHA256::Finalize(unsigned char hash[OUTPUT_SIZE])
-{
-    unsigned char temp[32];
-    inner.Finalize(temp);
-    outer.Write(temp, 32).Finalize(hash);
+CHMAC_SHA256 &CHMAC_SHA256::Write(const unsigned char *data, size_t len) {
+    hmac_sha256_Update(&m_ctx, data, len);
+    return *this;
 }
+
+void CHMAC_SHA256::Finalize(unsigned char hash[OUTPUT_SIZE]) {
+    hmac_sha256_Final(&m_ctx, hash);
+}
+

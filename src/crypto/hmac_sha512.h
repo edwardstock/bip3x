@@ -9,23 +9,19 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include "hmac.h"
 
 /** A hasher class for HMAC-SHA-512. */
 class CHMAC_SHA512
 {
 private:
-    CSHA512 outer;
-    CSHA512 inner;
+    HMAC_SHA512_CTX m_ctx;
 
 public:
     static const size_t OUTPUT_SIZE = 64;
 
     CHMAC_SHA512(const unsigned char* key, size_t keylen);
-    CHMAC_SHA512& Write(const unsigned char* data, size_t len)
-    {
-        inner.Write(data, len);
-        return *this;
-    }
+    CHMAC_SHA512 &Write(const unsigned char *data, size_t len);
     void Finalize(unsigned char hash[OUTPUT_SIZE]);
 };
 
