@@ -8,6 +8,7 @@
 
 #include <limits>
 #include "utils.h"
+#include <stdexcept>
 
 std::vector<uint8_t> minter::hexToBytes(const std::string &hex) {
     std::vector<uint8_t> bytes;
