@@ -2,7 +2,7 @@
 #define BIP39_CORE_BIP39_H
 
 #include "bip39_core.h"
-#include <wordlist.h>
+#include "wordlist.h"
 
 #ifdef __cplusplus
 extern "C" {

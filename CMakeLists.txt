@@ -56,6 +56,7 @@ set(SOURCES
     src/minter/uint256_t.hpp
     src/minter/PCGRand.hpp)
 
+
 include_directories(libs/trezor-crypto)
 
 set(JNI_SOURCES
@@ -70,11 +71,37 @@ set(JNI_SOURCES
 include_directories(src/)
 include_directories(libs/uint256_t)
 
-
+# Core
 add_library(${PROJECT_NAME}_core SHARED ${SOURCES})
 target_compile_options(${PROJECT_NAME}_core PUBLIC -Wno-shift-count-overflow -fPIC)
 add_subdirectory(libs/trezor-crypto)
 target_link_libraries(${PROJECT_NAME}_core trezor_crypto)
+
+# GO
+set(BIP39_C_SOURCES
+    ${SOURCES}
+    src/golang/bip39_config.h
+    src/golang/bip39.h
+    src/golang/bip39.cpp
+    src/golang/bip39.cpp
+    src/golang/hdkey_encoder.h
+    src/golang/hdkey_encoder.cpp
+    )
+add_library(bip39_go ${BIP39_C_SOURCES})
+target_compile_options(bip39_go PRIVATE -Wno-shift-count-overflow -std=c++14 -stdlib=libc++)
+target_link_libraries(bip39_go trezor_crypto)
+#set(CGO_FLAGS "CGO_FLAGS=\"-std=c11 -I${CMAKE_CURRENT_SOURCE_DIR}/src/golang\" CGO_LDFLAGS=\"-L${CMAKE_BINARY_DIR} -L${CMAKE_BINARY_DIR}/libs/trezor-crypto -lstdc++ -lbip39_go -ltrezor_crypto\"")
+#add_custom_target(bip39-go-build
+#                  COMMAND bash -c "${CGO_FLAGS} go build"
+#                  DEPENDS bip39_go
+#                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/golang/bip39
+#                  )
+#
+#add_custom_target(bip39-go-test
+#                  COMMAND bash -c "${CGO_FLAGS} go test"
+#                  DEPENDS bip39-go-build
+#                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/golang/bip39
+#                  )
 
 
 if (NOT DISABLE_JNI)
@@ -98,10 +125,13 @@ endif ()
 if (${RUN})
 	add_executable(bip39dev src/main.cpp)
 	target_link_libraries(bip39dev ${PROJECT_NAME}_core)
+	#	target_compile_options(bip39dev PUBLIC -fsanitize=address -m64 -pipe -ffunction-sections -fdata-sections  -O0 -g -fno-omit-frame-pointer)
 endif ()
 
 # yum install java-1.8.0-openjdk java-1.8.0-openjdk-devel
-if (${ENABLE_TEST})
+if (WITH_TEST)
+
+	# main test
 	set(PROJECT_TEST_NAME "bip39_test")
 	enable_testing()
 	add_definitions(-DBIP39_TESTING=1)
@@ -127,4 +157,14 @@ if (${ENABLE_TEST})
 	target_link_libraries(${PROJECT_TEST_NAME} ${PROJECT_NAME}_core)
 	target_link_libraries(${PROJECT_TEST_NAME} gtest gtest_main)
 
+	# native C test
+	add_executable(bip39_c_test
+	               tests/minter_c_mnemonic_test.cpp
+	               )
+
+	target_compile_options(bip39_c_test PRIVATE -Wno-missing-field-initializers)
+	target_link_libraries(bip39_c_test ${PROJECT_NAME}_core)
+	target_link_libraries(bip39_c_test ${PROJECT_NAME}_go)
+	target_link_libraries(bip39_c_test gtest gtest_main)
+	target_include_directories(bip39_c_test PRIVATE ${BIP39_C_SOURCES})
 endif ()

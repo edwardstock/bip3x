@@ -43,25 +43,69 @@ int main(int argc, char **argv) {
         encodedMnemonic = Bip39Mnemonic::encodeBytes(entropy.data(), "en", BIP39_ENTROPY_LEN_128);
     */
 
-    Bip39Mnemonic::MnemonicResult encodedMnemonic = Bip39Mnemonic::generate();
-    HDKey bip32RootKey = HDKeyEncoder::makeBip32RootKey(HDKeyEncoder::makeBip39Seed(encodedMnemonic.words));
-    HDKey bip32ExtKey = HDKeyEncoder::makeExtendedKey(bip32RootKey, "m/44'/60'/0'/0");
-    HDKey bip44ExtKey = HDKeyEncoder::makeExtendedKey(bip32RootKey, "m/44'/60'/0'");
+//    Bip39Mnemonic::MnemonicResult encodedMnemonic = Bip39Mnemonic::generate();
+//    Bip39Mnemonic::MnemonicResult encodedMnemonic;
+//    encodedMnemonic.raw = "crystal enable mask thought ask upgrade custom broccoli green zero wrestle cloth";
+//    encodedMnemonic.words = {"crystal", "enable", "mask", "thought","ask", "upgrade", "custom", "broccoli", "green","zero", "wrestle", "cloth"};
+//    encodedMnemonic.len = 12;
+//    encodedMnemonic.status = Bip39Mnemonic::MnemonicStatus::Ok;
+//
+//    Data64 seed = HDKeyEncoder::makeBip39Seed(encodedMnemonic.words);
+//
+//
+//    HDKey bip32RootKey = HDKeyEncoder::makeBip32RootKey(seed);
+//    HDKey bip32ExtKey = HDKeyEncoder::makeExtendedKey(bip32RootKey, "m/44'/60'/0'/0");
+//    HDKey bip44ExtKey = HDKeyEncoder::makeExtendedKey(bip32RootKey, "m/44'/60'/0'");
+//
+//    std::cout << "Mnemonic words count:    " << encodedMnemonic.len << std::endl;
+//    std::cout << "Mnemonic words:          " << encodedMnemonic.raw << std::endl;
+//    std::cout << "Seed:                    " << seed.toHex() << std::endl;
+//    std::cout << "Bip32 root key:          " << bip32RootKey.extPrivateKey.toString() << std::endl;
+//    std::cout << "Bip32 extended priv key: " << bip32ExtKey.extPrivateKey.toString() << std::endl;
+//    std::cout << "Bip32 extended pub key:  " << bip32ExtKey.extPublicKey.toString() << std::endl;
+//    std::cout << "Bip44 priv key:          " << bip44ExtKey.privateKey.toHex() << std::endl;
+//    std::cout << "Bip44 pub key:           " << bip44ExtKey.publicKey.toHex() << std::endl;
+//    std::cout << "Bip44 extended priv key: " << bip44ExtKey.extPrivateKey.toString() << std::endl;
+//    std::cout << "Bip44 extended pub key:  " << bip44ExtKey.extPublicKey.toString() << std::endl;
+//    std::cout << "address:                 " << HDKeyEncoder::getAddress(bip44ExtKey) << std::endl;
+//
+//    bip32RootKey.clear();
+//    bip32ExtKey.clear();
+//    bip44ExtKey.clear();
 
-    std::cout << "Mnemonic words count:    " << encodedMnemonic.len << std::endl;
-    std::cout << "Mnemonic words:          " << encodedMnemonic.raw << std::endl;
-    std::cout << "Bip32 root key:          " << bip32RootKey.extPrivateKey.toString() << std::endl;
-    std::cout << "Bip32 extended priv key: " << bip32ExtKey.extPrivateKey.toString() << std::endl;
-    std::cout << "Bip32 extended pub key:  " << bip32ExtKey.extPublicKey.toString() << std::endl;
-    std::cout << "Bip44 priv key:          " << bip44ExtKey.privateKey.toHex() << std::endl;
-    std::cout << "Bip44 pub key:           " << bip44ExtKey.publicKey.toHex() << std::endl;
-    std::cout << "Bip44 extended priv key: " << bip44ExtKey.extPrivateKey.toString() << std::endl;
-    std::cout << "Bip44 extended pub key:  " << bip44ExtKey.extPublicKey.toString() << std::endl;
-    std::cout << "address:                 " << HDKeyEncoder::getAddress(bip44ExtKey) << std::endl;
-
-    bip32RootKey.clear();
-    bip32ExtKey.clear();
-    bip44ExtKey.clear();
+//    std::vector<int> tmp;
+//    const int n = 10;
+//    tmp.resize(n);
+//    char** test = new char*[tmp.size()];
+//    for (int i = 0; i < n; i++) {
+//        test[i] = new char[10];
+//    }
+//
+//    for(int i = 0; i < 10; i++) {
+//        sprintf((test[i]), "aaa %d", i);
+//    }
+//
+//    for(int i = 0; i < 10; i++) {
+//        std::cout << test[i] << std::endl;
+//    }
+//
+//    std::cout << "\n\n" << std::endl;
+//    char** copy = new char*[n];
+//    for(int i = 0; i < n; i++) {
+//        copy[i] = new char[sizeof(test[i])];
+//        memcpy(copy[i], test[i], sizeof(test[i]));
+//    }
+//
+//    for(int i = 0; i < 10; i++) {
+//        std::cout << copy[i] << std::endl;
+//    }
+//
+//    for(int i = 0; i < n; i++) {
+//        delete [] copy[i];
+//        delete [] test[i];
+//    }
+//    delete [] copy;
+//    delete [] test;
 
     return 0;
 }
