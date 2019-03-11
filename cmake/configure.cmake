@@ -18,6 +18,7 @@ check_include_file("unistd.h" HAVE_UNISTD_H)
 
 check_symbol_exists("uint8_t" "stdint.h;inttypes.h" HAVE_UINT8_TYPE)
 check_symbol_exists("uint32_t" "stdint.h;inttypes.h" HAVE_UINT32_TYPE)
+check_symbol_exists("uint16_t" "stdint.h;inttypes.h" HAVE_UINT32_TYPE)
 check_symbol_exists("uint64_t" "stdint.h;inttypes.h" HAVE_UINT64_TYPE)
 
 configure_file(
