@@ -27,11 +27,11 @@ minter_hdkey *copy_hdkey(minter::HDKey &&res) {
     return out;
 }
 
-minter_hdkey *encoder_make_bip32_root_key(const minter_data64 *seed) {
+minter_hdkey *encoder_make_bip32_root_key(const struct minter_data64 *seed) {
     return copy_hdkey(minter::HDKeyEncoder::makeBip32RootKey(minter::Data64(seed->data),
                                                              minter::HDKeyEncoder::MainNet));
 }
-minter_hdkey *encoder_make_ext_key(const minter_hdkey *root_key, const char *derivation_path) {
+minter_hdkey *encoder_make_ext_key(const struct minter_hdkey *root_key, const char *derivation_path) {
     minter::HDKey in;
     in.net = minter::HDKeyEncoder::MainNet;
     in.publicKey.get().assign(root_key->public_key.data, root_key->public_key.data + 33);
@@ -47,7 +47,7 @@ minter_hdkey *encoder_make_ext_key(const minter_hdkey *root_key, const char *der
     return copy_hdkey(minter::HDKeyEncoder::makeExtendedKey(in, derivation_path));
 }
 
-void free_hdkey(minter_hdkey *key) {
+void free_hdkey(struct minter_hdkey *key) {
     if (!key) return;
     memset(key->public_key.data, 0, 33);
     memset(key->private_key.data, 0, 32);

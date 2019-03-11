@@ -36,7 +36,7 @@ words *wordlist_init(const char *text);
 /**
  * Search word in words
  */
-int binary_search_find_index(std::vector<std::string> v, std::string data);
+int binary_search_find_index(std::vector<std::string> v, const std::string &data);
 
 /**
  * Find a word in a wordlist.
@@ -49,7 +49,7 @@ int binary_search_find_index(std::vector<std::string> v, std::string data);
  */
 size_t wordlist_lookup_word(
     const struct words *w,
-    const char *word);
+    const std::string &word);
 
 /**
  * Return the Nth word in a wordlist.

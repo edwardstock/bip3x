@@ -24,6 +24,8 @@
 #include <string>
 #include <sys/types.h>
 #include <cstring>
+#include <vector>
+#include <algorithm>
 #include "base58.h"
 #include "sha2.hpp"
 #include "ripemd160.h"
@@ -45,19 +47,19 @@ bool b58tobin(uint8_t *bin, size_t *binszp, const char *b58)
 	size_t binsz = *binszp;
 	const auto b58u = (const unsigned char*)b58;
 	auto binu = bin;
-	size_t outisz = (binsz + 3) / 4;
-	uint32_t outi[outisz];
+    const size_t outisz = (binsz + 3) / 4;
+    std::vector<uint32_t> outi(outisz);
 	uint64_t t;
 	uint32_t c;
 	size_t i, j;
 	uint8_t bytesleft = binsz % 4;
-	uint32_t zeromask = bytesleft ? (0xffffffff << (bytesleft * 8)) : 0;
+    uint32_t zeromask = bytesleft ? (0xffffffff << (bytesleft * 8u)) : 0u;
 	unsigned zerocount = 0;
 	size_t b58sz;
 
 	b58sz = strlen(b58);
 
-	memset(outi, 0, outisz * sizeof(*outi));
+    std::fill(outi.begin(), outi.end(), 0);
 
 	// Leading zeros, just count
 	for (i = 0; i < b58sz && b58u[i] == '1'; ++i)
@@ -65,7 +67,7 @@ bool b58tobin(uint8_t *bin, size_t *binszp, const char *b58)
 
 	for ( ; i < b58sz; ++i)
 	{
-		if (b58u[i] & 0x80)
+        if (b58u[i] & 0x80U)
 			// High-bit set on invalid digit
 			return false;
 		if (b58digits_map[b58u[i]] == -1)
@@ -75,7 +77,7 @@ bool b58tobin(uint8_t *bin, size_t *binszp, const char *b58)
 		for (j = outisz; j--; )
 		{
 			t = ((uint64_t)outi[j]) * 58 + c;
-			c = (t & 0x3f00000000) >> 32;
+            c = (t & 0x3f00000000ULL) >> 32U;
 			outi[j] = t & 0xffffffff;
 		}
 		if (c)
@@ -88,14 +90,11 @@ bool b58tobin(uint8_t *bin, size_t *binszp, const char *b58)
 
 	j = 0;
 	switch (bytesleft) {
-		case 3:
-			*(binu++) = (outi[0] &   0xff0000) >> 16;
+		case 3: *(binu++) = (outi[0] & 0xff0000U) >> 16U;
 			//-fallthrough
-		case 2:
-			*(binu++) = (outi[0] &     0xff00) >>  8;
+		case 2: *(binu++) = (outi[0] & 0xff00U) >> 8U;
 			//-fallthrough
-		case 1:
-			*(binu++) = (outi[0] &       0xff);
+		case 1: *(binu++) = (outi[0] & 0xffU);
 			++j;
 			//-fallthrough
 		default:
@@ -104,10 +103,10 @@ bool b58tobin(uint8_t *bin, size_t *binszp, const char *b58)
 
 	for (; j < outisz; ++j)
 	{
-		*(binu++) = (outi[j] >> 0x18) & 0xff;
-		*(binu++) = (outi[j] >> 0x10) & 0xff;
-		*(binu++) = (outi[j] >>    8) & 0xff;
-		*(binu++) = (outi[j] >>    0) & 0xff;
+        *(binu++) = (outi[j] >> 0x18U) & 0xffU;
+        *(binu++) = (outi[j] >> 0x10U) & 0xffU;
+        *(binu++) = (outi[j] >> 8U) & 0xffU;
+        *(binu++) = (outi[j] >> 0U) & 0xffU;
 	}
 
 	// Count canonical base58 byte count
@@ -133,10 +132,12 @@ int b58check(const uint8_t *bin, size_t binsz, HasherType hasher_type, const cha
 	unsigned char buf[32];
 	const uint8_t *binc = bin;
 	unsigned i;
-	if (binsz < 4)
-		return -4;
+    if (binsz < 4) {
+        return -4;
+    }
+
 	hasher_Raw(hasher_type, bin, binsz - 4, buf);
-	if (memcmp(&binc[binsz - 4], buf, 4))
+    if (memcmp(&binc[binsz - 4], buf, 4) > 0)
 		return -1;
 
 	// Check number of zeros is correct AFTER verifying checksum (to avoid possibility of accessing base58str beyond the end)
@@ -161,8 +162,10 @@ bool b58enc(char *outb58, size_t *b58sz, const uint8_t *data, size_t binsz)
 		++zcount;
 
 	size = (binsz - zcount) * 138 / 100 + 1;
-	uint8_t buf[size];
-	memset(buf, 0, size);
+//	uint8_t buf[size];
+    std::vector<uint8_t> buf(size);
+    std::fill(buf.begin(), buf.end(), 0);
+//	memset(buf, 0, size);
 
 	for (i = zcount, high = size - 1; i < (ssize_t)binsz; ++i, high = j)
 	{
@@ -197,13 +200,16 @@ int base58_encode_check(const uint8_t *data, size_t datalen, HasherType hasher_t
 	if (datalen > 128) {
 		return 0;
 	}
-	uint8_t buf[datalen + 32];
-	uint8_t *hash = buf + datalen;
-	memcpy(buf, data, datalen);
+
+    std::vector<uint8_t> buf(datalen + 32);
+    uint8_t *hash = &buf[0] + datalen;
+    memcpy(&buf[0], data, datalen);
+
+
 	hasher_Raw(hasher_type, data, datalen, hash);
 	size_t res = strsize;
-	bool success = b58enc(str, &res, buf, datalen + 4);
-	memzero(buf, sizeof(buf));
+    bool success = b58enc(str, &res, &buf[0], datalen + 4);
+    std::fill(buf.begin(), buf.end(), 0);
 	return success ? res : 0;
 }
 
@@ -212,12 +218,14 @@ int base58_decode_check(const char *str, HasherType hasher_type, uint8_t *data, 
 	if (datalen > 128) {
 		return 0;
 	}
-	uint8_t d[datalen + 4];
+//	uint8_t d[datalen + 4];
+    std::vector<uint8_t> d(datalen + 4);
+
 	size_t res = datalen + 4;
-	if (b58tobin(d, &res, str) != true) {
+    if (!b58tobin(&d[0], &res, str)) {
 		return 0;
 	}
-	uint8_t *nd = d + datalen + 4 - res;
+    uint8_t *nd = &d[0] + datalen + 4 - res;
 	if (b58check(nd, res, hasher_type, str) < 0) {
 		return 0;
 	}
@@ -228,13 +236,14 @@ int base58_decode_check(const char *str, HasherType hasher_type, uint8_t *data, 
 #if USE_GRAPHENE
 int b58gphcheck(const uint8_t *bin, size_t binsz, const char *base58str)
 {
-	unsigned char buf[32];
+//	unsigned char buf[32];
+    std::vector<uint8_t> buf(32);
 	const uint8_t *binc = bin;
 	unsigned i;
 	if (binsz < 4)
 		return -4;
-	ripemd160(bin, binsz - 4, buf);  // No double SHA256, but a single RIPEMD160
-	if (memcmp(&binc[binsz - 4], buf, 4))
+    ripemd160(bin, binsz - 4, &buf[0]);  // No double SHA256, but a single RIPEMD160
+    if (memcmp(&binc[binsz - 4], &buf[0], 4) > 0)
 		return -1;
 
 	// Check number of zeros is correct AFTER verifying checksum (to avoid possibility of accessing base58str beyond the end)
@@ -251,13 +260,14 @@ int base58gph_encode_check(const uint8_t *data, int datalen, char *str, int strs
 	if (datalen > 128) {
 		return 0;
 	}
-	uint8_t buf[datalen + 32];
-	uint8_t *hash = buf + datalen;
-	memcpy(buf, data, datalen);
+
+    std::vector<uint8_t> buf(datalen + 32);
+    uint8_t *hash = &buf[0] + datalen;
+    memcpy(&buf[0], data, datalen);
 	ripemd160(data, datalen, hash);  // No double SHA256, but a single RIPEMD160
 	size_t res = strsize;
-	bool success = b58enc(str, &res, buf, datalen + 4);
-	memzero(buf, sizeof(buf));
+    bool success = b58enc(str, &res, &buf[0], datalen + 4);
+    std::fill(buf.begin(), buf.end(), 0);
 	return success ? res : 0;
 }
 
@@ -266,12 +276,13 @@ int base58gph_decode_check(const char *str, uint8_t *data, int datalen)
 	if (datalen > 128) {
 		return 0;
 	}
-	uint8_t d[datalen + 4];
+//	uint8_t d[datalen + 4];
+    std::vector<uint8_t> d(datalen + 4);
 	size_t res = datalen + 4;
-	if (b58tobin(d, &res, str) != true) {
+    if (!b58tobin(&d[0], &res, str)) {
 		return 0;
 	}
-	uint8_t *nd = d + datalen + 4 - res;
+    uint8_t *nd = &d[0] + datalen + 4 - res;
 	if (b58gphcheck(nd, res, str) < 0) {
 		return 0;
 	}

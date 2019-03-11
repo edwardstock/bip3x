@@ -111,9 +111,9 @@ class Data {
     }
 
     const std::string toString() {
-        char out[size()];
-        memcpy(out, data(), size());
-        return std::string(out);
+        std::vector<char> out(size());
+        memcpy(&out[0], data(), size());
+        return std::string(&out[0]);
     }
 
     std::vector<uint8_t> takeFirstBytes(size_t n) const {
@@ -130,7 +130,6 @@ class Data {
 
     const std::string toBase58() {
         std::vector<char> out(112);
-        size_t sz = size();
         base58_encode_check(cdata(), size(), HASHER_SHA3K, &out[0], 112);
         const char *res = &out[0];
         return std::string(res);

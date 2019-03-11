@@ -14,8 +14,8 @@
 // CTRS
 minter::nobject::nobject(JNIEnv *env, const jclass &cls) :
     env(env),
-    cls(cls),
     obj(env->AllocObject(cls)),
+    cls(cls),
     instantiated(true) { }
 
 minter::nobject::nobject(JNIEnv *env, const char *className) :
@@ -33,8 +33,8 @@ minter::nobject::nobject(JNIEnv *env, const jobject &obj) :
 
 minter::nobject::nobject(JNIEnv *env, const jclass &cls, const jobject &obj) :
     env(env),
-    cls(cls),
     obj(obj),
+    cls(cls),
     instantiated(false) { }
 
 minter::nobject::~nobject() {

@@ -12,7 +12,7 @@
 #include <golang/hdkey_encoder.h>
 #include <minter/utils.h>
 
-minter_hdkey *makeRootKey(const minter_data64 &seed) {
+minter_hdkey *makeRootKey(const struct minter_data64 *seed) {
     return encoder_make_bip32_root_key(seed);
 }
 
@@ -39,7 +39,11 @@ TEST(CMinter, PrivateKeyFromMnemonic) {
                          seed.data,
                          &written);
 
-    minter_hdkey *rootKey = makeRootKey(seed);
+    std::cout << "SEED: " << minter::bytesToHex(seed.data, 64) << std::endl;
+
+//    return;
+
+    minter_hdkey *rootKey = makeRootKey(&seed);
     print_hdkey_data(rootKey, "ROOT");
     minter_hdkey *extKey = makeExtKey(rootKey);
     print_hdkey_data(extKey, "EXT KEY");

@@ -224,7 +224,6 @@ int bip39_mnemonic_to_seed(const char *mnemonic, const char *password,
     const size_t password_len = password ? strlen(password) : 0;
     const size_t salt_len = prefix_len + password_len;
     unsigned char *salt;
-    int ret;
 
     if (written) {
         *written = 0;

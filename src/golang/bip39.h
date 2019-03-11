@@ -8,6 +8,7 @@ extern "C" {
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "bip39_config.h"
 

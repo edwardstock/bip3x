@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.4)
 
 set(CMAKE_CXX_STANDARD 14)
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -pedantic")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -g0 -O2")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c99-extensions -Wno-unused-function -Wno-unused-const-variable")
+
 set(BTC_SRC
     src/crypto/common.h
     src/crypto/sha256.h
@@ -78,13 +82,16 @@ add_subdirectory(libs/trezor-crypto)
 target_link_libraries(${PROJECT_NAME}_core trezor_crypto)
 
 # GO
-set(BIP39_C_SOURCES
-    ${SOURCES}
+set(BIP39_C_HEADERS
     src/golang/bip39_config.h
     src/golang/bip39.h
-    src/golang/bip39.cpp
-    src/golang/bip39.cpp
     src/golang/hdkey_encoder.h
+    )
+set(BIP39_C_SOURCES
+    ${SOURCES}
+    ${BIP39_C_HEADERS}
+    src/golang/bip39.cpp
+    src/golang/bip39.cpp
     src/golang/hdkey_encoder.cpp
     )
 add_library(bip39_go ${BIP39_C_SOURCES})
@@ -168,3 +175,13 @@ if (WITH_TEST)
 	target_link_libraries(bip39_c_test gtest gtest_main)
 	target_include_directories(bip39_c_test PRIVATE ${BIP39_C_SOURCES})
 endif ()
+
+
+install(
+	TARGETS bip39_go trezor_crypto
+	LIBRARY DESTINATION lib
+	ARCHIVE DESTINATION lib
+	PUBLIC_HEADER DESTINATION include
+)
+
+install(FILES ${BIP39_C_HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include)

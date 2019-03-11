@@ -214,7 +214,6 @@ class uint256_t {
     }
 
     inline bool operator>=(const bignum256 &v) {
-        const uint256_t vn = v;
         return !bn_is_less(&m_val, &v);
     }
 

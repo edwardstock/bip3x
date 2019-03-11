@@ -40,10 +40,10 @@ class Derivation {
 class HDKey {
  public:
     HDKey() :
-        curve(&secp256k1_info),
         depth(0),
         index(0),
-        fingerprint(0) { };
+        fingerprint(0),
+        curve(&secp256k1_info) { };
     ~HDKey() {
         clear();
     }
