@@ -5,11 +5,6 @@
 extern "C" {
 #endif //__cplusplus
 
-#include <stddef.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdint.h>
-
 #include "bip39_config.h"
 
 #define BIP39_ENTROPY_LEN_128 16
