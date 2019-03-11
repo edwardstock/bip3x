@@ -61,7 +61,7 @@ set(SOURCES
     src/minter/PCGRand.hpp)
 
 
-include_directories(libs/trezor-crypto)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/trezor-crypto)
 
 set(JNI_SOURCES
     src/java/network_minter_core_bip39_NativeBip39.h
@@ -72,13 +72,13 @@ set(JNI_SOURCES
     src/java/nobject.cpp
     )
 
-include_directories(src/)
-include_directories(libs/uint256_t)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/uint256_t)
 
 # Core
 add_library(${PROJECT_NAME}_core SHARED ${SOURCES})
 target_compile_options(${PROJECT_NAME}_core PUBLIC -Wno-shift-count-overflow -fPIC)
-add_subdirectory(libs/trezor-crypto)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/trezor-crypto)
 target_link_libraries(${PROJECT_NAME}_core trezor_crypto)
 
 # GO
@@ -95,7 +95,7 @@ set(BIP39_C_SOURCES
     src/golang/hdkey_encoder.cpp
     )
 add_library(bip39_go ${BIP39_C_SOURCES})
-target_compile_options(bip39_go PRIVATE -Wno-shift-count-overflow -std=c++14 -stdlib=libc++)
+target_compile_options(bip39_go PRIVATE -Wno-shift-count-overflow -std=c++14)
 target_link_libraries(bip39_go trezor_crypto)
 #set(CGO_FLAGS "CGO_FLAGS=\"-std=c11 -I${CMAKE_CURRENT_SOURCE_DIR}/src/golang\" CGO_LDFLAGS=\"-L${CMAKE_BINARY_DIR} -L${CMAKE_BINARY_DIR}/libs/trezor-crypto -lstdc++ -lbip39_go -ltrezor_crypto\"")
 #add_custom_target(bip39-go-build
@@ -124,7 +124,7 @@ if (NOT DISABLE_JNI)
 			target_link_libraries(${PROJECT_NAME}_jni ${JAVA_JVM_LIBRARY})
 			target_include_directories(${PROJECT_NAME}_jni PRIVATE ${JNI_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
 		else ()
-			message(WARN "JNI not found")
+			message(STATUS "JNI not found")
 		endif ()
 	endif ()
 endif ()
