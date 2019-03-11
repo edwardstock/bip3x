@@ -178,7 +178,7 @@ endif ()
 
 
 install(
-	TARGETS bip39_go trezor_crypto
+	TARGETS bip39_go
 	LIBRARY DESTINATION lib
 	ARCHIVE DESTINATION lib
 	PUBLIC_HEADER DESTINATION include

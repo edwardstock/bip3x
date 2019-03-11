@@ -57,4 +57,11 @@ add_library(trezor_crypto ${SOURCES})
 target_compile_options(trezor_crypto PRIVATE -fPIC)
 add_definitions(-DUSE_KECCAK=1 -DUSE_MONERO=1 -DNO_VALGRIND=1 -DUSE_ETHEREUM=1 -DUSE_GRAPHENE=1)
 
+install(
+	TARGETS trezor_crypto
+	LIBRARY DESTINATION lib
+	ARCHIVE DESTINATION lib
+	PUBLIC_HEADER DESTINATION include
+)
+
 
