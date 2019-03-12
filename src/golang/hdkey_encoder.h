@@ -18,7 +18,7 @@ extern "C" {
 #include <stdlib.h>
 #include "bip39_config.h"
 
-typedef struct GOEXPORT minter_hdkey {
+typedef struct minter_hdkey {
   minter_data33 public_key;
   minter_data32 private_key;
   minter_data32 chain_code;

@@ -38,4 +38,19 @@ TEST(Minter, PrivateKeyFromMnemonic) {
     ASSERT_STREQ(expectedPrivateKey, privateKey.toHex().c_str());
 }
 
+TEST(Minter, StringCopyToCharPtr) {
+    std::string ascii = "hello world";
+    char* asciiPtr = new char[ascii.size()];
+    ascii.copy(asciiPtr, ascii.size());
+
+    std::string unicoded = "константная юникодная строка";
+    char* unicodePtr = new char[unicoded.size()];
+    unicoded.copy(unicodePtr, unicoded.size());
+
+    ASSERT_STREQ("hello world", asciiPtr);
+    ASSERT_STREQ("константная юникодная строка", unicodePtr);
+
+
+}
+
  

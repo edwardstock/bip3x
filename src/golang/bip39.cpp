@@ -12,32 +12,43 @@
 #include "bip39.h"
 
 char **minter_get_languages(size_t *num_written) {
-    std::vector<char *> tmp = minter::Bip39Mnemonic::getLanguages();
+    std::vector<std::string> tmp = minter::Bip39Mnemonic::getLanguages();
     *num_written = tmp.size();
     char **out = new char *[tmp.size()];
     for (size_t i = 0; i < tmp.size(); i++) {
-        out[i] = new char[sizeof(tmp[i])];
-        strcpy(out[i], tmp.at(i));
+        const size_t sz = tmp[i].size();
+        out[i] = new char[sz+1];
+        tmp.at(i).copy(out[i], sz);
+        out[i][sz] = '\0';
     }
 
     return out;
 }
-void minter_free_string_array(char **langs, size_t len) {
-    for (size_t i = 0; i < len; i++) {
-        memset(langs[i], 0, sizeof(char *) * strlen(langs[i]));
-//        delete[] langs[i];
+void minter_free_string_array(char **arr, size_t len) {
+    if(!arr) {
+        //nullptr
+        return;
     }
 
-    delete[] langs;
+    for (size_t i = 0; i < len; i++) {
+        if(arr[i]) {
+            memset(arr[i], 0, sizeof(char) * strlen(arr[i]));
+            delete[] arr[i];
+        }
+    }
+
+    delete[] arr;
 }
 
 char **minter_get_words_from_language(const char *lang, size_t *num_written) {
-    std::vector<const char *> tmp = minter::Bip39Mnemonic::getWordsFromLanguage(lang);
+    std::vector<std::string> tmp = minter::Bip39Mnemonic::getWordsFromLanguage(lang);
     *num_written = tmp.size();
     char **out = new char *[tmp.size()];
     for (size_t i = 0; i < tmp.size(); i++) {
-        out[i] = new char[sizeof(tmp[i])];
-        strcpy(out[i], tmp.at(i));
+        const size_t sz = tmp[i].size();
+        out[i] = new char[sz+1];
+        tmp.at(i).copy(out[i], sz);
+        out[i][sz] = '\0';
     }
 
     return out;
@@ -48,8 +59,9 @@ minter_mnemonic_result *copy_mnemonic(minter::Bip39Mnemonic::MnemonicResult &&re
     out->len = res.len;
     out->words = new char *[res.len];
     for (size_t i = 0; i < res.len; i++) {
-        out->words[i] = new char[sizeof(res.words[i]).c_str()];
-        memcpy(out->words[i], res.words[i].c_str(), res.words[i].size());
+        out->words[i] = new char[res.words[i].size()+1];
+        res.words[i].copy(out->words[i], res.words[i].size());
+        out->words[i][res.words[i].size()] = '\0';
     }
 
     switch (res.status) {
@@ -61,8 +73,10 @@ minter_mnemonic_result *copy_mnemonic(minter::Bip39Mnemonic::MnemonicResult &&re
             out->status = minter_mnemonic_status::UnsupportedEntropy;
             break;
     }
-    out->raw = new char[res.raw.size()];
-    memcpy(out->raw, res.raw.c_str(), res.raw.size());
+
+    out->raw = new char[res.raw.size()+1];
+    res.raw.copy(out->raw, res.raw.size());
+    out->raw[res.raw.size()] = '\0';
 
     return out;
 }

@@ -50,7 +50,7 @@ TEST(CMinter, PrivateKeyFromMnemonic) {
     minter_data32 privateKey = extKey->private_key;
 
     const char *expectedPrivateKey = "fd90261f5bd702ffbe7483c3b5aa7b76b1f40c1582cc6a598120b16067d3cb9a";
-    uint8_t *givenPrivate = new uint8_t[32];
+    auto *givenPrivate = new uint8_t[32];
     memcpy(givenPrivate, privateKey.data, 32);
 
     ASSERT_STREQ(expectedPrivateKey, minter::bytesToHex(givenPrivate, 32).c_str());

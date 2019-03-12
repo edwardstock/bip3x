@@ -16,9 +16,9 @@ jobjectArray Java_network_minter_core_bip39_NativeBip39_bip39GetLanguages(JNIEnv
     jobjectArray
         langArr = env->NewObjectArray(static_cast<jsize>(langs.size()),
                                       env->FindClass("java/lang/String"),
-                                      NULL);
+                                      nullptr);
     for (int i = 0; i < langs.size(); i++) {
-        env->SetObjectArrayElement(langArr, i, env->NewStringUTF(langs[i]));
+        env->SetObjectArrayElement(langArr, i, env->NewStringUTF(langs[i].c_str()));
     }
 
     return langArr;
@@ -28,13 +28,12 @@ jobjectArray Java_network_minter_core_bip39_NativeBip39_bip39GetWordsFromLanguag
     JNIEnv *env, jclass, jstring language_) {
     const char *language = env->GetStringUTFChars(language_, 0);
 
-    const std::vector<const char *> words = minter::Bip39Mnemonic::getWordsFromLanguage(language);
+    const std::vector<std::string> words = minter::Bip39Mnemonic::getWordsFromLanguage(language);
 
     jobjectArray wordsArr = env->NewObjectArray(static_cast<jsize>(words.size()),
-                                                env->FindClass("java/lang/String"),
-                                                NULL);
+                                                env->FindClass("java/lang/String"),nullptr);
     for (size_t i = 0; i < words.size(); i++) {
-        jstring s = env->NewStringUTF(words[i]);
+        jstring s = env->NewStringUTF(words[i].c_str());
         env->SetObjectArrayElement(wordsArr, static_cast<jsize>(i), s);
         env->DeleteLocalRef(s);
     }

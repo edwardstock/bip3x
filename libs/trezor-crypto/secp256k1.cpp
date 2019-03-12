@@ -56,28 +56,28 @@ const ecdsa_curve secp256k1 = {
 };
 
 const curve_info secp256k1_info = {
-	.bip32_name = "Bitcoin seed",
-	.params = &secp256k1,
-	.hasher_bip32 = HASHER_SHA2,
-	.hasher_base58 = HASHER_SHA2D,
-	.hasher_sign = HASHER_SHA2D,
-	.hasher_pubkey = HASHER_SHA2,
+	"Bitcoin seed",
+	&secp256k1,
+	HASHER_SHA2,
+	HASHER_SHA2D,
+	HASHER_SHA2D,
+	HASHER_SHA2,
 };
 
 const curve_info secp256k1_decred_info = {
-	.bip32_name = "Decred seed",
-	.params = &secp256k1,
-	.hasher_bip32 = HASHER_BLAKE,
-	.hasher_base58 = HASHER_BLAKED,
-	.hasher_sign = HASHER_BLAKE,
-	.hasher_pubkey = HASHER_BLAKE,
+	"Decred seed",
+	&secp256k1,
+	HASHER_BLAKE,
+	HASHER_BLAKED,
+	HASHER_BLAKE,
+	HASHER_BLAKE,
 };
 
 const curve_info secp256k1_groestl_info = {
-	.bip32_name = "Bitcoin seed",
-	.params = &secp256k1,
-	.hasher_bip32 = HASHER_SHA2,
-	.hasher_base58 = HASHER_GROESTLD_TRUNC,
-	.hasher_sign = HASHER_SHA2,
-	.hasher_pubkey = HASHER_SHA2,
+	"Bitcoin seed",
+	&secp256k1,
+	HASHER_SHA2,
+	HASHER_GROESTLD_TRUNC,
+	HASHER_SHA2,
+	HASHER_SHA2,
 };

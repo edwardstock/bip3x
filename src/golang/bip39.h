@@ -14,15 +14,14 @@ extern "C" {
 #define BIP39_ENTROPY_LEN_256 32
 #define BIP39_ENTROPY_LEN_288 36
 #define BIP39_ENTROPY_LEN_320 40
-typedef
-enum minter_mnemonic_status {
+
+typedef enum minter_mnemonic_status {
   Ok,
   UnsupportedEntropy,
   UnknownError
 } minter_mnemonic_status;
 
-typedef
-struct minter_mnemonic_result {
+typedef struct minter_mnemonic_result {
   char **words;
   size_t len;
   char *raw;
@@ -30,7 +29,7 @@ struct minter_mnemonic_result {
 } minter_mnemonic_result;
 
 GOEXPORT char **minter_get_languages(size_t *num_written);
-GOEXPORT void minter_free_string_array(char **langs, size_t len);
+GOEXPORT void minter_free_string_array(char **arr, size_t len);
 GOEXPORT char **minter_get_words_from_language(const char *lang, size_t *num_written);
 /// \brief
 /// \param lang

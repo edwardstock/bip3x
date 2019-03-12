@@ -32,14 +32,14 @@ static const struct {
     /* FIXME: Should 'zh' map to traditional or simplified? */
 };
 
-int bip39_get_languages(char **output) {
-    if (!output) {
-        return MINTER_EINVAL;
-    }
+int bip39_get_languages(std::vector<std::string> &output) {
+//    if (!output) {
+//        return MINTER_EINVAL;
+//    }
 
-    int len = bip39_get_languages_size();
+    auto len = (size_t) bip39_get_languages_size();
     for (size_t i = 0; i < len; i++) {
-        output[i] = (char *) lookup[i].name;
+        output[i] = std::string(lookup[i].name);
     }
 
     return len;
@@ -58,7 +58,7 @@ int bip39_get_wordlist(const char *lang, struct words **output) {
     *output = (struct words *) &en_words; /* Fallback to English if not found */
 
     if (lang)
-        for (i = 0; i < bip39_get_languages_size(); ++i)
+        for (i = 0; i < (size_t) bip39_get_languages_size(); ++i)
             if (!strcmp(lang, lookup[i].name)) {
                 *output = (struct words *) lookup[i].words;
                 break;
@@ -66,19 +66,16 @@ int bip39_get_wordlist(const char *lang, struct words **output) {
     return MINTER_OK;
 }
 
-int bip39_get_word(const struct words *w, size_t idx, char **output) {
+int bip39_get_word(const struct words *w, size_t idx, std::string &output) {
     const char *word;
-
-    if (output)
-        *output = NULL;
 
     w = w ? w : &en_words;
 
-    if (!output || !(word = wordlist_lookup_index(w, idx)))
+    if (!(word = wordlist_lookup_index(w, idx)))
         return MINTER_EINVAL;
 
-    *output = wally_strdup(word);
-    return *output ? MINTER_OK : MINTER_ENOMEM;
+    output.assign(word);
+    return output.length() ? MINTER_OK : MINTER_ENOMEM;
 }
 
 /* Convert an input entropy length to a mask for checksum bits. As it
@@ -97,7 +94,7 @@ static size_t len_to_mask(size_t len) {
     }
 }
 
-size_t bip39_checksum(const unsigned char *bytes, size_t bytes_len, size_t mask) {
+size_t bip39_checksum(const uint8_t *bytes, size_t bytes_len, size_t mask) {
 
     uint8_t out[CSHA256::OUTPUT_SIZE];
     SHA256_CTX ctx;
@@ -105,8 +102,7 @@ size_t bip39_checksum(const unsigned char *bytes, size_t bytes_len, size_t mask)
     sha256_Update(&ctx, bytes, bytes_len);
     sha256_Final(&ctx, out);
 
-    size_t ret;
-    ret = out[0] | (out[1] << 8);
+    size_t ret = out[0] | (out[1] << 8u);
     return ret & mask;
 }
 
@@ -117,7 +113,7 @@ int bip39_mnemonic_from_bytes(const struct words *w,
     size_t checksum, mask;
 
     if (output)
-        *output = NULL;
+        *output = nullptr;
 
     if (!bytes || !bytes_len || !output)
         return MINTER_EINVAL;
@@ -139,19 +135,20 @@ int bip39_mnemonic_from_bytes(const struct words *w,
     return *output ? MINTER_OK : MINTER_ENOMEM;
 }
 
-static bool checksum_ok(const unsigned char *bytes, size_t idx, size_t mask) {
+static bool checksum_ok(const uint8_t *bytes, size_t idx, size_t mask) {
     /* The checksum is stored after the data to sum */
     size_t calculated = bip39_checksum(bytes, idx, mask);
     size_t stored = bytes[idx];
-    if (mask > 0xff)
-        stored |= (bytes[idx + 1] << 8u);
+    if (mask > 0xffu)
+        stored |= (bytes[idx + 1u] << 8u);
     return (stored & mask) == calculated;
 }
 
 int bip39_mnemonic_to_bytes(const struct words *w, const char *mnemonic,
-                            unsigned char *bytes_out, size_t len,
+                            uint8_t *bytes_out, size_t len,
                             size_t *written) {
-    unsigned char tmp_bytes[BIP39_ENTROPY_LEN_MAX];
+
+    std::vector<uint8_t> tmp_bytes(BIP39_ENTROPY_LEN_MAX);
     size_t mask, tmp_len;
     int ret;
 
@@ -174,7 +171,7 @@ int bip39_mnemonic_to_bytes(const struct words *w, const char *mnemonic,
         return MINTER_EINVAL;
     }
 
-    ret = mnemonic_to_bytes(w, mnemonic, tmp_bytes, sizeof(tmp_bytes), &tmp_len);
+    ret = mnemonic_to_bytes(w, mnemonic, &tmp_bytes[0], tmp_bytes.size(), &tmp_len);
 
     if (!ret) {
         /* Remove checksum bytes from the output length */
@@ -183,22 +180,22 @@ int bip39_mnemonic_to_bytes(const struct words *w, const char *mnemonic,
             --tmp_len; /* Second byte required */
         }
 
-        if (tmp_len > sizeof(tmp_bytes)) {
+        if (tmp_len > tmp_bytes.size()) {
             ret = MINTER_EINVAL; /* Too big for biggest supported entropy */
         } else {
             if (tmp_len <= len) {
                 if (!(mask = len_to_mask(tmp_len)) ||
-                    !checksum_ok(tmp_bytes, tmp_len, mask)) {
+                    !checksum_ok(&tmp_bytes[0], tmp_len, mask)) {
                     tmp_len = 0;
                     ret = MINTER_EINVAL; /* Bad checksum */
                 } else {
-                    memcpy(bytes_out, tmp_bytes, tmp_len);
+                    memcpy(bytes_out, &tmp_bytes[0], tmp_len);
                 }
             }
         }
     }
 
-    bzero(tmp_bytes, sizeof(tmp_bytes));
+    std::fill(tmp_bytes.begin(), tmp_bytes.end(), 0);
     if (!ret && written) {
         *written = tmp_len;
     }
@@ -241,7 +238,12 @@ int bip39_mnemonic_to_seed(const char *mnemonic, const char *password,
         memcpy(salt + prefix_len, password, password_len);
     }
 
-    pbkdf2_hmac_sha512(reinterpret_cast<const uint8_t *>(mnemonic), strlen(mnemonic), salt, salt_len, bip9_cost, bytes_out);
+    pbkdf2_hmac_sha512(reinterpret_cast<const uint8_t *>(mnemonic),
+                       strlen(mnemonic),
+                       salt,
+                       salt_len,
+                       bip9_cost,
+                       bytes_out);
 
     if (written)
         *written = BIP39_SEED_LEN_512; /* Succeeded */

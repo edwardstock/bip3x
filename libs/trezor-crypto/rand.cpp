@@ -25,27 +25,18 @@
 
 #ifndef RAND_PLATFORM_INDEPENDENT
 
-
-#pragma message("NOT SUITABLE FOR PRODUCTION USE!")
-
-// The following code is not supposed to be used in a production environment.
-// It's included only to make the library testable.
-// The message above tries to prevent any accidental use outside of the test environment.
-//
-// You are supposed to replace the random32() function with your own secure code.
-// There is also a possibility to replace the random_buffer() function as it is defined as a weak symbol.
-
 #include <cstdio>
 #include <ctime>
+#include <random>
+#include "minter/PCGRand.hpp"
 
-uint32_t random32(void)
+uint32_t random32()
 {
-	static int initialized = 0;
-	if (!initialized) {
-		srand((unsigned)time(NULL));
-		initialized = 1;
-	}
-	return ((rand() & 0xFF) | ((rand() & 0xFF) << 8) | ((rand() & 0xFF) << 16) | ((uint32_t) (rand() & 0xFF) << 24));
+    std::random_device dev;
+    PCGRand rand(dev);
+    std::uniform_int_distribution<> udist(0, INT32_MAX);
+
+    return udist(rand);
 }
 
 #endif /* RAND_PLATFORM_INDEPENDENT */
@@ -61,7 +52,7 @@ void __attribute__((weak)) random_buffer(uint8_t *buf, size_t len)
 		if (i % 4 == 0) {
 			r = random32();
 		}
-		buf[i] = (r >> ((i % 4) * 8)) & 0xFF;
+		buf[i] = (r >> ((i % 4) * 8)) & 0xFFU;
 	}
 }
 

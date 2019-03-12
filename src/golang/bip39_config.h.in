@@ -17,26 +17,6 @@
 #include <sys/types.h>
 #endif
 
-#cmakedefine HAVE_UINT8_TYPE
-#ifndef HAVE_UINT8_TYPE
-typedef unsigned char uint8_t;
-#endif
-
-#cmakedefine HAVE_UINT16_TYPE
-#ifndef HAVE_UINT16_TYPE
-typedef unsigned short uint16_t;
-#endif
-
-#cmakedefine HAVE_UINT32_TYPE
-#ifndef HAVE_UINT32_TYPE
-typedef unsigned int uint32_t;
-#endif
-
-#cmakedefine HAVE_UINT64_TYPE
-#ifndef HAVE_UINT64_TYPE
-typedef unsigned long long uint64_t;
-#endif
-
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>

@@ -32,8 +32,8 @@ class Bip39Mnemonic {
       size_t len;
     };
 
-    static std::vector<char *> getLanguages();
-    static std::vector<const char *> getWordsFromLanguage(const char *lang);
+    static std::vector<std::string> getLanguages();
+    static std::vector<std::string> getWordsFromLanguage(const char *lang);
     static MnemonicResult generate(const char *lang = "en", size_t entropy = BIP39_ENTROPY_LEN_128);
     static MnemonicResult encodeBytes(const uint8_t *src,
                                       const char *lang = "en",

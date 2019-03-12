@@ -25,7 +25,7 @@ std::vector<uint8_t> minter::hexToBytes(const std::string &hex) {
 std::string minter::bytesToHex(const uint8_t *data, size_t len) {
     std::stringstream ss;
     ss << std::hex;
-    for (int i = 0; i < len; ++i) {
+    for (size_t i = 0; i < len; ++i) {
         ss << std::setw(2) << std::setfill('0') << (int) data[i];
     }
 
@@ -56,9 +56,9 @@ std::vector<std::string> minter::splitString(const std::string &source, const st
 }
 const std::string minter::glueStrings(const std::vector<std::string> &input, const std::string &g) {
     std::stringstream ss;
-    for (int i = 0; i < input.size(); i++) {
+    for (size_t i = 0; i < input.size(); i++) {
         ss << input[i];
-        if (i + 1 < input.size()) {
+        if (i + 1u < input.size()) {
             ss << g;
         }
     }

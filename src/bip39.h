@@ -30,7 +30,7 @@ extern "C" {
  *
  * ..note:: The string returned should be freed using `wally_free_string`.
  */
-MINTER_BIP39_CORE_API int bip39_get_languages(char **output);
+MINTER_BIP39_CORE_API int bip39_get_languages(std::vector<std::string> &output);
 
 /**
  * Get the default word list for a language.
@@ -62,7 +62,7 @@ MINTER_BIP39_CORE_API int bip39_get_languages_size();
 MINTER_BIP39_CORE_API int bip39_get_word(
     const struct words *w,
     size_t index,
-    char **output);
+    std::string &output);
 
 /**
  * Generate a mnemonic sentence from the entropy in ``bytes``.

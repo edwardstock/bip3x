@@ -8,23 +8,23 @@
 #include "Bip39Mnemonic.h"
 #include "PCGRand.hpp"
 
-std::vector<char *> minter::Bip39Mnemonic::getLanguages() {
+std::vector<std::string> minter::Bip39Mnemonic::getLanguages() {
     int sz = bip39_get_languages_size();
-    std::vector<char *> languages(static_cast<size_t>(sz));
-    bip39_get_languages(&languages[0]);
+    std::vector<std::string> languages(static_cast<size_t>(sz));
+    bip39_get_languages(languages);
 
     return languages;
 }
-std::vector<const char *> minter::Bip39Mnemonic::getWordsFromLanguage(const char *lang) {
+std::vector<std::string> minter::Bip39Mnemonic::getWordsFromLanguage(const char *lang) {
     words *wl[1];
     bip39_get_wordlist(lang, wl);
     if (!wl[0]) {
         return {};
     }
 
-    std::vector<const char *> wordsList(wl[0]->len);
+    std::vector<std::string> wordsList(wl[0]->len);
     for (size_t i = 0; i < wordsList.size(); i++) {
-        wordsList[i] = wl[0]->indices[i];
+        wordsList[i] = std::string(wl[0]->indices[i]);
     }
 
     return wordsList;

@@ -36,7 +36,7 @@ void numToBytes(const NumT num, std::vector<uint8_t> &out) {
     static_assert(std::is_integral<NumT>::value, "Only integral types can be passed");
 
     size_t sz = sizeof(num);
-    for (int i = 0; i < sz; i++) {
+    for (size_t i = 0; i < sz; i++) {
         out[(out.size() - 1) - i] = (num >> (i * 8));
     }
 }
@@ -177,7 +177,7 @@ class Data {
     }
 
     void write(size_t pos, const uint8_t *data, size_t dataLen) {
-        for (int i = 0; i < dataLen; i++) {
+        for (size_t i = 0; i < dataLen; i++) {
             m_data[i + pos] = data[i];
         }
     }
@@ -195,7 +195,7 @@ class Data {
     }
 
     void insert(size_t pos, const std::vector<uint8_t> &data) {
-        for (int i = 0; i < data.size(); i++) {
+        for (size_t i = 0; i < data.size(); i++) {
             m_data[pos + i] = data[i];
         }
     }
