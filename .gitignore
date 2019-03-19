@@ -1,6 +1,7 @@
 /.idea
 /cmake-build-*
 /build
+/_build
 /build_*
 .DS_STORE
 venv

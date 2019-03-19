@@ -11,8 +11,6 @@
 #include "hdkey_encoder.h"
 
 minter_hdkey *copy_hdkey(minter::HDKey &&res) {
-    std::cout << "PRIV key: " << res.privateKey.toHex() << std::endl;
-    std::cout << "PUB  key: " << res.publicKey.toHex() << std::endl;
     auto *out = new minter_hdkey;
 
     memcpy(out->public_key.data, res.publicKey.data(), res.publicKey.size());
