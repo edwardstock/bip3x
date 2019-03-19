@@ -17,7 +17,7 @@ jobjectArray Java_network_minter_core_bip39_NativeBip39_bip39GetLanguages(JNIEnv
         langArr = env->NewObjectArray(static_cast<jsize>(langs.size()),
                                       env->FindClass("java/lang/String"),
                                       nullptr);
-    for (int i = 0; i < langs.size(); i++) {
+    for (jsize i = 0; i < langs.size(); i++) {
         env->SetObjectArrayElement(langArr, i, env->NewStringUTF(langs[i].c_str()));
     }
 
