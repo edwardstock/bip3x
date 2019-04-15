@@ -97,21 +97,8 @@ set(BIP39_C_SOURCES
     src/golang/hdkey_encoder.cpp
     )
 add_library(bip39_go ${BIP39_C_SOURCES})
-target_compile_options(bip39_go PRIVATE -Wno-shift-count-overflow -std=c++14)
+target_compile_options(bip39_go PRIVATE -Wno-shift-count-overflow -std=c++14 -fPIC)
 target_link_libraries(bip39_go trezor_crypto)
-#set(CGO_FLAGS "CGO_FLAGS=\"-std=c11 -I${CMAKE_CURRENT_SOURCE_DIR}/src/golang\" CGO_LDFLAGS=\"-L${CMAKE_BINARY_DIR} -L${CMAKE_BINARY_DIR}/libs/trezor-crypto -lstdc++ -lbip39_go -ltrezor_crypto\"")
-#add_custom_target(bip39-go-build
-#                  COMMAND bash -c "${CGO_FLAGS} go build"
-#                  DEPENDS bip39_go
-#                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/golang/bip39
-#                  )
-#
-#add_custom_target(bip39-go-test
-#                  COMMAND bash -c "${CGO_FLAGS} go test"
-#                  DEPENDS bip39-go-build
-#                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/golang/bip39
-#                  )
-
 
 if (NOT DISABLE_JNI)
 	if (ANDROID_PLATFORM)
