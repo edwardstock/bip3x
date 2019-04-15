@@ -40,12 +40,14 @@ TEST(Minter, PrivateKeyFromMnemonic) {
 
 TEST(Minter, StringCopyToCharPtr) {
     std::string ascii = "hello world";
-    char* asciiPtr = new char[ascii.size()];
+    char* asciiPtr = new char[ascii.size()+1];
     ascii.copy(asciiPtr, ascii.size());
+    asciiPtr[ascii.size()] = '\0';
 
     std::string unicoded = "константная юникодная строка";
     char* unicodePtr = new char[unicoded.size()];
     unicoded.copy(unicodePtr, unicoded.size());
+    unicodePtr[unicoded.size()] = '\0';
 
     ASSERT_STREQ("hello world", asciiPtr);
     ASSERT_STREQ("константная юникодная строка", unicodePtr);
