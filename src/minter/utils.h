@@ -14,7 +14,7 @@
 #include <sstream>
 #include <iomanip>
 #include <cassert>
-#include <ripemd160.h>
+#include "ripemd160.h"
 #include <cstring>
 #include "base58.h"
 #include "hasher.h"
@@ -78,7 +78,7 @@ class Data {
     Data(Data &&other) = default;
     Data &operator=(const Data &other) = default;
     Data &operator=(Data &&other) = default;
-    const std::vector<uint8_t> cget() const {
+    const std::vector<uint8_t>& cget() const {
         return m_data;
     }
 
@@ -110,7 +110,7 @@ class Data {
         return &m_data[0];
     }
 
-    const std::string toString() {
+    virtual const std::string toString() {
         std::vector<char> out(size());
         memcpy(&out[0], data(), size());
         return std::string(&out[0]);

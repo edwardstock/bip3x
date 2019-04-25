@@ -78,7 +78,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/uint256_t)
 
 # Core
-add_library(${PROJECT_NAME}_core SHARED ${SOURCES})
+add_library(${PROJECT_NAME}_core STATIC ${SOURCES})
 target_compile_options(${PROJECT_NAME}_core PUBLIC -Wno-shift-count-overflow -fPIC)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/trezor-crypto)
 target_link_libraries(${PROJECT_NAME}_core trezor_crypto)
