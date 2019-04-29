@@ -76,8 +76,8 @@ class Data {
 
     Data(const Data &other) = default;
     Data(Data &&other) = default;
-    Data &operator=(const Data &other) = default;
-    Data &operator=(Data &&other) = default;
+    virtual Data &operator=(const Data &other) = default;
+    virtual Data &operator=(Data &&other) = default;
     const std::vector<uint8_t>& cget() const {
         return m_data;
     }
