@@ -8,13 +8,14 @@
 #ifndef BIP39_KEY_ENCODER_H
 #define BIP39_KEY_ENCODER_H
 
+#include <trezor-crypto/secp256k1.h>
+#include <trezor-crypto/base58.h>
+#include <trezor-crypto/ecdsa.h>
+#include <trezor-crypto/hmac.h>
+#include <trezor-crypto/curves.h>
+
 #include "utils.h"
 #include "Bip39Mnemonic.h"
-#include <secp256k1.h>
-#include <base58.h>
-#include <ecdsa.h>
-#include <hmac.h>
-#include <curves.h>
 
 namespace minter {
 

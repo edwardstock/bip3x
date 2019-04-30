@@ -28,7 +28,7 @@
 #include <cstdio>
 #include <ctime>
 #include <random>
-#include "minter/PCGRand.hpp"
+#include "bip39/PCGRand.hpp"
 
 uint32_t random32()
 {

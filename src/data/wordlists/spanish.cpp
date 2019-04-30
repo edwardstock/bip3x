@@ -1,5 +1,5 @@
 /* Generated file - do not edit! */
-#include "wordlist.h"
+#include "bip39/wordlist.h"
 
 static const unsigned char es_[] = {
     0x61, 0xcc, 0x81, 0x62, 0x61, 0x63, 0x6f, 0,

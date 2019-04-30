@@ -8,9 +8,9 @@
  */
 
 #include <gtest/gtest.h>
-#include <golang/bip39.h>
-#include <golang/hdkey_encoder.h>
-#include <minter/utils.h>
+#include <bip39.h>
+#include <hdkey_encoder.h>
+#include <bip39/utils.h>
 
 minter_hdkey *makeRootKey(const struct minter_data64 *seed) {
     return encoder_make_bip32_root_key(seed);

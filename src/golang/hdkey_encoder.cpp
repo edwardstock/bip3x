@@ -7,7 +7,7 @@
  * \link   https://github.com/edwardstock
  */
 
-#include <minter/HDKeyEncoder.h>
+#include <bip39/HDKeyEncoder.h>
 #include "hdkey_encoder.h"
 
 minter_hdkey *copy_hdkey(minter::HDKey &&res) {

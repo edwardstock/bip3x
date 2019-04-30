@@ -11,8 +11,8 @@
 #include <vector>
 #include <iostream>
 #include <random>
-#include "../bip39.h"
-#include "../wordlist.h"
+#include "bip39.h"
+#include "wordlist.h"
 #include "utils.h"
 
 namespace minter {

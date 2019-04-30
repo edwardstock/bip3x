@@ -10,8 +10,8 @@
 #ifndef BIP39_UINT256_T_HPP
 #define BIP39_UINT256_T_HPP
 
-#include <bignum.h>
-#include <memzero.h>
+#include <trezor-crypto/bignum.h>
+#include <trezor-crypto/memzero.h>
 #include "utils.h"
 
 namespace minter {

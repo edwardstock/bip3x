@@ -8,9 +8,9 @@
  */
 
 #include <iostream>
-#include "gtest/gtest.h"
-#include "minter/utils.h"
-#include "minter/HDKeyEncoder.h"
+#include <gtest/gtest.h>
+#include <bip39/utils.h>
+#include <bip39/HDKeyEncoder.h>
 
 using namespace minter;
 

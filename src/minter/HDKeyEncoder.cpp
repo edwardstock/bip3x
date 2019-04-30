@@ -5,9 +5,9 @@
  * \link https://github.com/edwardstock
  */
 
-#include "HDKeyEncoder.h"
-#include "uint256_t.hpp"
-#include "ripemd160.h"
+#include "bip39/HDKeyEncoder.h"
+#include "bip39/uint256_t.hpp"
+#include <trezor-crypto/ripemd160.h>
 
 const std::string minter::HDKeyEncoder::masterSecret = "Bitcoin seed";
 const minter::BTCNetwork minter::HDKeyEncoder::networks[] = {

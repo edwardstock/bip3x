@@ -3,11 +3,6 @@
 // Eduard Maximovich <edward.vstock@gmail.com>
 //
 
-/**
- * 
- * 
- */
-
 #include <string>
 #include "nobject.h"
 

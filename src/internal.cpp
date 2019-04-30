@@ -1,9 +1,9 @@
 #include <cstring>
-#include "internal.h"
-#include "pbkdf2.hpp"
-#include "crypto/sha256.h"
-#include "crypto/sha512.h"
-#include "ripemd160.h"
+#include <trezor-crypto/pbkdf2.hpp>
+#include <trezor-crypto/ripemd160.h>
+#include "bip39/internal.h"
+#include "bip39/crypto/sha256.h"
+#include "bip39/crypto/sha512.h"
 
 char *wally_strdup(const char *str) {
     size_t len = strlen(str) + 1;

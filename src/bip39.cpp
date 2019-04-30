@@ -1,11 +1,12 @@
-#include <pbkdf2.hpp>
 #include <cstring>
-#include "internal.h"
-#include "mnemonic.h"
-#include "wordlist.h"
-#include "hmac.h"
-#include "bip39.h"
-#include "crypto/sha256.h"
+#include <trezor-crypto/pbkdf2.hpp>
+#include <trezor-crypto/hmac.h>
+#include "bip39/internal.h"
+#include "bip39/mnemonic.h"
+#include "bip39/wordlist.h"
+
+#include "bip39/bip39.h"
+#include "bip39/crypto/sha256.h"
 
 #include "data/wordlists/chinese_simplified.cpp"
 #include "data/wordlists/chinese_traditional.cpp"

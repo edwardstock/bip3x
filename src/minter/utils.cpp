@@ -7,7 +7,7 @@
  */
 
 #include <limits>
-#include "utils.h"
+#include "bip39/utils.h"
 #include <stdexcept>
 
 std::vector<uint8_t> minter::hexToBytes(const std::string &hex) {

@@ -5,11 +5,11 @@
 #ifndef BITCOIN_CRYPTO_HMAC_SHA256_H
 #define BITCOIN_CRYPTO_HMAC_SHA256_H
 
-#include <crypto/sha256.h>
+#include "sha256.h"
 
 #include <stdint.h>
 #include <stdlib.h>
-#include "hmac.h"
+#include <trezor-crypto/hmac.h>
 
 /** A hasher class for HMAC-SHA-256. */
 class CHMAC_SHA256

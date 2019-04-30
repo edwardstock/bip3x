@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <cstring>
 #include <vector>
-#include "internal.h"
-#include "wordlist.h"
+#include "bip39/internal.h"
+#include "bip39/wordlist.h"
 
 static int bstrcmp(const void *l, const void *r) {
     return strcmp(reinterpret_cast<const char *>(l), reinterpret_cast<const char *>(r));

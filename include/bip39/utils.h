@@ -14,14 +14,14 @@
 #include <sstream>
 #include <iomanip>
 #include <cassert>
-#include <ripemd160.h>
+#include <trezor-crypto/ripemd160.h>
 #include <cstring>
-#include "base58.h"
-#include "hasher.h"
-#include "crypto/hmac_sha512.h"
-#include "crypto/hmac_sha256.h"
-#include "crypto/sha512.h"
-#include "crypto/sha256.h"
+#include <trezor-crypto/base58.h>
+#include <trezor-crypto/hasher.h>
+#include "bip39/crypto/hmac_sha512.h"
+#include "bip39/crypto/hmac_sha256.h"
+#include "bip39/crypto/sha512.h"
+#include "bip39/crypto/sha256.h"
 
 namespace minter {
 

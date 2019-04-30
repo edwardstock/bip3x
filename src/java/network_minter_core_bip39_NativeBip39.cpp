@@ -1,5 +1,5 @@
 #include <jni.h>
-#include <minter/Bip39Mnemonic.h>
+#include <bip39/Bip39Mnemonic.h>
 #include "network_minter_core_bip39_NativeBip39.h"
 
 /**

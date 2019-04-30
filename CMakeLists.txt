@@ -6,26 +6,21 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -pedantic")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -g0 -O2")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c99-extensions -Wno-unused-function -Wno-unused-const-variable")
+set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY ON)
+
+option(ENABLE_SHARED "Build shared core library instead of static" ON)
+option(WITH_TEST "Compile unit tests" OFF)
+option(ENABLE_JNI "Enable compiling for android/jre" ON)
+option(ENABLE_GO "Enable compiling pure C for golang bindings" ON)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/configure.cmake)
 
-set(BTC_SRC
-    src/crypto/common.h
-    src/crypto/sha256.h
-    src/crypto/sha256.cpp
-    src/crypto/sha256_sse4.cpp
-    src/crypto/hmac_sha256.h
-    src/crypto/hmac_sha256.cpp
-    src/crypto/hmac_sha512.h
-    src/crypto/hmac_sha512.cpp
-    src/crypto/sha512.h
-    src/crypto/sha512.cpp
-    )
+set(BTC_SRC)
+set(BTC_HEADERS)
 
 if (WIN32)
-	set(BTC_SRC
-	    ${BTC_SRC}
-	    src/crypto/win_endian.h
+	set(BTC_HEADERS
+	    include/bip39/crypto/win_endian.h
 	    )
 endif ()
 
@@ -35,11 +30,36 @@ else ()
 	set(BTC_SRC ${BTC_SRC} src/crypto/sha256.cpp)
 endif ()
 
+set(HEADERS
+    ${BTC_HEADERS}
+    include/bip39/crypto/common.h
+    include/bip39/crypto/sha256.h
+    include/bip39/crypto/hmac_sha256.h
+    include/bip39/crypto/hmac_sha512.h
+    include/bip39/crypto/sha512.h
+
+    include/bip39/bip39.h
+    include/bip39/wordlist.h
+    include/bip39/internal.h
+    include/bip39/bip39_core.h
+    include/bip39/config.h
+    include/bip39/uint256_t.hpp
+    include/bip39/PCGRand.hpp
+    include/bip39/utils.h
+    include/bip39/Bip39Mnemonic.h
+    include/bip39/HDKeyEncoder.h
+    )
 
 set(SOURCES
+    ${HEADERS}
     ${BTC_SRC}
+    src/crypto/sha256.cpp
+    src/crypto/sha256_sse4.cpp
+    src/crypto/hmac_sha256.cpp
+    src/crypto/hmac_sha512.cpp
+    src/crypto/sha512.cpp
+
     src/bip39.cpp
-    src/bip39.h
     src/data/wordlists/chinese_simplified.cpp
     src/data/wordlists/chinese_traditional.cpp
     src/data/wordlists/english.cpp
@@ -48,22 +68,12 @@ set(SOURCES
     src/data/wordlists/japanese.cpp
     src/data/wordlists/spanish.cpp
     src/wordlist.cpp
-    src/wordlist.h
-    src/mnemonic.h
     src/mnemonic.cpp
     src/internal.cpp
-    src/internal.h
-    src/bip39_core.h
-    src/config.h
-
-    src/minter/utils.h src/minter/utils.cpp
-    src/minter/HDKeyEncoder.cpp src/minter/HDKeyEncoder.h
-    src/minter/Bip39Mnemonic.cpp src/minter/Bip39Mnemonic.h
-    src/minter/uint256_t.hpp
-    src/minter/PCGRand.hpp)
-
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/trezor-crypto)
+    src/minter/utils.cpp
+    src/minter/HDKeyEncoder.cpp
+    src/minter/Bip39Mnemonic.cpp
+    )
 
 set(JNI_SOURCES
     src/java/network_minter_core_bip39_NativeBip39.h
@@ -74,33 +84,60 @@ set(JNI_SOURCES
     src/java/nobject.cpp
     )
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/uint256_t)
 
 # Core
-add_library(${PROJECT_NAME}_core SHARED ${SOURCES})
+if (ENABLE_SHARED)
+	add_library(${PROJECT_NAME}_core SHARED ${SOURCES})
+else ()
+	add_library(${PROJECT_NAME}_core STATIC ${SOURCES})
+endif ()
 target_compile_options(${PROJECT_NAME}_core PUBLIC -Wno-shift-count-overflow -fPIC)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/trezor-crypto)
 target_link_libraries(${PROJECT_NAME}_core trezor_crypto)
 
-# GO
-set(BIP39_C_HEADERS
-    src/golang/bip39_config.h
-    src/golang/bip39.h
-    src/golang/hdkey_encoder.h
-    )
-set(BIP39_C_SOURCES
-    ${SOURCES}
-    ${BIP39_C_HEADERS}
-    src/golang/bip39.cpp
-    src/golang/bip39.cpp
-    src/golang/hdkey_encoder.cpp
-    )
-add_library(bip39_go ${BIP39_C_SOURCES})
-target_compile_options(bip39_go PRIVATE -Wno-shift-count-overflow -std=c++14 -fPIC)
-target_link_libraries(bip39_go trezor_crypto)
+target_include_directories(${PROJECT_NAME}_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(${PROJECT_NAME}_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 
-if (NOT DISABLE_JNI)
+# TODO fix this s__t
+target_include_directories(trezor_crypto PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+
+# GO
+if (ENABLE_GO)
+	set(BIP39_C_HEADERS
+	    src/golang/bip39_config.h
+	    src/golang/bip39.h
+	    src/golang/hdkey_encoder.h
+	    )
+
+	set(BIP39_C_SOURCES
+	    ${SOURCES}
+	    ${BIP39_C_HEADERS}
+	    src/golang/bip39.cpp
+	    src/golang/bip39.cpp
+	    src/golang/hdkey_encoder.cpp
+	    )
+
+	add_library(bip39_go ${BIP39_C_SOURCES})
+	set_target_properties(bip39_go PROPERTIES PUBLIC_HEADER "${BIP39_C_HEADERS}")
+
+	target_compile_options(bip39_go PRIVATE -Wno-shift-count-overflow -std=c++14 -fPIC)
+	target_link_libraries(bip39_go trezor_crypto)
+	target_include_directories(bip39_go PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+	target_include_directories(bip39_go PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libs)
+	target_include_directories(bip39_go PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/golang)
+
+	install(
+		TARGETS bip39_go
+		LIBRARY DESTINATION lib
+		ARCHIVE DESTINATION lib
+		PUBLIC_HEADER DESTINATION include
+		COMPONENT golib
+	)
+endif ()
+
+# Android/JAVA
+if (ENABLE_JNI)
 	if (ANDROID_PLATFORM)
 		add_definitions(-D__ANDROID__)
 		add_library(${PROJECT_NAME}_jni SHARED ${JNI_SOURCES})
@@ -111,7 +148,7 @@ if (NOT DISABLE_JNI)
 			add_library(${PROJECT_NAME}_jni SHARED ${JNI_SOURCES})
 			target_link_libraries(${PROJECT_NAME}_jni ${PROJECT_NAME}_core)
 			target_link_libraries(${PROJECT_NAME}_jni ${JAVA_JVM_LIBRARY})
-			target_include_directories(${PROJECT_NAME}_jni PRIVATE ${JNI_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
+			target_include_directories(${PROJECT_NAME}_jni PRIVATE ${JNI_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 		else ()
 			message(STATUS "JNI not found")
 		endif ()
@@ -124,9 +161,8 @@ if (${RUN})
 	#	target_compile_options(bip39dev PUBLIC -fsanitize=address -m64 -pipe -ffunction-sections -fdata-sections  -O0 -g -fno-omit-frame-pointer)
 endif ()
 
-# yum install java-1.8.0-openjdk java-1.8.0-openjdk-devel
-if (WITH_TEST)
 
+if (WITH_TEST)
 	# main test
 	set(PROJECT_TEST_NAME "bip39_test")
 	enable_testing()
@@ -166,11 +202,3 @@ if (WITH_TEST)
 endif ()
 
 
-install(
-	TARGETS bip39_go
-	LIBRARY DESTINATION lib
-	ARCHIVE DESTINATION lib
-	PUBLIC_HEADER DESTINATION include
-)
-
-install(FILES ${BIP39_C_HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
