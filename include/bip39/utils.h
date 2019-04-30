@@ -78,11 +78,13 @@ class Data {
     Data(Data &&other) = default;
     Data &operator=(const Data &other) = default;
     Data &operator=(Data &&other) = default;
-    const std::vector<uint8_t> cget() const {
+    virtual ~Data() = default;
+
+    const std::vector<uint8_t>& get() const {
         return m_data;
     }
 
-    std::vector<uint8_t> &get() {
+    std::vector<uint8_t>& get() {
         return m_data;
     }
 
@@ -191,7 +193,7 @@ class Data {
     }
 
     void write(size_t pos, const Data &data) {
-        insert(pos, data.cget());
+        insert(pos, data.get());
     }
 
     void insert(size_t pos, const std::vector<uint8_t> &data) {
@@ -261,7 +263,7 @@ class Data {
     }
 
     template<typename T>
-    T to() {
+    const T to() const {
         size_t len = sizeof(T);
         if (len == 1) {
             return m_data[0];
@@ -288,6 +290,39 @@ class Data {
 
         return 0;
     }
+
+    explicit operator uint8_t() const {
+        return to<uint8_t>();
+    }
+
+    explicit operator char() const {
+        return to<char>();
+    }
+
+    explicit operator uint16_t() const {
+        return to<uint16_t>();
+    }
+
+    explicit operator int16_t() const {
+        return to<int16_t>();
+    }
+
+    explicit operator uint32_t() const {
+        return to<uint32_t>();
+    }
+
+    explicit operator int32_t() const {
+        return to<int32_t>();
+    }
+
+    explicit operator uint64_t() const {
+        return to<uint64_t>();
+    }
+
+    explicit operator int64_t() const {
+        return to<int64_t>();
+    }
+
 };
 
 template<size_t N>
