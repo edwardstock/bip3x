@@ -165,7 +165,7 @@ typedef uint64_t sha2_word64;	/* Exactly 8 bytes */
  * library -- they are intended for private internal visibility/use
  * only.
  */
-static void sha512_Last(SHA512_CTX*);
+static void sha512_Last(trezor::SHA512_CTX*);
 
 
 /*** SHA-XYZ INITIAL HASH VALUES AND CONSTANTS ************************/
@@ -281,7 +281,7 @@ static const char *sha2_hex_digits = "0123456789abcdef";
 
 
 /*** SHA-1: ***********************************************************/
-void sha1_Init(SHA1_CTX* context) {
+void sha1_Init(trezor::SHA1_CTX* context) {
 	MEMCPY_BCOPY(context->state, sha1_initial_hash_value, SHA1_DIGEST_LENGTH);
 	memzero(context->buffer, SHA1_BLOCK_LENGTH);
 	context->bitcount = 0;
@@ -520,7 +520,7 @@ void sha1_Transform(const sha2_word32* state_in, const sha2_word32* data, sha2_w
 
 #endif /* SHA2_UNROLL_TRANSFORM */
 
-void sha1_Update(SHA1_CTX* context, const sha2_byte *data, size_t len) {
+void sha1_Update(trezor::SHA1_CTX* context, const sha2_byte *data, size_t len) {
 	unsigned int	freespace, usedspace;
 
 	if (len == 0) {
@@ -578,7 +578,7 @@ void sha1_Update(SHA1_CTX* context, const sha2_byte *data, size_t len) {
 	usedspace = freespace = 0;
 }
 
-void sha1_Final(SHA1_CTX* context, sha2_byte digest[]) {
+void sha1_Final(trezor::SHA1_CTX* context, sha2_byte digest[]) {
 	unsigned int	usedspace;
 
 	/* If no digest buffer is passed, we don't bother doing this: */
@@ -628,11 +628,11 @@ void sha1_Final(SHA1_CTX* context, sha2_byte digest[]) {
 	}
 
 	/* Clean up state data: */
-	memzero(context, sizeof(SHA1_CTX));
+	memzero(context, sizeof(trezor::SHA1_CTX));
 	usedspace = 0;
 }
 
-char *sha1_End(SHA1_CTX* context, char buffer[]) {
+char *sha1_End(trezor::SHA1_CTX* context, char buffer[]) {
 	sha2_byte	digest[SHA1_DIGEST_LENGTH], *d = digest;
 	int		i;
 
@@ -646,21 +646,21 @@ char *sha1_End(SHA1_CTX* context, char buffer[]) {
 		}
 		*buffer = (char)0;
 	} else {
-		memzero(context, sizeof(SHA1_CTX));
+		memzero(context, sizeof(trezor::SHA1_CTX));
 	}
 	memzero(digest, SHA1_DIGEST_LENGTH);
 	return buffer;
 }
 
 void sha1_Raw(const sha2_byte* data, size_t len, uint8_t digest[SHA1_DIGEST_LENGTH]) {
-	SHA1_CTX	context;
+    trezor::SHA1_CTX	context;
 	sha1_Init(&context);
 	sha1_Update(&context, data, len);
 	sha1_Final(&context, digest);
 }
 
 char* sha1_Data(const sha2_byte* data, size_t len, char digest[SHA1_DIGEST_STRING_LENGTH]) {
-	SHA1_CTX	context;
+    trezor::SHA1_CTX	context;
 
 	sha1_Init(&context);
 	sha1_Update(&context, data, len);
@@ -668,8 +668,8 @@ char* sha1_Data(const sha2_byte* data, size_t len, char digest[SHA1_DIGEST_STRIN
 }
 
 /*** SHA-256: *********************************************************/
-void sha256_Init(SHA256_CTX* context) {
-	if (context == (SHA256_CTX*)0) {
+void sha256_Init(trezor::SHA256_CTX* context) {
+	if (context == (trezor::SHA256_CTX*)0) {
 		return;
 	}
 	MEMCPY_BCOPY(context->state, sha256_initial_hash_value, SHA256_DIGEST_LENGTH);
@@ -827,7 +827,7 @@ void sha256_Transform(const sha2_word32* state_in, const sha2_word32* data, sha2
 
 #endif /* SHA2_UNROLL_TRANSFORM */
 
-void sha256_Update(SHA256_CTX* context, const sha2_byte *data, size_t len) {
+void sha256_Update(trezor::SHA256_CTX* context, const sha2_byte *data, size_t len) {
 	unsigned int	freespace, usedspace;
 
 	if (len == 0) {
@@ -885,7 +885,7 @@ void sha256_Update(SHA256_CTX* context, const sha2_byte *data, size_t len) {
 	usedspace = freespace = 0;
 }
 
-void sha256_Final(SHA256_CTX* context, sha2_byte digest[]) {
+void sha256_Final(trezor::SHA256_CTX* context, sha2_byte digest[]) {
 	unsigned int	usedspace;
 
 	/* If no digest buffer is passed, we don't bother doing this: */
@@ -935,11 +935,11 @@ void sha256_Final(SHA256_CTX* context, sha2_byte digest[]) {
 	}
 
 	/* Clean up state data: */
-	memzero(context, sizeof(SHA256_CTX));
+	memzero(context, sizeof(trezor::SHA256_CTX));
 	usedspace = 0;
 }
 
-char *sha256_End(SHA256_CTX* context, char buffer[]) {
+char *sha256_End(trezor::SHA256_CTX* context, char buffer[]) {
 	sha2_byte	digest[SHA256_DIGEST_LENGTH], *d = digest;
 	int		i;
 
@@ -953,21 +953,21 @@ char *sha256_End(SHA256_CTX* context, char buffer[]) {
 		}
 		*buffer = (char)0;
 	} else {
-		memzero(context, sizeof(SHA256_CTX));
+		memzero(context, sizeof(trezor::SHA256_CTX));
 	}
 	memzero(digest, SHA256_DIGEST_LENGTH);
 	return buffer;
 }
 
 void sha256_Raw(const sha2_byte* data, size_t len, uint8_t digest[SHA256_DIGEST_LENGTH]) {
-	SHA256_CTX	context;
+    trezor::SHA256_CTX	context;
 	sha256_Init(&context);
 	sha256_Update(&context, data, len);
 	sha256_Final(&context, digest);
 }
 
 char* sha256_Data(const sha2_byte* data, size_t len, char digest[SHA256_DIGEST_STRING_LENGTH]) {
-	SHA256_CTX	context;
+    trezor::SHA256_CTX	context;
 
 	sha256_Init(&context);
 	sha256_Update(&context, data, len);
@@ -976,8 +976,8 @@ char* sha256_Data(const sha2_byte* data, size_t len, char digest[SHA256_DIGEST_S
 
 
 /*** SHA-512: *********************************************************/
-void sha512_Init(SHA512_CTX* context) {
-	if (context == (SHA512_CTX*)0) {
+void sha512_Init(trezor::SHA512_CTX* context) {
+	if (context == (trezor::SHA512_CTX*)0) {
 		return;
 	}
 	MEMCPY_BCOPY(context->state, sha512_initial_hash_value, SHA512_DIGEST_LENGTH);
@@ -1132,7 +1132,7 @@ void sha512_Transform(const sha2_word64* state_in, const sha2_word64* data, sha2
 
 #endif /* SHA2_UNROLL_TRANSFORM */
 
-void sha512_Update(SHA512_CTX* context, const sha2_byte *data, size_t len) {
+void sha512_Update(trezor::SHA512_CTX* context, const sha2_byte *data, size_t len) {
 	unsigned int	freespace, usedspace;
 
 	if (len == 0) {
@@ -1190,7 +1190,7 @@ void sha512_Update(SHA512_CTX* context, const sha2_byte *data, size_t len) {
 	usedspace = freespace = 0;
 }
 
-static void sha512_Last(SHA512_CTX* context) {
+static void sha512_Last(trezor::SHA512_CTX* context) {
 	unsigned int	usedspace;
 
 	usedspace = (context->bitcount[0] >> 3) % SHA512_BLOCK_LENGTH;
@@ -1229,7 +1229,7 @@ static void sha512_Last(SHA512_CTX* context) {
 	sha512_Transform(context->state, context->buffer, context->state);
 }
 
-void sha512_Final(SHA512_CTX* context, sha2_byte digest[]) {
+void sha512_Final(trezor::SHA512_CTX* context, sha2_byte digest[]) {
 	/* If no digest buffer is passed, we don't bother doing this: */
 	if (digest != (sha2_byte*)0) {
 		sha512_Last(context);
@@ -1245,10 +1245,10 @@ void sha512_Final(SHA512_CTX* context, sha2_byte digest[]) {
 	}
 
 	/* Zero out state data */
-	memzero(context, sizeof(SHA512_CTX));
+	memzero(context, sizeof(trezor::SHA512_CTX));
 }
 
-char *sha512_End(SHA512_CTX* context, char buffer[]) {
+char *sha512_End(trezor::SHA512_CTX* context, char buffer[]) {
 	sha2_byte	digest[SHA512_DIGEST_LENGTH], *d = digest;
 	int		i;
 
@@ -1262,21 +1262,21 @@ char *sha512_End(SHA512_CTX* context, char buffer[]) {
 		}
 		*buffer = (char)0;
 	} else {
-		memzero(context, sizeof(SHA512_CTX));
+		memzero(context, sizeof(trezor::SHA512_CTX));
 	}
 	memzero(digest, SHA512_DIGEST_LENGTH);
 	return buffer;
 }
 
 void sha512_Raw(const sha2_byte* data, size_t len, uint8_t digest[SHA512_DIGEST_LENGTH]) {
-	SHA512_CTX	context;
+    trezor::SHA512_CTX	context;
 	sha512_Init(&context);
 	sha512_Update(&context, data, len);
 	sha512_Final(&context, digest);
 }
 
 char* sha512_Data(const sha2_byte* data, size_t len, char digest[SHA512_DIGEST_STRING_LENGTH]) {
-	SHA512_CTX	context;
+    trezor::SHA512_CTX	context;
 
 	sha512_Init(&context);
 	sha512_Update(&context, data, len);

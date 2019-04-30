@@ -180,7 +180,7 @@ uint32_t minter::HDKeyEncoder::fetchFingerprint(minter::HDKey &key) {
     uint32_t fingerprint;
     fillPublicKey(key);
 
-    SHA256_CTX ctx;
+    trezor::SHA256_CTX ctx;
     sha256_Init(&ctx);
     sha256_Update(&ctx, key.publicKey.cdata(), 33);
     sha256_Final(&ctx, digest.data());

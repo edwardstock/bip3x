@@ -98,7 +98,7 @@ static size_t len_to_mask(size_t len) {
 size_t bip39_checksum(const uint8_t *bytes, size_t bytes_len, size_t mask) {
 
     uint8_t out[CSHA256::OUTPUT_SIZE];
-    SHA256_CTX ctx;
+    trezor::SHA256_CTX ctx;
     sha256_Init(&ctx);
     sha256_Update(&ctx, bytes, bytes_len);
     sha256_Final(&ctx, out);

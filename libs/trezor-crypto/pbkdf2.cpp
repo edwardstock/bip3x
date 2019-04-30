@@ -30,7 +30,7 @@
 
 void pbkdf2_hmac_sha256_Init(PBKDF2_HMAC_SHA256_CTX *pctx, const uint8_t *pass, int passlen, const uint8_t *salt, int saltlen)
 {
-	SHA256_CTX ctx;
+    trezor::SHA256_CTX ctx;
 	uint32_t blocknr = 1;
 #if BYTE_ORDER == LITTLE_ENDIAN
 	REVERSE32(blocknr, blocknr);
@@ -89,7 +89,7 @@ void pbkdf2_hmac_sha256(const uint8_t *pass, int passlen, const uint8_t *salt, i
 
 void pbkdf2_hmac_sha512_Init(PBKDF2_HMAC_SHA512_CTX *pctx, const uint8_t *pass, int passlen, const uint8_t *salt, int saltlen)
 {
-	SHA512_CTX ctx;
+    trezor::SHA512_CTX ctx;
 	uint32_t blocknr = 1;
 #if BYTE_ORDER == LITTLE_ENDIAN
 	REVERSE32(blocknr, blocknr);

@@ -75,7 +75,7 @@ void hmac_sha256_prepare(const uint8_t *key, const uint32_t keylen, uint32_t *op
 
 	memzero(key_pad, sizeof(key_pad));
 	if (keylen > SHA256_BLOCK_LENGTH) {
-		static CONFIDENTIAL SHA256_CTX context;
+		static CONFIDENTIAL trezor::SHA256_CTX context;
 		sha256_Init(&context);
 		sha256_Update(&context, key, keylen);
 		sha256_Final(&context, (uint8_t*)key_pad);
@@ -150,7 +150,7 @@ void hmac_sha512_prepare(const uint8_t *key, const uint32_t keylen, uint64_t *op
 
 	memzero(key_pad, sizeof(key_pad));
 	if (keylen > SHA512_BLOCK_LENGTH) {
-		static CONFIDENTIAL SHA512_CTX context;
+		static CONFIDENTIAL trezor::SHA512_CTX context;
 		sha512_Init(&context);
 		sha512_Update(&context, key, keylen);
 		sha512_Final(&context, (uint8_t*)key_pad);

@@ -50,7 +50,7 @@ typedef struct {
     HasherType type;
 
     union {
-        SHA256_CTX sha2;
+        trezor::SHA256_CTX sha2;
         SHA3_CTX sha3;
         BLAKE256_CTX blake;
         GROESTL512_CTX groestl;
