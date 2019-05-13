@@ -18,6 +18,7 @@
 #include <cstring>
 #include <trezor-crypto/base58.h>
 #include <trezor-crypto/hasher.h>
+#include <trezor-crypto/sha3.h>
 #include "bip39/crypto/hmac_sha512.h"
 #include "bip39/crypto/hmac_sha256.h"
 #include "bip39/crypto/sha512.h"
@@ -67,6 +68,7 @@ class Data {
     }
 
     Data(const char *hexString) : m_data(hexToBytes(hexString)) { }
+    Data(const std::string &hexString) : m_data(hexToBytes(hexString)) { }
     Data(const std::vector<uint8_t> &data) : m_data(data) { }
     Data(std::vector<uint8_t> &&data) : m_data(std::move(data)) { }
     Data(const uint8_t *data, size_t len) {
@@ -80,11 +82,11 @@ class Data {
     Data &operator=(Data &&other) = default;
     virtual ~Data() = default;
 
-    const std::vector<uint8_t>& get() const {
+    const std::vector<uint8_t> &get() const {
         return m_data;
     }
 
-    std::vector<uint8_t>& get() {
+    std::vector<uint8_t> &get() {
         return m_data;
     }
 
@@ -113,9 +115,7 @@ class Data {
     }
 
     const std::string toString() {
-        std::vector<char> out(size());
-        memcpy(&out[0], data(), size());
-        return std::string(&out[0]);
+        return std::string(get().begin(), get().end());
     }
 
     std::vector<uint8_t> takeFirstBytes(size_t n) const {
@@ -159,11 +159,11 @@ class Data {
         return *this;
     }
 
-    const std::vector<uint8_t> toHmac512(const char *key) const {
+    std::vector<uint8_t> toHmac512(const char *key) const {
         return toHmac512(reinterpret_cast<const uint8_t *>(key), strlen(key));
     }
 
-    const std::vector<uint8_t> toHmac512(const uint8_t *key, size_t len) const {
+    std::vector<uint8_t> toHmac512(const uint8_t *key, size_t len) const {
         std::vector<uint8_t> out(64);
         CHMAC_SHA512 hm(key, len);
         hm.Write(cdata(), size());
@@ -172,7 +172,18 @@ class Data {
         return out;
     }
 
-    const std::vector<uint8_t> toHash160() const {
+    std::vector<uint8_t> toSha3K() const {
+        std::vector<uint8_t> output(SHA3_256_DIGEST_LENGTH);
+
+        SHA3_CTX hash_ctx;
+        keccak_256_Init(&hash_ctx);
+        keccak_Update(&hash_ctx, cdata(), size());
+        keccak_Final(&hash_ctx, &output[0]);
+
+        return output;
+    }
+
+    std::vector<uint8_t> toHash160() const {
         std::vector<uint8_t> out(20);
         ripemd160(cdata(), size(), &out[0]);
         return out;

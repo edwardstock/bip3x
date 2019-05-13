@@ -188,6 +188,8 @@ if (WITH_TEST)
 
 	target_link_libraries(${PROJECT_TEST_NAME} ${PROJECT_NAME}_core)
 	target_link_libraries(${PROJECT_TEST_NAME} gtest gtest_main)
+	target_include_directories(${PROJECT_TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+	target_include_directories(${PROJECT_TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 
 	# native C test
 	add_executable(bip39_c_test
@@ -199,6 +201,8 @@ if (WITH_TEST)
 	target_link_libraries(bip39_c_test ${PROJECT_NAME}_go)
 	target_link_libraries(bip39_c_test gtest gtest_main)
 	target_include_directories(bip39_c_test PRIVATE ${BIP39_C_SOURCES})
+	target_include_directories(bip39_c_test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+	target_include_directories(bip39_c_test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 endif ()
 
 

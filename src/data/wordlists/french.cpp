@@ -2398,7 +2398,7 @@ static const char *fr_i[] = {
 };
 #undef fr
 
-static const struct words fr_words = {
+const struct words fr_words = {
     2048,
     11,
     false,

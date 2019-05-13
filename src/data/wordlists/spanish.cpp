@@ -2398,7 +2398,7 @@ static const char *es_i[] = {
 };
 #undef es
 
-static const struct words es_words = {
+const struct words es_words = {
     2048,
     11,
     false,

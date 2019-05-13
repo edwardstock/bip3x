@@ -23,6 +23,14 @@ struct words {
     const char **indices;
 };
 
+extern const struct words es_words;
+extern const struct words zhs_words;
+extern const struct words zht_words;
+extern const struct words en_words;
+extern const struct words fr_words;
+extern const struct words it_words;
+extern const struct words jp_words;
+
 /**
  * Initialize a words structure.
  *

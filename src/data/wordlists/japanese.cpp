@@ -2434,7 +2434,7 @@ static const char *jp_i[] = {
 };
 #undef jp
 
-static const struct words jp_words = {
+const struct words jp_words = {
     2048,
     11,
     false,

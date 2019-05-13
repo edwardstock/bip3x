@@ -4,10 +4,6 @@
 #include "bip39/internal.h"
 #include "bip39/wordlist.h"
 
-static int bstrcmp(const void *l, const void *r) {
-    return strcmp(reinterpret_cast<const char *>(l), reinterpret_cast<const char *>(r));
-}
-
 /* https://graphics.stanford.edu/~seander/bithacks.html#IntegerLogObvious */
 static int get_bits(size_t n) {
     size_t bits = 0;

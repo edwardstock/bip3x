@@ -2398,7 +2398,7 @@ static const char *zht_i[] = {
 };
 #undef zht
 
-static const struct words zht_words = {
+const struct words zht_words = {
     2048,
     11,
     false,

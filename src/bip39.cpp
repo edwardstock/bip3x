@@ -8,14 +8,6 @@
 #include "bip39/bip39.h"
 #include "bip39/crypto/sha256.h"
 
-#include "data/wordlists/chinese_simplified.cpp"
-#include "data/wordlists/chinese_traditional.cpp"
-#include "data/wordlists/english.cpp"
-#include "data/wordlists/french.cpp"
-#include "data/wordlists/italian.cpp"
-#include "data/wordlists/spanish.cpp"
-#include "data/wordlists/japanese.cpp"
-
 /* Maximum length including up to 2 bytes for checksum */
 #define BIP39_ENTROPY_LEN_MAX (BIP39_ENTROPY_LEN_320 + sizeof(unsigned char) * 2)
 
