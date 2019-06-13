@@ -1,0 +1,27 @@
+# vim:set ft=dockerfile:
+
+FROM edwardstock/cpp-dev:deb-stretch-latest
+# use this line to install libcurl4 instead of deprecated libcurl3
+#RUN echo deb http://ftp.us.debian.org/debian testing main contrib non-free >> /etc/apt/sources.list
+RUN apt-get -y update;
+
+RUN apt-get -y install apt-utils default-jdk;
+
+COPY . /root
+ENV USER root
+
+WORKDIR /root
+RUN mkdir -p /root/_build
+RUN ls -lsah /root/_build
+WORKDIR /root/_build
+
+# cmake
+#RUN sh /root/packaging/init_build.sh
+
+WORKDIR /root/_build
+
+# workaround for date library, it won't work from first configuring
+RUN cmake .. -DCMAKE_BUILD_TYPE=Debug
+RUN make
+
+RUN ls -lsah /root/_build

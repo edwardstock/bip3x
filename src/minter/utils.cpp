@@ -9,6 +9,8 @@
 #include <limits>
 #include "bip39/utils.h"
 #include <stdexcept>
+#include <sstream>
+#include <vector>
 
 std::vector<uint8_t> minter::hexToBytes(const std::string &hex) {
     std::vector<uint8_t> bytes;

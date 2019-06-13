@@ -247,6 +247,17 @@ class Data {
         return !operator==(other);
     }
 
+    void writeUint64BE(size_t pos, uint64_t val) {
+        m_data[pos] = val >> 56u;
+        m_data[pos + 1] = val >> 48u;
+        m_data[pos + 2] = val >> 40u;
+        m_data[pos + 3] = val >> 32u;
+        m_data[pos + 4] = val >> 24u;
+        m_data[pos + 5] = val >> 16u;
+        m_data[pos + 6] = val >> 8u;
+        m_data[pos + 7] = val;
+    }
+
     void writeUint32BE(size_t pos, uint32_t val) {
         m_data[pos] = val >> 24;
         m_data[pos + 1] = val >> 16;
@@ -284,17 +295,18 @@ class Data {
             out |= m_data[1];
             return out;
         } else if (len == 4) {
-            uint32_t out = (m_data[0] << 24ul) | (m_data[1] << 16u) | (m_data[2] << 8u) | (m_data[3] & 0xFFu);
+            uint32_t out = (static_cast<uint64_t>(m_data[0]) << 24u) | (m_data[1] << 16u) | (m_data[2] << 8u) | (m_data[3] & 0xFFu);
             return out;
         } else if (sizeof(uint64_t) == len) {
-            uint64_t out = (m_data[0] << 56ul)
-                | (m_data[1] << 48ul)
-                | (m_data[2] << 40ul)
-                | (m_data[3] << 32ul)
-                | (m_data[4] << 24ul)
-                | (m_data[5] << 16ul)
-                | (m_data[6] << 8ul)
-                | (m_data[7] << 0xFFul);
+
+            uint64_t out = static_cast<uint64_t>(m_data[0]) << 56u |
+                static_cast<uint64_t>(m_data[1]) << 48u |
+                static_cast<uint64_t>(m_data[2]) << 40u |
+                static_cast<uint64_t>(m_data[3]) << 32u |
+                static_cast<uint64_t>(m_data[4]) << 24u |
+                static_cast<uint64_t>(m_data[5]) << 16u |
+                static_cast<uint64_t>(m_data[6]) << 8u |
+                static_cast<uint64_t>(m_data[7]);
 
             return out;
         }
