@@ -21,9 +21,15 @@ class Bip39Conan(ConanFile):
     description = "Bip39 mnemonic C++ implementation. Contains java bindings."
     topics = ("bip39", "bip39-mnemonic", "bip44", "bip39-java")
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False]}
+    options = {
+        "shared": [True, False],
+        "enableJNI": [True, False],
+        "enableCGO": [True, False],
+    }
     default_options = {
         "shared": False,
+        "enableJNI": False,
+        "enableCGO": False,
     }
     exports = "version"
     exports_sources = (
@@ -55,10 +61,18 @@ class Bip39Conan(ConanFile):
         opts = {
             'WITH_BIP39_TEST': 'Off',
             'CMAKE_BUILD_TYPE': 'Release',
+            'ENABLE_GO': 'Off',
+            'ENABLE_JNI': 'Off',
         }
 
         if self.options["shared"]:
             opts['ENABLE_SHARED'] = 'On'
+
+        if self.options["enableJNI"]:
+            opts['ENABLE_JNI'] = 'On'
+
+        if self.options['enableCGO']:
+            opts['ENABLE_GO'] = 'On'
 
         cmake.configure(defs=opts)
         cmake.build()
