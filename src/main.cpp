@@ -10,9 +10,9 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
-#include "bip39/utils.h"
-#include "bip39/Bip39Mnemonic.h"
-#include "bip39/HDKeyEncoder.h"
+#include "minter/bip39/utils.h"
+#include "minter/bip39/Bip39Mnemonic.h"
+#include "minter/bip39/HDKeyEncoder.h"
 using namespace minter;
 
 int main(int argc, char **argv) {

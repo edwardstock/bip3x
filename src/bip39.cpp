@@ -1,12 +1,12 @@
 #include <cstring>
-#include <trezor-crypto/pbkdf2.hpp>
-#include <trezor-crypto/hmac.h>
-#include "bip39/internal.h"
-#include "bip39/mnemonic.h"
-#include "bip39/wordlist.h"
+#include <minter/crypto/pbkdf2.hpp>
+#include <minter/crypto/hmac.h>
+#include "minter/bip39/internal.h"
+#include "minter/bip39/mnemonic.h"
+#include "minter/bip39/wordlist.h"
 
-#include "bip39/bip39.h"
-#include "bip39/crypto/sha256.h"
+#include "minter/bip39/bip39.h"
+#include "minter/bip39/crypto/sha256.h"
 
 /* Maximum length including up to 2 bytes for checksum */
 #define BIP39_ENTROPY_LEN_MAX (BIP39_ENTROPY_LEN_320 + sizeof(unsigned char) * 2)

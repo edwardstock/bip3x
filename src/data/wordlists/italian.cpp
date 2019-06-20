@@ -1,5 +1,5 @@
 /* Generated file - do not edit! */
-#include "bip39/wordlist.h"
+#include "minter/bip39/wordlist.h"
 
 static const unsigned char it_[] = {
     0x61, 0x62, 0x61, 0x63, 0x6f, 0,

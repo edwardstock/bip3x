@@ -1,7 +1,7 @@
 #include <cstring>
-#include "bip39/internal.h"
-#include "bip39/mnemonic.h"
-#include "bip39/wordlist.h"
+#include "minter/bip39/internal.h"
+#include "minter/bip39/mnemonic.h"
+#include "minter/bip39/wordlist.h"
 
 #define U8_AT(bytes, pos) (bytes)[(pos) / 8u]
 #define U8_MASK(pos) (1u << (7u - (pos) % 8u))

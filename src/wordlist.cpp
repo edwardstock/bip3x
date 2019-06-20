@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <cstring>
 #include <vector>
-#include "bip39/internal.h"
-#include "bip39/wordlist.h"
+#include "minter/bip39/internal.h"
+#include "minter/bip39/wordlist.h"
 
 /* https://graphics.stanford.edu/~seander/bithacks.html#IntegerLogObvious */
 static int get_bits(size_t n) {

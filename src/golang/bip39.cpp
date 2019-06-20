@@ -7,7 +7,7 @@
  * \link   https://github.com/edwardstock
  */
 
-#include <bip39/Bip39Mnemonic.h>
+#include <minter/bip39/Bip39Mnemonic.h>
 #include <cstdlib>
 #include "bip39.h"
 

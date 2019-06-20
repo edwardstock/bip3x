@@ -2,12 +2,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "bip39/crypto/sha256.h"
-#include "bip39/crypto/common.h"
-
 #include <cassert>
 #include <cstring>
 #include <atomic>
+
+#include "minter/bip39/crypto/sha256.h"
+#include "minter/bip39/crypto/common.h"
 
 #if defined(__x86_64__) || defined(__amd64__)
 #if defined(USE_ASM)

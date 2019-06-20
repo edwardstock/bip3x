@@ -5,8 +5,8 @@
  * \link https://github.com/edwardstock
  */
 
-#include "bip39/Bip39Mnemonic.h"
-#include "bip39/PCGRand.hpp"
+#include "minter/bip39/Bip39Mnemonic.h"
+#include "minter/bip39/PCGRand.hpp"
 
 std::vector<std::string> minter::Bip39Mnemonic::getLanguages() {
     int sz = bip39_get_languages_size();

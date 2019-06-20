@@ -3,8 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "bip39/uint256.h"
-#include "bip39/utils.h"
+#include "minter/bip39/uint256.h"
+#include "minter/bip39/utils.h"
 
 #include <cstdio>
 #include <string>

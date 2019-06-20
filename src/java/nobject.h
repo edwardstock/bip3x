@@ -8,7 +8,7 @@
 
 #include <jni.h>
 #include <string>
-#include <bip39/utils.h>
+#include <minter/bip39/utils.h>
 
 namespace minter {
 
