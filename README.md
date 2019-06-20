@@ -1,7 +1,8 @@
 # native-bip39 (with java bindings)
 Bip39 mnemonic C++ implementation. Contains java bindings.
 
-[![Build Status](https://travis-ci.org/edwardstock/native-bip39.svg?branch=master)](https://travis-ci.org/edwardstock/native-bip39)
+[![CircleCI](https://circleci.com/gh/edwardstock/native-bip39.svg?style=svg)](https://circleci.com/gh/edwardstock/native-bip39)
+
 
 
 ## Description
@@ -25,7 +26,7 @@ cmake ../ -DCMAKE_BUILD_TYPE=Release
 make
 ```
 * Pickup lib files:
-  * libbip39_core.[so | dylib] 
+  * libbip39.[a | so | dylib] 
   * libbip39_jni.[so | dylib] 
   
 ### Cross-compile for Windows under mingw64 (MSVC didn't tested yet)
@@ -43,8 +44,8 @@ cmake ../ -DCMAKE_BUILD_TYPE=Release \
 make
 ```
 * Pickup lib files:
-  * libbip39_core.dll
-  * libbip39_core.dll.a
+  * libbip39.dll
+  * libbip39.dll.a
   * libbip39_jni.dll
   * libbip39_jni.dll.a
   
@@ -54,9 +55,9 @@ Compiling under windows and mingw64 can be successfully, i didn't tested.
 ## Examples
 ### C++
 ```c++
-#include "minter/utils.h"
-#include "minter/Bip39Mnemonic.h"
-#include "minter/HDKeyEncoder.h"
+#include <minter/utils.h>
+#include <minter/Bip39Mnemonic.h>
+#include <minter/HDKeyEncoder.h>
 #include <iostream>
 
 using namespace minter;
@@ -171,7 +172,7 @@ add_subdirectory(bip39)
 
  and 
 ```cmake
-target_link_libraries(bip39_core)
+target_link_libraries(bip39)
 ```
 
 * Done!
