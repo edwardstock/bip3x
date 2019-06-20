@@ -32,16 +32,9 @@ jobs:
       - run: mkdir -p _build
       - run: export CC=/usr/bin/gcc
       - run: export CXX=/usr/bin/g++
-      - restore_cache:
-          keys:
-            - conan-dir-{{ checksum "conanfile.py" }}
       - run:
           name: Configuring
           command: conan remove --locks && cd _build && cmake .. -DCMAKE_BUILD_TYPE=Debug -DWITH_BIP39_TEST=ON
-      - save_cache:
-          key: conan-dir-{{ checksum "conanfile.py" }}
-          paths:
-            - /root/.conan
       - run:
           name: Testing
           command: $(which bash) .circleci/test.sh
@@ -81,16 +74,9 @@ jobs:
       - run: mkdir -p _build
       - run: export CC=/usr/bin/gcc
       - run: export CXX=/usr/bin/g++
-      - restore_cache:
-          keys:
-            - conan-dir-{{ checksum "conanfile.py" }}
       - run:
           name: Configuring
           command: conan remove --locks && cd _build && cmake .. -DCMAKE_BUILD_TYPE=Debug -DWITH_BIP39_TEST=ON
-      - save_cache:
-          key: conan-dir-{{ checksum "conanfile.py" }}
-          paths:
-            - /root/.conan
       - run:
           name: Testing
           command: $(which bash) .circleci/test.sh
