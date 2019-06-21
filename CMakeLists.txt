@@ -48,29 +48,6 @@ endif ()
 
 if (APPLE)
 	set(CMAKE_MACOSX_RPATH OFF)
-	#	# use, i.e. don't skip the full RPATH for the build tree
-#	set(CMAKE_SKIP_BUILD_RPATH FALSE)
-#
-#	# when building, don't use the install RPATH already
-#	# (but later on when installing)
-#	set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-#
-#	set(CMAKE_BUILD_RPATH "${CMAKE_BINARY_DIR}/lib")
-#	set(CMAKE_INSTALL_RPATH "${CMAKE_BUILD_RPATH}")
-#	message(STATUS "@rpath: ${CMAKE_BUILD_RPATH}")
-#
-#	# add the automatically determined parts of the RPATH
-#	# which point to directories outside the build tree to the install RPATH
-#	set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-
-	# the RPATH to be used when installing, but only if it's not a system directory
-	#	LIST(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
-	#	IF("${isSystemDir}" STREQUAL "-1")
-	#		message(STATUS "${isSystemDir}")
-	#		SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-	#	ENDIF("${isSystemDir}" STREQUAL "-1")
-
 endif (APPLE)
 
 if (SSE41_FOUND OR SSE42_FOUND)
@@ -190,9 +167,7 @@ else ()
 	add_library(${PROJECT_NAME} STATIC ${SOURCES})
 endif ()
 target_compile_options(${PROJECT_NAME} PUBLIC -Wno-shift-count-overflow -fPIC)
-set_target_properties(${PROJECT_NAME} PROPERTIES
-                      LANGUAGE CXX
-                      PUBLIC_HEADER "${HEADERS};${TREZOR_HEADERS}")
+set_target_properties(${PROJECT_NAME} PROPERTIES LANGUAGE CXX)
 
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -200,11 +175,16 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/li
 
 install(
 	TARGETS bip39
+	RUNTIME DESTINATION bin
 	LIBRARY DESTINATION lib
 	ARCHIVE DESTINATION lib
-	PUBLIC_HEADER DESTINATION include
 	COMPONENT main
 )
+
+install(
+	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/minter
+	DESTINATION include
+	COMPONENT main)
 
 # GO
 if (ENABLE_GO)
