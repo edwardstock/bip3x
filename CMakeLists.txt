@@ -1,10 +1,17 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.5)
 project(bip39
         VERSION 1.0.0
         DESCRIPTION "Native BIP39 Mnemonic implementation (with JNI bindings)"
         LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
+
+option(ENABLE_SHARED "Build shared core library instead of static" OFF)
+option(WITH_BIP39_TEST "Compile unit tests" OFF)
+option(ENABLE_JNI "Enable compiling for android/jre" ON)
+option(ENABLE_GO "Enable compiling pure C for golang bindings" ON)
+option(ENABLE_CONAN_BUILD "Enable conan dependencies" ON)
+
 execute_process(
 	COMMAND bash -c "echo ${CMAKE_PROJECT_VERSION} > ${CMAKE_CURRENT_SOURCE_DIR}/version"
 )
@@ -12,9 +19,11 @@ execute_process(
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(ConanInit)
 
+if(ENABLE_CONAN_BUILD)
 add_conan_remote(bincrafters https://api.bintray.com/conan/bincrafters/public-conan)
 add_conan_remote(edwardstock https://api.bintray.com/conan/edwardstock/conan-public)
 conan_init()
+endif()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -22,10 +31,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -pedantic")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -g0 -O2")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c99-extensions -Wno-unused-function -Wno-unused-const-variable")
 
-option(ENABLE_SHARED "Build shared core library instead of static" OFF)
-option(WITH_BIP39_TEST "Compile unit tests" OFF)
-option(ENABLE_JNI "Enable compiling for android/jre" ON)
-option(ENABLE_GO "Enable compiling pure C for golang bindings" ON)
+
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/configure.cmake)
 
@@ -269,7 +275,7 @@ if (${RUN})
 endif ()
 
 
-if (WITH_BIP39_TEST)
+if (WITH_BIP39_TEST AND ENABLE_CONAN_BUILD)
 	include(GoogleTest)
 
 	# main test
