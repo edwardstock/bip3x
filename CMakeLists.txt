@@ -161,9 +161,7 @@ else ()
 	add_library(${PROJECT_NAME} STATIC ${SOURCES})
 endif ()
 target_compile_options(${PROJECT_NAME} PUBLIC -Wno-shift-count-overflow -fPIC)
-set_target_properties(${PROJECT_NAME} PROPERTIES
-                      LANGUAGE CXX
-                      PUBLIC_HEADER "${HEADERS};${TREZOR_HEADERS}")
+set_target_properties(${PROJECT_NAME} PROPERTIES LANGUAGE CXX)
 
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -171,11 +169,16 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/li
 
 install(
 	TARGETS bip39
+	RUNTIME DESTINATION bin
 	LIBRARY DESTINATION lib
 	ARCHIVE DESTINATION lib
-	PUBLIC_HEADER DESTINATION include
 	COMPONENT main
 )
+
+install(
+	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/minter
+	DESTINATION include
+	COMPONENT main)
 
 # GO
 if (ENABLE_GO)

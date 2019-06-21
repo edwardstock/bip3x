@@ -2,9 +2,10 @@
 mkdir output
 mkdir -p _build_package && cd _build_package
 
+rm -rf _install
 
-cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=$(pwd)/_install
-cmake --build . -- -j4
+cmake .. -DCMAKE_BUILD_TYPE=Debug -DENABLE_GO=Off -DENABLE_JNI=Off -DCMAKE_INSTALL_PREFIX=$(pwd)/_install
+cmake --build . --target bip39 -- -j4
 cmake -DCOMPONENT=main -P cmake_install.cmake
 
 function to_lower() {
@@ -40,8 +41,8 @@ sysname=$(uname)
 sysname=$(to_lower ${sysname})
 gvers=$(git tag)
 ghash=$(git rev-parse --short=8 HEAD)
-fname_sufix="${gvers}_${ghash}_${sysname}_${arch}"
-fname="libbip39_${fname_sufix}.tar.gz"
+fname_sufix="v${gvers}-${ghash}-${sysname}-${arch}"
+fname="libbip39-${fname_sufix}.tar.gz"
 
 cd $(pwd)/_install
 
@@ -49,6 +50,9 @@ tar -zcvf ${fname} .
 
 mv ${fname} ../../output
 cd ../../output
+
+ls -lsa $(pwd)
+
 ghr ${VERS} .
 
 
