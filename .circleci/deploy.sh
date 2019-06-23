@@ -18,6 +18,8 @@ then
 fi
 
 ## Deploy in latest channel
-CONAN_LOCAL=1 conan create . edwardstock/latest
-CONAN_LOCAL=1 conan create . edwardstock/latest -s compiler.libcxx=libstdc++11
+CONAN_LOCAL=1 conan create . edwardstock/latest -s compiler.libcxx=libstdc++11 -s build_type=Debug --build=missing
+CONAN_LOCAL=1 conan create . edwardstock/latest -s compiler.libcxx=libstdc++11 -s build_type=Release --build=missing
+CONAN_LOCAL=1 conan create . edwardstock/latest -s compiler.libcxx=libstdc++ -s build_type=Debug --build=missing
+CONAN_LOCAL=1 conan create . edwardstock/latest -s compiler.libcxx=libstdc++ -s build_type=Release --build=missing
 CONAN_LOCAL=1 conan upload bip39/${VERS}@edwardstock/latest --all -r=edwardstock

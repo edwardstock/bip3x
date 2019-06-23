@@ -1,8 +1,10 @@
-/.idea
 /cmake-build-*
 /build
-/_build
+_build
+_build*
 /build_*
+output
+.idea
 .DS_STORE
 venv
 tools/openssl*
