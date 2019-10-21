@@ -58,16 +58,7 @@ TEST(CMinter, PrivateKeyFromMnemonic) {
     free_hdkey(rootKey);
     free_hdkey(extKey);
 
-    ASSERT_EQ(rootKey->public_key.data[0], 0);
-    ASSERT_EQ(rootKey->public_key.data[sizeof(minter_data33) - 1], 0);
-    ASSERT_EQ(rootKey->private_key.data[0], 0);
-    ASSERT_EQ(rootKey->private_key.data[sizeof(minter_data32) - 1], 0);
-    ASSERT_EQ(rootKey->chain_code.data[0], 0);
-    ASSERT_EQ(rootKey->chain_code.data[sizeof(minter_data32) - 1], 0);
-    ASSERT_EQ(rootKey->ext_private_key.data[0], 0);
-    ASSERT_EQ(rootKey->ext_private_key.data[sizeof(minter_bip32_key) - 1], 0);
-    ASSERT_EQ(rootKey->ext_public_key.data[0], 0);
-    ASSERT_EQ(rootKey->ext_public_key.data[sizeof(minter_bip32_key) - 1], 0);
+    // not both keys are freed
 }
 
 TEST(CMinter, GetLanguages) {
@@ -84,10 +75,6 @@ TEST(CMinter, GetLanguages) {
     ASSERT_STREQ(langs[6], "zht");
 
     minter_free_string_array(langs, n);
-
-    // here langs being invalid!
-    ASSERT_STRNE(langs[0], "en");
-    ASSERT_STRNE(langs[6], "zht");
 }
 
 TEST(CMinter, GetLanguageWords) {

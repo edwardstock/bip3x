@@ -4,7 +4,7 @@ mkdir -p _build_package && cd _build_package
 
 rm -rf _install
 
-cmake .. -DCMAKE_BUILD_TYPE=Debug -DENABLE_GO=Off -DENABLE_JNI=Off -DCMAKE_INSTALL_PREFIX=$(pwd)/_install
+cmake .. -DCMAKE_BUILD_TYPE=Debug -DENABLE_BIP39_C=Off -DENABLE_BIP39_TESTS=Off -DENABLE_BIP39_JNI=Off -DCMAKE_INSTALL_PREFIX=$(pwd)/_install
 cmake --build . --target bip39 -- -j4
 cmake -DCOMPONENT=main -P cmake_install.cmake
 

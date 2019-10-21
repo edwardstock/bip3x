@@ -34,7 +34,7 @@ jobs:
       - run: export CXX=/usr/bin/g++
       - run:
           name: Configuring
-          command: conan remove --locks && cd _build && cmake .. -DCMAKE_BUILD_TYPE=Debug -DWITH_BIP39_TEST=ON
+          command: conan remove --locks && cd _build && cmake .. -DCMAKE_BUILD_TYPE=Debug -DENABLE_BIP39_TESTS=ON
       - run:
           name: Testing
           command: $(which bash) .circleci/test.sh
@@ -76,7 +76,7 @@ jobs:
       - run: export CXX=/usr/bin/g++
       - run:
           name: Configuring
-          command: conan remove --locks && cd _build && cmake .. -DCMAKE_BUILD_TYPE=Debug -DWITH_BIP39_TEST=ON
+          command: conan remove --locks && cd _build && cmake .. -DCMAKE_BUILD_TYPE=Debug -DENABLE_BIP39_TESTS=ON
       - run:
           name: Testing
           command: $(which bash) .circleci/test.sh

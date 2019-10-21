@@ -10,4 +10,4 @@ venv
 tools/openssl*
 tools/arm*
 tools/OpenSSL_*
-src/golang/bip39_config.h
+src/bindings/bip39_config.h

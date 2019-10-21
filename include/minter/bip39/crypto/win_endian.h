@@ -2,7 +2,9 @@
 #define    _I386_ENDIAN_H_
 
 /* All the headers include this file. */
+#ifdef __MINGW32__
 #include <_mingw.h>
+#endif
 #include <sys/types.h>
 #include <cstddef>
 

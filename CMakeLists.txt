@@ -1,36 +1,47 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.4)
 project(bip39
-        VERSION 1.0.0
+        VERSION 1.1.0
         DESCRIPTION "Native BIP39 Mnemonic implementation (with JNI bindings)"
         LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 
-option(ENABLE_SHARED "Build shared core library instead of static" OFF)
-option(WITH_BIP39_TEST "Compile unit tests" OFF)
-option(ENABLE_JNI "Enable compiling for android/jre" ON)
-option(ENABLE_GO "Enable compiling pure C for golang bindings" ON)
-option(ENABLE_CONAN_BUILD "Enable conan dependencies" ON)
+set(ENABLE_BIP39_SHARED OFF CACHE BOOL "Build shared core library instead of static")
+set(ENABLE_BIP39_TESTS OFF CACHE BOOL "Compile unit google tests")
+set(ENABLE_BIP39_JNI ON CACHE BOOL "Enable compiling for android/jre")
+set(ENABLE_BIP39_C ON CACHE BOOL "Enable compiling pure C for other language bindings")
+set(ENABLE_BIP39_CONAN ON CACHE BOOL "Enable conan dependencies instead of system")
 
-execute_process(
-	COMMAND bash -c "echo ${CMAKE_PROJECT_VERSION} > ${CMAKE_CURRENT_SOURCE_DIR}/version"
-)
+if(WIN32)
+	execute_process(
+		COMMAND cmd /C "echo ${CMAKE_PROJECT_VERSION} > ${CMAKE_CURRENT_SOURCE_DIR}/version"
+	)
+	else()
+	execute_process(
+		COMMAND bash -c "echo ${CMAKE_PROJECT_VERSION} > ${CMAKE_CURRENT_SOURCE_DIR}/version"
+	)
+	endif()
+
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(ConanInit)
 
-if(ENABLE_CONAN_BUILD)
-add_conan_remote(bincrafters https://api.bintray.com/conan/bincrafters/public-conan)
-add_conan_remote(edwardstock https://api.bintray.com/conan/edwardstock/conan-public)
-conan_init()
-endif()
+if (ENABLE_BIP39_CONAN)
+	add_conan_remote(bincrafters https://api.bintray.com/conan/bincrafters/public-conan)
+	add_conan_remote(edwardstock https://api.bintray.com/conan/edwardstock/conan-public)
+	conan_init()
+endif ()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -pedantic")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -g0 -O2")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c99-extensions -Wno-unused-function -Wno-unused-const-variable")
 
+if (WIN32)
+	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+else ()
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c99-extensions -Wno-unused-function -Wno-unused-const-variable")
+endif ()
 
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/configure.cmake)
@@ -43,12 +54,8 @@ set(BTC_HEADERS)
 if (WIN32)
 	set(BTC_HEADERS
 	    include/minter/bip39/crypto/win_endian.h
-	    )
+)
 endif ()
-
-if (APPLE)
-	set(CMAKE_MACOSX_RPATH OFF)
-endif (APPLE)
 
 if (SSE41_FOUND OR SSE42_FOUND)
 	set(BTC_SRC ${BTC_SRC} src/crypto/sha256_sse4.cpp)
@@ -161,12 +168,18 @@ set(JNI_SOURCES
     )
 
 # Core
-if (ENABLE_SHARED)
+if (ENABLE_BIP39_SHARED)
 	add_library(${PROJECT_NAME} SHARED ${SOURCES})
 else ()
 	add_library(${PROJECT_NAME} STATIC ${SOURCES})
 endif ()
-target_compile_options(${PROJECT_NAME} PUBLIC -Wno-shift-count-overflow -fPIC)
+
+if (WIN32)
+	target_compile_options(${PROJECT_NAME} PUBLIC -fPIC)
+else ()
+	target_compile_options(${PROJECT_NAME} PUBLIC -Wno-shift-count-overflow -fPIC)
+endif ()
+
 set_target_properties(${PROJECT_NAME} PROPERTIES LANGUAGE CXX)
 
 
@@ -187,42 +200,47 @@ install(
 	COMPONENT main)
 
 # GO
-if (ENABLE_GO)
+if (ENABLE_BIP39_C)
 	set(BIP39_C_HEADERS
-	    src/golang/bip39_config.h
-	    src/golang/bip39.h
-	    src/golang/hdkey_encoder.h
+	    src/bindings/bip39_config.h
+	    src/bindings/bip39.h
+	    src/bindings/hdkey_encoder.h
 	    )
 
 	set(BIP39_C_SOURCES
 	    ${SOURCES}
 	    ${BIP39_C_HEADERS}
-	    src/golang/bip39.cpp
-	    src/golang/bip39.cpp
-	    src/golang/hdkey_encoder.cpp
+	    src/bindings/bip39.cpp
+	    src/bindings/bip39.cpp
+	    src/bindings/hdkey_encoder.cpp
 	    )
 
-	add_library(bip39_go ${BIP39_C_SOURCES})
-	set_target_properties(bip39_go PROPERTIES
+	add_library(cbip39 ${BIP39_C_SOURCES})
+	set_target_properties(cbip39 PROPERTIES
 	                      PUBLIC_HEADER "${BIP39_C_HEADERS}"
 	                      LANGUAGE C99)
 
-	target_compile_options(bip39_go PRIVATE -Wno-shift-count-overflow -std=c++14 -fPIC)
-	target_include_directories(bip39_go PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-	target_include_directories(bip39_go PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libs)
-	target_include_directories(bip39_go PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/golang)
+	if (WIN32)
+		target_compile_options(cbip39 PRIVATE -std=c++14 -fPIC)
+	else ()
+		target_compile_options(cbip39 PRIVATE -Wno-shift-count-overflow -std=c++14 -fPIC)
+	endif ()
+
+	target_include_directories(cbip39 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+	target_include_directories(cbip39 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libs)
+	target_include_directories(cbip39 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/bindings)
 
 	install(
-		TARGETS bip39_go
+		TARGETS cbip39
 		LIBRARY DESTINATION lib
 		ARCHIVE DESTINATION lib
 		PUBLIC_HEADER DESTINATION include
-		COMPONENT go-binding
+		COMPONENT c-binding
 	)
 endif ()
 
 # Android/JAVA
-if (ENABLE_JNI)
+if (ENABLE_BIP39_JNI)
 	if (ANDROID_PLATFORM)
 		add_definitions(-D__ANDROID__)
 		add_library(${PROJECT_NAME}_jni SHARED ${JNI_SOURCES})
@@ -236,7 +254,7 @@ if (ENABLE_JNI)
 			target_include_directories(${PROJECT_NAME}_jni PRIVATE ${JNI_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 
 			install(
-				TARGETS bip39_go
+				TARGETS cbip39
 				LIBRARY DESTINATION lib
 				ARCHIVE DESTINATION lib
 				PUBLIC_HEADER DESTINATION include
@@ -255,7 +273,7 @@ if (${RUN})
 endif ()
 
 
-if (WITH_BIP39_TEST AND ENABLE_CONAN_BUILD)
+if (ENABLE_BIP39_TESTS AND ENABLE_BIP39_CONAN)
 	include(GoogleTest)
 
 	# main test
@@ -264,7 +282,7 @@ if (WITH_BIP39_TEST AND ENABLE_CONAN_BUILD)
 	enable_testing()
 
 
-	if (ENABLE_GO)
+	if (ENABLE_BIP39_C)
 		add_executable(
 			${PROJECT_CC_TEST_NAME}
 			tests/minter_c_mnemonic_test.cpp
