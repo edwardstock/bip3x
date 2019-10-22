@@ -10,7 +10,19 @@
 #ifndef BIP39_BIP39_CONFIG_H_IN
 #define BIP39_BIP39_CONFIG_H_IN
 
-#define GOEXPORT     __attribute__((visibility("default")))
+#if BIP39_EXPORTING
+#   if _MSC_VER
+    #       define BIP39_API __declspec(dllexport)
+    #   else
+    #       define BIP39_API __attribute__((visibility("default")))
+    #   endif
+#else
+#   if _MSC_VER
+#       define BIP39_API __declspec(dllimport)
+#   else
+#       define BIP39_API
+#   endif
+#endif
 
 #cmakedefine HAVE_SYS_TYPES_H 1
 #ifdef HAVE_SYS_TYPES_H

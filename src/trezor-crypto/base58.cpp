@@ -21,6 +21,10 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifdef _MSC_VER
+typedef signed long ssize_t;
+#endif
+
 #include <string>
 #include <sys/types.h>
 #include <cstring>

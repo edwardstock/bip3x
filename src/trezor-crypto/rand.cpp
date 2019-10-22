@@ -45,7 +45,7 @@ uint32_t random32()
 // The following code is platform independent
 //
 
-void __attribute__((weak)) random_buffer(uint8_t *buf, size_t len)
+void ATTR_WEAK random_buffer(uint8_t *buf, size_t len)
 {
 	uint32_t r = 0;
 	for (size_t i = 0; i < len; i++) {

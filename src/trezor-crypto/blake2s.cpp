@@ -19,6 +19,7 @@
 #include "minter/crypto/blake2_common.h"
 #include "minter/crypto/memzero.h"
 
+#include "minter/crypto/packed_attr.h"
 typedef struct blake2s_param__
 {
     uint8_t  digest_length; /* 1 */
@@ -33,7 +34,8 @@ typedef struct blake2s_param__
     /* uint8_t  reserved[0]; */
     uint8_t  salt[BLAKE2S_SALTBYTES]; /* 24 */
     uint8_t  personal[BLAKE2S_PERSONALBYTES];  /* 32 */
-} __attribute__((packed)) blake2s_param;
+} PACKED blake2s_param;
+#include "minter/crypto/packed_attr_end.h"
 
 static const uint32_t blake2s_IV[8] =
 {

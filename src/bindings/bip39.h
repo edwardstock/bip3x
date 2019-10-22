@@ -28,18 +28,18 @@ typedef struct minter_mnemonic_result {
   enum minter_mnemonic_status status;
 } minter_mnemonic_result;
 
-GOEXPORT char **minter_get_languages(size_t *num_written);
-GOEXPORT void minter_free_string_array(char **arr, size_t len);
-GOEXPORT char **minter_get_words_from_language(const char *lang, size_t *num_written);
+BIP39_API char **minter_get_languages(size_t *num_written);
+BIP39_API void minter_free_string_array(char **arr, size_t len);
+BIP39_API char **minter_get_words_from_language(const char *lang, size_t *num_written);
 /// \brief
 /// \param lang
 /// \param entropy use by default: BIP39_ENTROPY_LEN_128
 /// \return
-GOEXPORT minter_mnemonic_result *minter_generate_mnemonic(const char *lang, size_t entropy);
-GOEXPORT void minter_free_mnemonic(minter_mnemonic_result *mnemonic);
-GOEXPORT minter_mnemonic_result *minter_encode_bytes(const uint8_t *src, const char *lang, size_t entropy);
-GOEXPORT void minter_words_to_seed(const char *words, uint8_t *out64, size_t *num_written);
-GOEXPORT bool minter_validate_words(const char *lang, const char *mnemonic);
+BIP39_API minter_mnemonic_result *minter_generate_mnemonic(const char *lang, size_t entropy);
+BIP39_API void minter_free_mnemonic(minter_mnemonic_result *mnemonic);
+BIP39_API minter_mnemonic_result *minter_encode_bytes(const uint8_t *src, const char *lang, size_t entropy);
+BIP39_API void minter_words_to_seed(const char *words, uint8_t *out64, size_t *num_written);
+BIP39_API bool minter_validate_words(const char *lang, const char *mnemonic);
 
 #ifdef __cplusplus
 }

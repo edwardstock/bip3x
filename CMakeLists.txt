@@ -34,19 +34,21 @@ endif ()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -pedantic")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -g0 -O2")
-
-if (WIN32)
-	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+if (MSVC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W2")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g0 -O2")
 else ()
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c99-extensions -Wno-unused-function -Wno-unused-const-variable")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wno-c99-extensions -Wno-unused-function -Wno-unused-const-variable")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -pedantic")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -g0 -O2")
 endif ()
 
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/configure.cmake)
 
 add_definitions(-DUSE_KECCAK=1 -DUSE_MONERO=1 -DNO_VALGRIND=1 -DUSE_ETHEREUM=1 -DUSE_GRAPHENE=1)
+add_definitions(-DBIP39_EXPORTING=1)
 
 set(BTC_SRC)
 set(BTC_HEADERS)
@@ -88,6 +90,8 @@ set(TREZOR_HEADERS
     include/minter/crypto/secp256k1.h
     include/minter/crypto/sha2.hpp
     include/minter/crypto/sha3.h
+    include/minter/crypto/packed_attr.h
+    include/minter/crypto/packed_attr_end.h
     )
 
 set(TREZOR_SOURCES
@@ -175,7 +179,7 @@ else ()
 endif ()
 
 if (WIN32)
-	target_compile_options(${PROJECT_NAME} PUBLIC -fPIC)
+
 else ()
 	target_compile_options(${PROJECT_NAME} PUBLIC -Wno-shift-count-overflow -fPIC)
 endif ()
@@ -199,7 +203,7 @@ install(
 	DESTINATION include
 	COMPONENT main)
 
-# GO
+# Pure C
 if (ENABLE_BIP39_C)
 	set(BIP39_C_HEADERS
 	    src/bindings/bip39_config.h
@@ -273,7 +277,21 @@ if (${RUN})
 endif ()
 
 
-if (ENABLE_BIP39_TESTS AND ENABLE_BIP39_CONAN)
+if (ENABLE_BIP39_TESTS)
+
+	set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+	if(NOT ENABLE_BIP39_CONAN)
+		add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/gtest)
+		add_library(CONAN_PKG::gtest ALIAS gtest)
+	endif()
+
+	if (MSVC)
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++14")
+	elseif (APPLE)
+		add_definitions(-DGTEST_USE_OWN_TR1_TUPLE)
+		add_definitions(-D__GLIBCXX__)
+	endif ()
+
 	include(GoogleTest)
 
 	# main test
@@ -281,16 +299,16 @@ if (ENABLE_BIP39_TESTS AND ENABLE_BIP39_CONAN)
 	set(PROJECT_CC_TEST_NAME "bip39_test_cc")
 	enable_testing()
 
-
 	if (ENABLE_BIP39_C)
 		add_executable(
 			${PROJECT_CC_TEST_NAME}
+			tests/main.cpp
 			tests/minter_c_mnemonic_test.cpp
 		)
 		target_link_libraries(${PROJECT_CC_TEST_NAME} ${PROJECT_NAME})
-		target_link_libraries(${PROJECT_CC_TEST_NAME} ${PROJECT_NAME}_go)
+		target_link_libraries(${PROJECT_CC_TEST_NAME} cbip39)
 		target_link_libraries(${PROJECT_CC_TEST_NAME} CONAN_PKG::gtest)
-		target_include_directories(${PROJECT_CC_TEST_NAME} PRIVATE ${BIP39_C_SOURCES})
+		target_include_directories(${PROJECT_CC_TEST_NAME} PUBLIC ${BIP39_C_HEADERS})
 		target_include_directories(${PROJECT_CC_TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 		target_include_directories(${PROJECT_CC_TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 		gtest_add_tests(TARGET ${PROJECT_CC_TEST_NAME})
@@ -298,7 +316,8 @@ if (ENABLE_BIP39_TESTS AND ENABLE_BIP39_CONAN)
 
 	add_executable(
 		${PROJECT_TEST_NAME}
-		tests/minter_mnemonic_test.cpp
+		tests/main.cpp
+		tests/minter_cxx_test.cpp
 	)
 	target_link_libraries(${PROJECT_TEST_NAME} ${PROJECT_NAME})
 	target_link_libraries(${PROJECT_TEST_NAME} CONAN_PKG::gtest)

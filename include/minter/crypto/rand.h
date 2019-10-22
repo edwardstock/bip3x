@@ -27,6 +27,12 @@
 #include <cstdint>
 #include <cstdlib>
 
+#ifdef _MSC_VER
+#define ATTR_WEAK
+#else
+#define ATTR_WEAK __attribute__((weak))
+#endif
+
 uint32_t random32(void);
 void random_buffer(uint8_t *buf, size_t len);
 

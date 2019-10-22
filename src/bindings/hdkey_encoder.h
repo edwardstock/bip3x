@@ -29,9 +29,9 @@ typedef struct minter_hdkey {
   uint32_t fingerprint;
 } minter_hdkey;
 
-GOEXPORT struct minter_hdkey *encoder_make_bip32_root_key(const struct minter_data64 *seed);
-GOEXPORT struct minter_hdkey *encoder_make_ext_key(const struct minter_hdkey *root_key, const char *derivation_path);
-GOEXPORT void free_hdkey(struct minter_hdkey *key);
+BIP39_API struct minter_hdkey *encoder_make_bip32_root_key(const struct minter_data64 *seed);
+BIP39_API struct minter_hdkey *encoder_make_ext_key(const struct minter_hdkey *root_key, const char *derivation_path);
+BIP39_API void free_hdkey(struct minter_hdkey *key);
 
 #ifdef __cplusplus
 }

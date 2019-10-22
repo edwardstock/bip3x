@@ -57,6 +57,46 @@
  * 2^256 and it must be a prime number.
  */
 
+
+
+#ifdef _MSC_VER
+#include <windows.h>
+#include <intrin.h>
+
+uint32_t __inline ctz( uint32_t value )
+{
+    DWORD trailing_zero = 0;
+
+    if ( _BitScanForward( &trailing_zero, value ) )
+    {
+        return trailing_zero;
+    }
+    else
+    {
+        // This is undefined, I better choose 32 than 0
+        return 32;
+    }
+}
+
+uint32_t __inline clz( uint32_t value )
+{
+    DWORD leading_zero = 0;
+
+    if ( _BitScanReverse( &leading_zero, value ) )
+    {
+        return 31 - leading_zero;
+    }
+    else
+    {
+        // Same remarks as above
+        return 32;
+    }
+}
+#else
+#define clz(x) __builtin_clz(x)
+#define ctz(x) __builtin_ctz(x)
+#endif
+
 inline uint32_t read_be(const uint8_t *data)
 {
 	return (((uint32_t)data[0]) << 24) |
@@ -186,13 +226,13 @@ void bn_read_uint64(uint64_t in_number, bignum256 *out_number)
 }
 
 // a must be normalized
-int bn_bitcount(const bignum256 *a)
+uint32_t bn_bitcount(const bignum256 *a)
 {
-	int i;
+	uint32_t i;
 	for (i = 8; i >= 0; i--) {
-		int tmp = a->val[i];
+		uint32_t tmp = a->val[i];
 		if (tmp != 0) {
-			return i * 30 + (32 - __builtin_clz(tmp));
+			return i * 30 + (32 - clz(tmp));
 		}
 	}
 	return 0;

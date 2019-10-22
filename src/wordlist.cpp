@@ -63,7 +63,12 @@ words *wordlist_init(const char *words) {
 }
 
 int binary_search_find_index(std::vector<std::string> v, const std::string &data) {
+    #ifdef _MSC_VER
+    auto it = std::lower_bound(v.begin(), v.end(), data, std::less<>());
+    #else
     auto it = std::lower_bound(v.begin(), v.end(), data);
+    #endif
+
     if (it == v.end() || *it != data) {
         return -1;
     } else {

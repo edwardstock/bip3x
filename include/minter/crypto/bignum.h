@@ -81,7 +81,7 @@ static inline void bn_copy(const bignum256 *a, bignum256 *b) {
 	*b = *a;
 }
 
-int bn_bitcount(const bignum256 *a);
+uint32_t bn_bitcount(const bignum256 *a);
 
 unsigned int bn_digitcount(const bignum256 *a);
 

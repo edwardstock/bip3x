@@ -41,8 +41,6 @@ TEST(CMinter, PrivateKeyFromMnemonic) {
 
     std::cout << "SEED: " << minter::bytesToHex(seed.data, 64) << std::endl;
 
-//    return;
-
     minter_hdkey *rootKey = makeRootKey(&seed);
     print_hdkey_data(rootKey, "ROOT");
     minter_hdkey *extKey = makeExtKey(rootKey);
@@ -57,8 +55,6 @@ TEST(CMinter, PrivateKeyFromMnemonic) {
 
     free_hdkey(rootKey);
     free_hdkey(extKey);
-
-    // not both keys are freed
 }
 
 TEST(CMinter, GetLanguages) {
@@ -82,17 +78,12 @@ TEST(CMinter, GetLanguageWords) {
     char **words = minter_get_words_from_language("en", &n);
 
     ASSERT_EQ(2048, n);
+    std::cout << "First word: " << words[0] << std::endl;
+    std::cout << "Last word:  " << words[n-1] << std::endl;
     ASSERT_STREQ(words[0], "abandon");
     ASSERT_STREQ(words[n - 1], "zoo");
 
     minter_free_string_array(words, n);
-
-    if (words) {
-        std::cout << "Check words values are not the same" << std::endl;
-        ASSERT_STRNE(*words, "abandon");
-        ASSERT_STRNE((*(words) + (n - 1)), "zoo");
-    }
-
 }
 
 TEST(CMinter, ValidateWords) {
