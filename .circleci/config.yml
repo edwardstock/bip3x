@@ -91,5 +91,4 @@ workflows:
   version: 2
   build_on_debian:
     jobs:
-      - build_jessie_amd64
       - build_stretch_amd64
