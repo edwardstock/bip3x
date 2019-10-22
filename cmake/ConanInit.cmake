@@ -1,15 +1,19 @@
-find_program(BASH_BIN bash REQUIRED)
 find_program(CONAN_BIN conan REQUIRED)
-find_program(GREP_BIN grep REQUIRED)
+find_program(BASH_BIN bash)
+find_program(GREP_BIN grep)
 
 macro (check_conan_remote_exist NAME)
-
-	execute_process(
-		COMMAND ${BASH_BIN} "-c" "${CONAN_BIN} remote list | ${GREP_BIN} ${NAME}"
-		ERROR_VARIABLE CONAN_REMOTE_GREP_ERR
-		OUTPUT_VARIABLE CONAN_REMOTE_GREP_OUT
-		RESULT_VARIABLE CONAN_REMOTE_GREP_RES
-	)
+	if (MSVC)
+		#it's not important, anyway, this function works wrong
+		set(CONAN_REMOTE_GREP_RES "${NAME}")
+	else ()
+		execute_process(
+			COMMAND ${BASH_BIN} "-c" "${CONAN_BIN} remote list | ${GREP_BIN} ${NAME}"
+			ERROR_VARIABLE CONAN_REMOTE_GREP_ERR
+			OUTPUT_VARIABLE CONAN_REMOTE_GREP_OUT
+			RESULT_VARIABLE CONAN_REMOTE_GREP_RES
+		)
+	endif ()
 
 	if (${CONAN_REMOTE_GREP_RES} STREQUAL "")
 		return()

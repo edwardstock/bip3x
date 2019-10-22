@@ -2,13 +2,17 @@
 // Created by edwar on 22-Oct-19.
 //
 
-#ifdef PACKED
-#define TMP_PACKED PACKED
+#ifndef BIP39_PACKET_ATTR_H
+#define BIP39_PACKET_ATTR_H
+
+#ifndef _MSC_VER
+#ifndef PACKED
+#define PACKED __attribute__ ((__packed__))
+#endif
+#else
+#ifndef PACKED
+#define PACKED
+#endif
 #endif
 
-#ifdef _MSC_VER // for WIN
-#define PACKED
-#pragma pack(push,1)
-#else // GNU
-#define PACKED __attribute__ ((__packed__))
-#endif // END
+#endif //BIP39_PACKET_ATTR_H

@@ -38,6 +38,8 @@ if (MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W2")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g0 -O2")
+	string(REGEX REPLACE "\\/W3" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+	add_compile_options(/wd4146)
 else ()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wno-c99-extensions -Wno-unused-function -Wno-unused-const-variable")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -pedantic")
@@ -91,7 +93,6 @@ set(TREZOR_HEADERS
     include/minter/crypto/sha2.hpp
     include/minter/crypto/sha3.h
     include/minter/crypto/packed_attr.h
-    include/minter/crypto/packed_attr_end.h
     )
 
 set(TREZOR_SOURCES
@@ -223,12 +224,6 @@ if (ENABLE_BIP39_C)
 	set_target_properties(cbip39 PROPERTIES
 	                      PUBLIC_HEADER "${BIP39_C_HEADERS}"
 	                      LANGUAGE C99)
-
-	if (WIN32)
-		target_compile_options(cbip39 PRIVATE -std=c++14 -fPIC)
-	else ()
-		target_compile_options(cbip39 PRIVATE -Wno-shift-count-overflow -std=c++14 -fPIC)
-	endif ()
 
 	target_include_directories(cbip39 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 	target_include_directories(cbip39 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libs)
