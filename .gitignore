@@ -10,4 +10,4 @@ venv
 tools/openssl*
 tools/arm*
 tools/OpenSSL_*
-src/bindings/bip39_config.h
+src/bindings/cbip39_config.h

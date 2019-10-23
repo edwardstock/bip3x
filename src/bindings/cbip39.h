@@ -5,7 +5,7 @@
 extern "C" {
 #endif //__cplusplus
 
-#include "bip39_config.h"
+#include "cbip39_config.h"
 
 #define BIP39_ENTROPY_LEN_128 16
 #define BIP39_ENTROPY_LEN_160 20

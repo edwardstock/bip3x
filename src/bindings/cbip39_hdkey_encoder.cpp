@@ -8,7 +8,7 @@
  */
 
 #include <minter/bip39/HDKeyEncoder.h>
-#include "hdkey_encoder.h"
+#include "cbip39_hdkey_encoder.h"
 
 minter_hdkey *copy_hdkey(minter::HDKey &&res) {
     auto *out = new minter_hdkey;

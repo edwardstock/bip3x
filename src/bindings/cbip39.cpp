@@ -9,7 +9,7 @@
 
 #include <minter/bip39/Bip39Mnemonic.h>
 #include <cstdlib>
-#include "bip39.h"
+#include "cbip39.h"
 
 char **minter_get_languages(size_t *num_written) {
     std::vector<std::string> tmp = minter::Bip39Mnemonic::getLanguages();

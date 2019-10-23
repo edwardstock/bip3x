@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 project(bip39
-        VERSION 1.1.0
+        VERSION 1.2.0
         DESCRIPTION "Native BIP39 Mnemonic implementation (with JNI bindings)"
         LANGUAGES CXX)
 
@@ -207,17 +207,17 @@ install(
 # Pure C
 if (ENABLE_BIP39_C)
 	set(BIP39_C_HEADERS
-	    src/bindings/bip39_config.h
-	    src/bindings/bip39.h
-	    src/bindings/hdkey_encoder.h
+	    src/bindings/cbip39_config.h
+	    src/bindings/cbip39.h
+	    src/bindings/cbip39_hdkey_encoder.h
 	    )
 
 	set(BIP39_C_SOURCES
 	    ${SOURCES}
 	    ${BIP39_C_HEADERS}
-	    src/bindings/bip39.cpp
-	    src/bindings/bip39.cpp
-	    src/bindings/hdkey_encoder.cpp
+	    src/bindings/cbip39.cpp
+	    src/bindings/cbip39.cpp
+	    src/bindings/cbip39_hdkey_encoder.cpp
 	    )
 
 	add_library(cbip39 ${BIP39_C_SOURCES})
@@ -231,6 +231,7 @@ if (ENABLE_BIP39_C)
 
 	install(
 		TARGETS cbip39
+		RUNTIME DESTINATION bin
 		LIBRARY DESTINATION lib
 		ARCHIVE DESTINATION lib
 		PUBLIC_HEADER DESTINATION include

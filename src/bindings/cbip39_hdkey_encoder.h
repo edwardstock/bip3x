@@ -7,8 +7,8 @@
  * \link   https://github.com/edwardstock
  */
 
-#ifndef BIP39_HDKEY_ENCODER_H
-#define BIP39_HDKEY_ENCODER_H
+#ifndef BIP39_CBIP39_HDKEY_ENCODER_H
+#define BIP39_CBIP39_HDKEY_ENCODER_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -16,7 +16,7 @@ extern "C" {
 
 #include <stddef.h>
 #include <stdlib.h>
-#include "bip39_config.h"
+#include "cbip39_config.h"
 
 typedef struct minter_hdkey {
   minter_data33 public_key;
@@ -37,4 +37,4 @@ BIP39_API void free_hdkey(struct minter_hdkey *key);
 }
 #endif //__cplusplus
 
-#endif //BIP39_HDKEY_ENCODER_H
+#endif //BIP39_CBIP39_HDKEY_ENCODER_H

@@ -29,7 +29,7 @@ make
   * libbip39.[a | so | dylib] 
   * libbip39_jni.[so | dylib] 
   
-### Cross-compile for Windows under mingw64 (MSVC didn't tested yet)
+### Cross-compile for Windows under mingw64
 * Setup mingw64 for linux or macOS
 * Setup Windows JDK (or just copy from windows machine to somewhere path)
 * Build
@@ -49,7 +49,23 @@ make
   * libbip39_jni.dll
   * libbip39_jni.dll.a
   
-Compiling under windows and mingw64 can be successfully, i didn't tested.
+
+### Build under the Windows
+**Requirements**
+* CMake for Windows
+* Visual Studio (at least community edition), tested only version 2019
+* Visual Studio C++ compiler
+* To build tests, you could install Conan OR just set configure-time flag `-DENABLE_BIP39_CONAN=Off` and resolve submodules: `git submodule update --init --recursive`
+
+Step-by-step:
+```bash
+cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="D:\path\you\want\to\install\libs"
+cmake --build .
+cmake --build . --target install
+```
+
+Then pick-up lib files and headers from **D:\path\you\want\to\install\libs**
+
 
 
 ## Examples

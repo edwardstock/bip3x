@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
-mkdir output
+rootDir=$(pwd)
+mkdir -p output
 mkdir -p _build_package && cd _build_package
 
+rm -rf ${rootDir}/output/*
 rm -rf _install
 
-cmake .. -DCMAKE_BUILD_TYPE=Debug -DENABLE_BIP39_C=Off -DENABLE_BIP39_TESTS=Off -DENABLE_BIP39_JNI=Off -DCMAKE_INSTALL_PREFIX=$(pwd)/_install
-cmake --build . --target bip39 -- -j4
-cmake -DCOMPONENT=main -P cmake_install.cmake
+cmake .. -DCMAKE_BUILD_TYPE=Debug -DENABLE_BIP39_C=On -DENABLE_BIP39_TESTS=Off -DENABLE_BIP39_JNI=Off -DCMAKE_INSTALL_PREFIX=$(pwd)/_install
+cmake --build . -- -j4
+cmake --build . --target install
 
 function to_lower() {
   local outRes=$(echo ${1} | awk '{ for ( i=1; i <= NF; i++) {   sub(".", substr(tolower($i),1,1) , $i)  } print }')
@@ -39,17 +41,17 @@ fi
 arch=$(uname -m)
 sysname=$(uname)
 sysname=$(to_lower ${sysname})
-gvers=$(git tag)
+gvers=$(git tag | sort -r | head -n 1)
 ghash=$(git rev-parse --short=8 HEAD)
 fname_sufix="v${gvers}-${ghash}-${sysname}-${arch}"
 fname="libbip39-${fname_sufix}.tar.gz"
 
 cd $(pwd)/_install
 
-tar -zcvf ${fname} .
+tar -zcvf "${fname}" .
 
-mv ${fname} ../../output
-cd ../../output
+mv "${fname}" ${rootDir}/output/
+cd ${rootDir}/output
 
 ls -lsa $(pwd)
 

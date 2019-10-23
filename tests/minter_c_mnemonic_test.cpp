@@ -8,8 +8,8 @@
  */
 
 #include <gtest/gtest.h>
-#include <bip39.h>
-#include <hdkey_encoder.h>
+#include <cbip39.h>
+#include <cbip39_hdkey_encoder.h>
 #include <minter/bip39/utils.h>
 
 minter_hdkey *makeRootKey(const struct minter_data64 *seed) {
