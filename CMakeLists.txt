@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.4)
 project(bip39
-        VERSION 1.2.0
-        DESCRIPTION "Native BIP39 Mnemonic implementation (with JNI bindings)"
+        VERSION 1.2.1
+        DESCRIPTION "Native BIP39 Mnemonic implementation (with JNI and pure C bindings)"
         LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)

@@ -24,12 +24,12 @@ class Bip39Conan(ConanFile):
     options = {
         "shared": [True, False],
         "enableJNI": [True, False],
-        "enableCGO": [True, False],
+        "enableC": [True, False],
     }
     default_options = {
         "shared": False,
         "enableJNI": False,
-        "enableCGO": False,
+        "enableC": True,
     }
     exports = "version"
     exports_sources = (
@@ -59,31 +59,56 @@ class Bip39Conan(ConanFile):
     def build(self):
         cmake = CMake(self)
         opts = {
-            'WITH_BIP39_TEST': 'Off',
+            'ENABLE_BIP39_TESTS': 'Off',
             'CMAKE_BUILD_TYPE': 'Release',
-            'ENABLE_GO': 'Off',
-            'ENABLE_JNI': 'Off',
+            'ENABLE_BIP39_C': 'On',
+            'ENABLE_BIP39_JNI': 'Off',
+            'ENABLE_BIP39_SHARED': 'Off'
         }
 
         if self.options["shared"]:
-            opts['ENABLE_SHARED'] = 'On'
+            opts['ENABLE_BIP39_SHARED'] = 'On'
 
         if self.options["enableJNI"]:
-            opts['ENABLE_JNI'] = 'On'
+            opts['ENABLE_BIP39_JNI'] = 'On'
 
-        if self.options['enableCGO']:
-            opts['ENABLE_GO'] = 'On'
+        if self.options['enableC']:
+            opts['ENABLE_BIP39_C'] = 'On'
 
         cmake.configure(defs=opts)
-        cmake.build()
+        if self.settings.compiler == "Visual Studio":
+            cmake.build(args=['--config', self.settings.get_safe("build_type")])
+        else:
+            cmake.build()
 
     def package(self):
-        self.copy("*", dst="include", src="include", keep_path=True)
-        self.copy("libbip39*.dylib", src="lib", dst="lib", keep_path=False)
-        self.copy("libbip39*.so", src="lib", dst="lib", keep_path=False)
-        self.copy("libbip39*.a", src="lib", dst="lib", keep_path=False)
-        self.copy("libbip39*.dll", src="lib", dst="lib", keep_path=False)
-        self.copy("libbip39*.lib", src="lib", dst="lib", keep_path=False)
+        if self.options.enableC:
+            self.copy("*.h", dst="include", src="src/bindings", keep_path=True)
+            self.copy("*.hpp", dst="include", src="src/bindings", keep_path=True)
 
-    def package_info(self):
-        self.cpp_info.libs = tools.collect_libs(self)
+        self.copy("*", dst="include", src="include", keep_path=True)
+        self.copy("*.dylib", src="lib", dst="lib", keep_path=False)
+        self.copy("*.so", src="lib", dst="lib", keep_path=False)
+        self.copy("*.a", src="lib", dst="lib", keep_path=False)
+        self.copy("*.lib", src="lib", dst="lib", keep_path=False)
+        self.copy("*.lib", src="Release", dst="lib", keep_path=False)
+        self.copy("*.lib", src="Debug", dst="lib", keep_path=False)
+        self.copy("*.dll", src="lib", dst="lib", keep_path=False)
+        self.copy("*.dll", src="Release", dst="lib", keep_path=False)
+        self.copy("*.dll", src="Debug", dst="lib", keep_path=False)
+        self.copy("*.dll.a", src="lib", dst="lib", keep_path=False)
+        self.copy("*.dll.a", src="Release", dst="lib", keep_path=False)
+        self.copy("*.dll.a", src="Debig", dst="lib", keep_path=False)
+        self.copy("*.exp", src="lib", dst="lib", keep_path=False)
+        self.copy("*.exp", src="Release", dst="lib", keep_path=False)
+        self.copy("*.exp", src="Debug", dst="lib", keep_path=False)
+        self.copy("*.ilk", src="lib", dst="lib", keep_path=False)
+        self.copy("*.ilk", src="Release", dst="lib", keep_path=False)
+        self.copy("*.ilk", src="Debug", dst="lib", keep_path=False)
+        self.copy("*.pdb", src="lib", dst="lib", keep_path=False)
+        self.copy("*.pdb", src="Release", dst="lib", keep_path=False)
+        self.copy("*.pdb", src="Debug", dst="lib", keep_path=False)
+
+
+def package_info(self):
+    self.cpp_info.libs = tools.collect_libs(self)

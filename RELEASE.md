@@ -1,3 +1,6 @@
+## 1.2.1
+ - Correct packaging MSVC built libraries
+
 ## 1.2.0
  - Renamed and standartized c-headers (prefix c)
  - Fixed github release package script
