@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 project(bip39
-        VERSION 1.2.2
+        VERSION 1.2.3
         DESCRIPTION "Native BIP39 Mnemonic implementation (with JNI and pure C bindings)"
         LANGUAGES CXX)
 
@@ -122,7 +122,6 @@ set(TREZOR_SOURCES
     src/trezor-crypto/hmac.cpp
     src/trezor-crypto/memzero.cpp
     src/trezor-crypto/pbkdf2.cpp
-    #src/trezor-crypto/rfc6979.cpp
     src/trezor-crypto/rand.cpp
     src/trezor-crypto/ripemd160.cpp
     src/trezor-crypto/script.cpp
@@ -185,12 +184,12 @@ set(JNI_SOURCES
     )
 
 configure_file(
-	${CMAKE_CURRENT_SOURCE_DIR}/include_cfg/bip39_core.h.in
+	${CMAKE_CURRENT_SOURCE_DIR}/cfg/bip39_core.h.in
 	${CMAKE_CURRENT_SOURCE_DIR}/include/minter/bip39/bip39_core.h
 )
 
 configure_file(
-	${CMAKE_CURRENT_SOURCE_DIR}/include_cfg/cbip39_config.h.in
+	${CMAKE_CURRENT_SOURCE_DIR}/cfg/cbip39_config.h.in
 	${CMAKE_CURRENT_SOURCE_DIR}/src/bindings/cbip39_config.h
 )
 

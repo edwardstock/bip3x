@@ -35,7 +35,7 @@ class Bip39Conan(ConanFile):
     exports_sources = (
         "cmake/*",
         "include/*",
-        "include_cfg/*"
+        "cfg/*",
         "tests/*",
         "src/*",
         "libs/*",
