@@ -24,7 +24,8 @@
 #define __SCRIPT_H__
 
 #include <cstdint>
+#include "minter/bip39/bip39_core.h"
 
-int script_output_to_address(const uint8_t *script, int scriptlen, char *addr, int addrsize);
+BIP39_CORE_API int script_output_to_address(const uint8_t *script, int scriptlen, char *addr, int addrsize);
 
 #endif

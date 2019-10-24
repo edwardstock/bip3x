@@ -26,6 +26,7 @@
 
 #include <cstdint>
 #include <cstdlib>
+#include "minter/bip39/bip39_core.h"
 
 #ifdef _MSC_VER
 #define ATTR_WEAK
@@ -33,10 +34,10 @@
 #define ATTR_WEAK __attribute__((weak))
 #endif
 
-uint32_t random32(void);
-void random_buffer(uint8_t *buf, size_t len);
+BIP39_CORE_API uint32_t random32(void);
+BIP39_CORE_API void random_buffer(uint8_t *buf, size_t len);
 
-uint32_t random_uniform(uint32_t n);
-void random_permute(char *buf, size_t len);
+BIP39_CORE_API uint32_t random_uniform(uint32_t n);
+BIP39_CORE_API void random_permute(char *buf, size_t len);
 
 #endif

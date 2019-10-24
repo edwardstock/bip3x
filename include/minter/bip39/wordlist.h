@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <vector>
 #include <string>
+#include <cstdint>
+#include "bip39_core.h"
 
 /**
  * struct words- structure representing a parsed list of words
@@ -39,12 +41,12 @@ extern const struct words jp_words;
  *
  * The returned structure contains a copy of @text.
  */
-words *wordlist_init(const char *text);
+BIP39_CORE_API words *wordlist_init(const char *text);
 
 /**
  * Search word in words
  */
-int binary_search_find_index(std::vector<std::string> v, const std::string &data);
+BIP39_CORE_API int binary_search_find_index(std::vector<std::string> v, const std::string &data);
 
 /**
  * Find a word in a wordlist.
@@ -55,7 +57,7 @@ int binary_search_find_index(std::vector<std::string> v, const std::string &data
  * Returns 0 if not found, idx + 1 otherwise.
  * @see wordlist_init.
  */
-size_t wordlist_lookup_word(
+BIP39_CORE_API size_t wordlist_lookup_word(
     const struct words *w,
     const std::string &word);
 
@@ -67,7 +69,7 @@ size_t wordlist_lookup_word(
  *
  * Returns NULL if not found, the word otherwise.
  */
-const char *wordlist_lookup_index(
+BIP39_CORE_API const char *wordlist_lookup_index(
     const struct words *w,
     size_t idx);
 
@@ -75,6 +77,6 @@ const char *wordlist_lookup_index(
  * wordlist_free - Free a words structure.
  * @w: structure to free.
  */
-void wordlist_free(struct words *w);
+BIP39_CORE_API void wordlist_free(struct words *w);
 
 #endif /* LIBWALLY_WORDLIST_H */

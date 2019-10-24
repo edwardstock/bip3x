@@ -8,9 +8,10 @@
 #include <cstdint>
 #include <cstdlib>
 #include <string>
+#include "minter/bip39/bip39_core.h"
 
 /** A hasher class for SHA-256. */
-class CSHA256
+class BIP39_CORE_API CSHA256
 {
 private:
     uint32_t s[8];
@@ -29,6 +30,6 @@ public:
 /** Autodetect the best available SHA256 implementation.
  *  Returns the name of the implementation.
  */
-std::string SHA256AutoDetect();
+BIP39_CORE_API std::string SHA256AutoDetect();
 
 #endif // BITCOIN_CRYPTO_SHA256_H

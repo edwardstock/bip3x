@@ -30,7 +30,7 @@ extern "C" {
  *
  * ..note:: The string returned should be freed using `wally_free_string`.
  */
-MINTER_BIP39_CORE_API int bip39_get_languages(std::vector<std::string> &output);
+BIP39_CORE_API int bip39_get_languages(std::vector<std::string> &output);
 
 /**
  * Get the default word list for a language.
@@ -40,7 +40,7 @@ MINTER_BIP39_CORE_API int bip39_get_languages(std::vector<std::string> &output);
  *
  * .. note:: The returned structure should not be freed or modified.
  */
-MINTER_BIP39_CORE_API int bip39_get_wordlist(
+BIP39_CORE_API int bip39_get_wordlist(
     const char *lang,
     struct words **output);
 
@@ -48,7 +48,7 @@ MINTER_BIP39_CORE_API int bip39_get_wordlist(
  * \brief Get length o languages
  * \return
  */
-MINTER_BIP39_CORE_API int bip39_get_languages_size();
+BIP39_CORE_API int bip39_get_languages_size();
 
 /**
  * Get the 'index'th word from a word list.
@@ -59,7 +59,7 @@ MINTER_BIP39_CORE_API int bip39_get_languages_size();
  *
  * The string returned should be freed using `wally_free_string`.
  */
-MINTER_BIP39_CORE_API int bip39_get_word(
+BIP39_CORE_API int bip39_get_word(
     const struct words *w,
     size_t index,
     std::string &output);
@@ -74,7 +74,7 @@ MINTER_BIP39_CORE_API int bip39_get_word(
  *
  * .. note:: The string returned should be freed using `wally_free_string`.
  */
-MINTER_BIP39_CORE_API int bip39_mnemonic_from_bytes(
+BIP39_CORE_API int bip39_mnemonic_from_bytes(
     const struct words *w,
     const unsigned char *bytes,
     size_t bytes_len,
@@ -91,7 +91,7 @@ size_t bip39_checksum(const unsigned char *bytes, size_t bytes_len, size_t mask)
  * :param len: The length of ``bytes_out`` in bytes.
  * :param written: Destination for the number of bytes written to ``bytes_out``.
  */
-MINTER_BIP39_CORE_API int bip39_mnemonic_to_bytes(
+BIP39_CORE_API int bip39_mnemonic_to_bytes(
     const struct words *w,
     const char *mnemonic,
     unsigned char *bytes_out,
@@ -104,7 +104,7 @@ MINTER_BIP39_CORE_API int bip39_mnemonic_to_bytes(
  * :param w: Word list to use. Pass NULL to use the default English list.
  * :param mnemonic: Mnemonic to validate.
  */
-MINTER_BIP39_CORE_API int bip39_mnemonic_validate(
+BIP39_CORE_API int bip39_mnemonic_validate(
     const struct words *w,
     const char *mnemonic);
 
@@ -118,7 +118,7 @@ MINTER_BIP39_CORE_API int bip39_mnemonic_validate(
  *|      be ``BIP39_SEED_LEN_512``.
  * :param written: Destination for the number of bytes written to ``bytes_out``.
  */
-MINTER_BIP39_CORE_API int bip39_mnemonic_to_seed(
+BIP39_CORE_API int bip39_mnemonic_to_seed(
     const char *mnemonic,
     const char *password,
     unsigned char *bytes_out,

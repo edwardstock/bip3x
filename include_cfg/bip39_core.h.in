@@ -12,19 +12,24 @@
 #include <cstddef>
 #include <cstdint>
 
-#ifndef MINTER_BIP39_CORE_API
-# if defined(_WIN32)
-#  ifdef WALLY_CORE_BUILD
-#   define MINTER_BIP39_CORE_API __declspec(dllexport)
+#cmakedefine BIP39_SHARED
+#ifdef BIP39_SHARED
+#  ifdef BIP39_EXPORTING
+#   if _MSC_VER
+#       define BIP39_CORE_API __declspec(dllexport)
+#   else
+#       define BIP39_CORE_API __attribute__((visibility("default")))
+#   endif
 #  else
-#   define MINTER_BIP39_CORE_API
+#   if _MSC_VER
+#       define BIP39_CORE_API __declspec(dllimport)
+#   else
+#       define BIP39_CORE_API
+#   endif
 #  endif
-# elif defined(__GNUC__) && defined(WALLY_CORE_BUILD)
-#  define MINTER_BIP39_CORE_API __attribute__ ((visibility ("default")))
-# else
-#  define MINTER_BIP39_CORE_API
-# endif
-#endif
+#else
+#define BIP39_CORE_API
+#endif // BIP39_SHARED
 
 #if defined(WIN32) && !defined(bzero)
 #include <cstring>

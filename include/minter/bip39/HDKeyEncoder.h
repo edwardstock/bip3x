@@ -8,12 +8,12 @@
 #ifndef BIP39_KEY_ENCODER_H
 #define BIP39_KEY_ENCODER_H
 
-#include <minter/crypto/secp256k1.h>
-#include <minter/crypto/base58.h>
-#include <minter/crypto/ecdsa.h>
-#include <minter/crypto/hmac.h>
-#include <minter/crypto/curves.h>
-
+#include "minter/crypto/secp256k1.h"
+#include "minter/crypto/base58.h"
+#include "minter/crypto/ecdsa.h"
+#include "minter/crypto/hmac.h"
+#include "minter/crypto/curves.h"
+#include "bip39_core.h"
 #include "utils.h"
 #include "Bip39Mnemonic.h"
 
@@ -28,34 +28,41 @@ struct BTCNetwork {
   uint8_t wif;
 };
 
-class Derivation {
- public:
-    Derivation(const std::string &path) : path(path) { }
-    Derivation(std::string &&path) : path(std::move(path)) { }
-    Derivation(const char* path): path(std::string(path)) { }
-
-    std::string path;
-
+static const BTCNetwork MainNet = {
+    "bitcoin",
+    "bc",
+    {0x0488b21e, 0x0488ade4},
+    0x00,
+    0x05,
+    0x80
 };
 
-class HDKey {
- public:
-    HDKey() :
-        depth(0),
-        index(0),
-        fingerprint(0),
-        curve(&secp256k1_info) { };
-    ~HDKey() {
-        clear();
-    }
+static const BTCNetwork TestNet = {
+    "testnet",
+    "tb",
+    {0x043587cf, 0x04358394},
+    0x6f,
+    0xc4,
+    0xef
+};
 
-    void clear() {
-        publicKey.clear();
-        privateKey.clear();
-        chainCode.clear();
-        extPrivateKey.clear();
-        extPublicKey.clear();
-    }
+static const std::string MASTER_SECRET = "Bitcoin seed";
+
+class BIP39_CORE_API Derivation {
+ public:
+    Derivation(const std::string &path);
+    Derivation(std::string &&path);
+    Derivation(const char* path);
+
+    std::string path;
+};
+
+class BIP39_CORE_API HDKey {
+ public:
+    HDKey();
+    ~HDKey();
+
+    void clear();
 
     FixedData<33> publicKey;
     FixedData<32> privateKey;
@@ -69,20 +76,12 @@ class HDKey {
     const curve_info *curve;
 };
 
-class HDKeyEncoder {
- private:
-    static const std::string masterSecret;
-    static const BTCNetwork networks[2];
-    static const Derivation EthereumAccountDerivation;
-
+class BIP39_CORE_API HDKeyEncoder {
  public:
-    static const BTCNetwork MainNet;
-    static const BTCNetwork TestNet;
-
     static Data64 makeBip39Seed(const std::string &mnemonicWords);
     static Data64 makeBip39Seed(const std::vector<std::string> &mnemonicWords);
-    static HDKey makeBip32RootKey(const char* mnemonic, BTCNetwork net = MainNet);
-    static HDKey makeBip32RootKey(const Data64 &seed, BTCNetwork net = MainNet);
+    static HDKey makeBip32RootKey(const char* mnemonic, BTCNetwork net = minter::MainNet);
+    static HDKey makeBip32RootKey(const Data64 &seed, BTCNetwork net = minter::MainNet);
     static HDKey makeExtendedKey(const HDKey &rootKey, const Derivation &derivation);
 
     static std::string getAddress(const HDKey &key);

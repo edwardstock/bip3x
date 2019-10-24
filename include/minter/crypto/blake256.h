@@ -33,6 +33,7 @@
 
 #include <cstdint>
 #include <cstddef>
+#include "minter/bip39/bip39_core.h"
 
 #define BLAKE256_DIGEST_LENGTH 32
 #define BLAKE256_BLOCK_LENGTH  64
@@ -44,10 +45,10 @@ typedef struct {
   uint8_t buf[64];
 } BLAKE256_CTX;
 
-void blake256_Init(BLAKE256_CTX *);
-void blake256_Update(BLAKE256_CTX *, const uint8_t *, size_t);
-void blake256_Final(BLAKE256_CTX *, uint8_t *);
+BIP39_CORE_API void blake256_Init(BLAKE256_CTX *);
+BIP39_CORE_API void blake256_Update(BLAKE256_CTX *, const uint8_t *, size_t);
+BIP39_CORE_API void blake256_Final(BLAKE256_CTX *, uint8_t *);
 
-void blake256(const uint8_t *, size_t, uint8_t *);
+BIP39_CORE_API void blake256(const uint8_t *, size_t, uint8_t *);
 
 #endif /* __BLAKE256_H__ */

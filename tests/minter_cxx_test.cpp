@@ -15,7 +15,7 @@
 using namespace minter;
 
 HDKey makeRootKey(const Data64 &seed) {
-    return minter::HDKeyEncoder::makeBip32RootKey(seed, minter::HDKeyEncoder::MainNet);
+    return minter::HDKeyEncoder::makeBip32RootKey(seed, minter::MainNet);
 }
 
 HDKey makeExtKey(const HDKey &rootHdKey) {

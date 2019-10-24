@@ -7,30 +7,7 @@
 
 #include "minter/bip39/HDKeyEncoder.h"
 #include "minter/bip39/uint256_t.hpp"
-#include <minter/crypto/ripemd160.h>
-
-const std::string minter::HDKeyEncoder::masterSecret = "Bitcoin seed";
-const minter::BTCNetwork minter::HDKeyEncoder::networks[] = {
-    {
-        "bitcoin",
-        "bc",
-        {0x0488b21e, 0x0488ade4},
-        0x00,
-        0x05,
-        0x80
-    },
-    {
-        "testnet",
-        "tb",
-        {0x043587cf, 0x04358394},
-        0x6f,
-        0xc4,
-        0xef
-    }
-};
-
-const minter::BTCNetwork minter::HDKeyEncoder::MainNet = minter::HDKeyEncoder::networks[0];
-const minter::BTCNetwork minter::HDKeyEncoder::TestNet = minter::HDKeyEncoder::networks[1];
+#include "minter/crypto/ripemd160.h"
 
 minter::Data64 minter::HDKeyEncoder::makeBip39Seed(const std::string &mnemonicWords) {
     size_t n;
@@ -276,3 +253,25 @@ std::string minter::HDKeyEncoder::getAddress(const minter::HDKey &key) {
     return std::string(addr);
 }
 
+
+minter::HDKey::HDKey() :
+    depth(0),
+    index(0),
+    fingerprint(0),
+    curve(&secp256k1_info) { }
+
+minter::HDKey::~HDKey() {
+    clear();
+}
+
+void minter::HDKey::clear() {
+    publicKey.clear();
+    privateKey.clear();
+    chainCode.clear();
+    extPrivateKey.clear();
+    extPublicKey.clear();
+}
+
+minter::Derivation::Derivation(const std::string &path) : path(path) { }
+minter::Derivation::Derivation(std::string &&path) : path(std::move(path)) { }
+minter::Derivation::Derivation(const char *path) : path(std::string(path)) { }

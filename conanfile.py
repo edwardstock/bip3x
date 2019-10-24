@@ -18,7 +18,7 @@ class Bip39Conan(ConanFile):
     license = "MIT"
     author = "Eduard Maximovich edward.vstock@gmail.com"
     url = "https://github.com/edwardstock/native-bip39"
-    description = "Bip39 mnemonic C++ implementation. Contains java bindings."
+    description = "Bip39 mnemonic C++ implementation. Contains java and pure C bindings."
     topics = ("bip39", "bip39-mnemonic", "bip44", "bip39-java")
     settings = "os", "compiler", "build_type", "arch"
     options = {
@@ -35,6 +35,7 @@ class Bip39Conan(ConanFile):
     exports_sources = (
         "cmake/*",
         "include/*",
+        "include_cfg/*"
         "tests/*",
         "src/*",
         "libs/*",
@@ -66,14 +67,16 @@ class Bip39Conan(ConanFile):
             'ENABLE_BIP39_SHARED': 'Off'
         }
 
-        if self.options["shared"]:
+        if self.options.shared:
             opts['ENABLE_BIP39_SHARED'] = 'On'
 
-        if self.options["enableJNI"]:
+        if self.options.enableJNI:
             opts['ENABLE_BIP39_JNI'] = 'On'
 
-        if self.options['enableC']:
+        if self.options.enableC:
             opts['ENABLE_BIP39_C'] = 'On'
+
+        opts['CMAKE_BUILD_TYPE'] = self.settings.get_safe("build_type")
 
         cmake.configure(defs=opts)
         if self.settings.compiler == "Visual Studio":
@@ -82,33 +85,24 @@ class Bip39Conan(ConanFile):
             cmake.build()
 
     def package(self):
+        self.copy("*", dst="include", src="include", keep_path=True)
         if self.options.enableC:
             self.copy("*.h", dst="include", src="src/bindings", keep_path=True)
             self.copy("*.hpp", dst="include", src="src/bindings", keep_path=True)
 
-        self.copy("*", dst="include", src="include", keep_path=True)
-        self.copy("*.dylib", src="lib", dst="lib", keep_path=False)
-        self.copy("*.so", src="lib", dst="lib", keep_path=False)
-        self.copy("*.a", src="lib", dst="lib", keep_path=False)
-        self.copy("*.lib", src="lib", dst="lib", keep_path=False)
-        self.copy("*.lib", src="Release", dst="lib", keep_path=False)
-        self.copy("*.lib", src="Debug", dst="lib", keep_path=False)
-        self.copy("*.dll", src="lib", dst="lib", keep_path=False)
-        self.copy("*.dll", src="Release", dst="lib", keep_path=False)
-        self.copy("*.dll", src="Debug", dst="lib", keep_path=False)
-        self.copy("*.dll.a", src="lib", dst="lib", keep_path=False)
-        self.copy("*.dll.a", src="Release", dst="lib", keep_path=False)
-        self.copy("*.dll.a", src="Debig", dst="lib", keep_path=False)
-        self.copy("*.exp", src="lib", dst="lib", keep_path=False)
-        self.copy("*.exp", src="Release", dst="lib", keep_path=False)
-        self.copy("*.exp", src="Debug", dst="lib", keep_path=False)
-        self.copy("*.ilk", src="lib", dst="lib", keep_path=False)
-        self.copy("*.ilk", src="Release", dst="lib", keep_path=False)
-        self.copy("*.ilk", src="Debug", dst="lib", keep_path=False)
-        self.copy("*.pdb", src="lib", dst="lib", keep_path=False)
-        self.copy("*.pdb", src="Release", dst="lib", keep_path=False)
-        self.copy("*.pdb", src="Debug", dst="lib", keep_path=False)
+        dir_types = ['bin', 'lib', 'Debug', 'Release', 'RelWithDebInfo', 'MinSizeRel']
+        file_types = ['lib', 'dll', 'dll.a', 'a', 'so', 'exp', 'pdb', 'ilk', 'dylib']
 
+        for dirname in dir_types:
+            for ftype in file_types:
+                self.copy("*." + ftype, src=dirname, dst="lib", keep_path=False)
 
-def package_info(self):
-    self.cpp_info.libs = tools.collect_libs(self)
+    def package_info(self):
+        self.cpp_info.includedirs = ['include']
+        self.cpp_info.libs = ['bip39.lib']
+        if self.options.enableC:
+            self.cpp_info.libs.append('cbip39.lib')
+
+        if self.options.enableJNI:
+            self.cpp_info.libs.append('bip39_jni.dll')
+

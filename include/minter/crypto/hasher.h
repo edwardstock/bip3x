@@ -27,6 +27,7 @@
 #include "sha3.h"
 #include "blake256.h"
 #include "groestl.h"
+#include "minter/bip39/bip39_core.h"
 
 #define HASHER_DIGEST_LENGTH 32
 
@@ -57,11 +58,11 @@ typedef struct {
     } ctx;
 } Hasher;
 
-void hasher_Init(Hasher *hasher, HasherType type);
-void hasher_Reset(Hasher *hasher);
-void hasher_Update(Hasher *hasher, const uint8_t *data, size_t length);
-void hasher_Final(Hasher *hasher, uint8_t hash[HASHER_DIGEST_LENGTH]);
+BIP39_CORE_API void hasher_Init(Hasher *hasher, HasherType type);
+BIP39_CORE_API void hasher_Reset(Hasher *hasher);
+BIP39_CORE_API void hasher_Update(Hasher *hasher, const uint8_t *data, size_t length);
+BIP39_CORE_API void hasher_Final(Hasher *hasher, uint8_t hash[HASHER_DIGEST_LENGTH]);
 
-void hasher_Raw(HasherType type, const uint8_t *data, size_t length, uint8_t hash[HASHER_DIGEST_LENGTH]);
+BIP39_CORE_API void hasher_Raw(HasherType type, const uint8_t *data, size_t length, uint8_t hash[HASHER_DIGEST_LENGTH]);
 
 #endif

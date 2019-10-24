@@ -19,6 +19,7 @@
 #include <minter/crypto/base58.h>
 #include <minter/crypto/hasher.h>
 #include <minter/crypto/sha3.h>
+#include "bip39_core.h"
 #include "minter/bip39/crypto/hmac_sha512.h"
 #include "minter/bip39/crypto/hmac_sha256.h"
 #include "minter/bip39/crypto/sha512.h"
@@ -26,11 +27,11 @@
 
 namespace minter {
 
-std::vector<uint8_t> hexToBytes(const std::string &hex);
-std::string bytesToHex(const uint8_t *data, size_t len);
-std::vector<std::string> splitString(const std::string &source, const std::string &delimiter);
-const std::string glueStrings(const std::vector<std::string> &input, const std::string &g);
-uint32_t stou(std::string const &str, size_t *idx = 0, int base = 10);
+BIP39_CORE_API std::vector<uint8_t> hexToBytes(const std::string &hex);
+BIP39_CORE_API std::string bytesToHex(const uint8_t *data, size_t len);
+BIP39_CORE_API std::vector<std::string> splitString(const std::string &source, const std::string &delimiter);
+BIP39_CORE_API const std::string glueStrings(const std::vector<std::string> &input, const std::string &g);
+BIP39_CORE_API uint32_t stou(std::string const &str, size_t *idx = 0, int base = 10);
 
 template<typename NumT>
 void numToBytes(const NumT num, std::vector<uint8_t> &out) {

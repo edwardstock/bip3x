@@ -5,7 +5,7 @@
 #include "config.h"
 #include <string>
 
-char *wally_strdup(const char *str);
+BIP39_CORE_API char *wally_strdup(const char *str);
 
 #endif /* LIBWALLY_INTERNAL_H */
 

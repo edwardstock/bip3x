@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 project(bip39
-        VERSION 1.2.1
+        VERSION 1.2.2
         DESCRIPTION "Native BIP39 Mnemonic implementation (with JNI and pure C bindings)"
         LANGUAGES CXX)
 
@@ -12,15 +12,38 @@ set(ENABLE_BIP39_JNI ON CACHE BOOL "Enable compiling for android/jre")
 set(ENABLE_BIP39_C ON CACHE BOOL "Enable compiling pure C for other language bindings")
 set(ENABLE_BIP39_CONAN ON CACHE BOOL "Enable conan dependencies instead of system")
 
-if(WIN32)
+if (WIN32)
 	execute_process(
 		COMMAND cmd /C "echo ${CMAKE_PROJECT_VERSION} > ${CMAKE_CURRENT_SOURCE_DIR}/version"
 	)
-	else()
+else ()
 	execute_process(
 		COMMAND bash -c "echo ${CMAKE_PROJECT_VERSION} > ${CMAKE_CURRENT_SOURCE_DIR}/version"
 	)
-	endif()
+endif ()
+
+if (MSVC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W2 /MP")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /DEBUG /Od")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2")
+	string(REGEX REPLACE "\\/W3" " " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+	add_compile_options(/wd4146)
+	add_compile_options(/wd4251)
+
+	if (NOT ENABLE_BIP39_SHARED)
+		foreach (flag_var
+		         CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+		         CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+			if (${flag_var} MATCHES "/MD")
+				string(REGEX REPLACE "MD" "MT" ${flag_var} "${${flag_var}}")
+			endif (${flag_var} MATCHES "/MD")
+		endforeach (flag_var)
+	endif ()
+else ()
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shift-count-overflow -fPIC -Wno-c99-extensions -Wno-unused-function -Wno-unused-const-variable")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -pedantic")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -g0 -O2")
+endif ()
 
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -34,23 +57,12 @@ endif ()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-if (MSVC)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W2")
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /DEBUG /Od")
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2")
-	string(REGEX REPLACE "\\/W3" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-	add_compile_options(/wd4146)
-else ()
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wno-c99-extensions -Wno-unused-function -Wno-unused-const-variable")
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -pedantic")
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -g0 -O2")
-endif ()
-
-
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/configure.cmake)
-
 add_definitions(-DUSE_KECCAK=1 -DUSE_MONERO=1 -DNO_VALGRIND=1 -DUSE_ETHEREUM=1 -DUSE_GRAPHENE=1)
-add_definitions(-DBIP39_EXPORTING=1)
+
+set(BIP39_EXPORTING 1)
+if (ENABLE_BIP39_SHARED)
+	set(BIP39_SHARED 1)
+endif ()
 
 set(BTC_SRC)
 set(BTC_HEADERS)
@@ -58,7 +70,7 @@ set(BTC_HEADERS)
 if (WIN32)
 	set(BTC_HEADERS
 	    include/minter/bip39/crypto/win_endian.h
-)
+	    )
 endif ()
 
 if (SSE41_FOUND OR SSE42_FOUND)
@@ -172,21 +184,29 @@ set(JNI_SOURCES
     src/java/nobject.cpp
     )
 
+configure_file(
+	${CMAKE_CURRENT_SOURCE_DIR}/include_cfg/bip39_core.h.in
+	${CMAKE_CURRENT_SOURCE_DIR}/include/minter/bip39/bip39_core.h
+)
+
+configure_file(
+	${CMAKE_CURRENT_SOURCE_DIR}/include_cfg/cbip39_config.h.in
+	${CMAKE_CURRENT_SOURCE_DIR}/src/bindings/cbip39_config.h
+)
+
 # Core
 if (ENABLE_BIP39_SHARED)
+	message(STATUS "Build shared libs")
 	add_library(${PROJECT_NAME} SHARED ${SOURCES})
 else ()
 	add_library(${PROJECT_NAME} STATIC ${SOURCES})
 endif ()
 
-if (WIN32)
-
-else ()
-	target_compile_options(${PROJECT_NAME} PUBLIC -Wno-shift-count-overflow -fPIC)
+if (MSVC)
+	set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY LINK_FLAGS /version:${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR})
 endif ()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LANGUAGE CXX)
-
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs)
@@ -220,7 +240,12 @@ if (ENABLE_BIP39_C)
 	    src/bindings/cbip39_hdkey_encoder.cpp
 	    )
 
-	add_library(cbip39 ${BIP39_C_SOURCES})
+	if (ENABLE_BIP39_SHARED)
+		add_library(cbip39 SHARED ${BIP39_C_SOURCES})
+	else ()
+		add_library(cbip39 STATIC ${BIP39_C_SOURCES})
+	endif ()
+
 	set_target_properties(cbip39 PROPERTIES
 	                      PUBLIC_HEADER "${BIP39_C_HEADERS}"
 	                      LANGUAGE C99)
@@ -243,18 +268,27 @@ endif ()
 if (ENABLE_BIP39_JNI)
 	if (ANDROID_PLATFORM)
 		add_definitions(-D__ANDROID__)
-		add_library(${PROJECT_NAME}_jni SHARED ${JNI_SOURCES})
+		if (ENABLE_BIP39_SHARED)
+			add_library(${PROJECT_NAME}_jni SHARED ${JNI_SOURCES})
+		else ()
+			add_library(${PROJECT_NAME}_jni STATIC ${JNI_SOURCES})
+		endif ()
 		target_link_libraries(${PROJECT_NAME}_jni ${PROJECT_NAME})
 	else ()
 		find_package(JNI)
 		if (JNI_FOUND)
-			add_library(${PROJECT_NAME}_jni SHARED ${JNI_SOURCES})
+			if (ENABLE_BIP39_SHARED)
+				add_library(${PROJECT_NAME}_jni SHARED ${JNI_SOURCES})
+			else ()
+				add_library(${PROJECT_NAME}_jni STATIC ${JNI_SOURCES})
+			endif ()
 			target_link_libraries(${PROJECT_NAME}_jni ${PROJECT_NAME})
 			target_link_libraries(${PROJECT_NAME}_jni ${JAVA_JVM_LIBRARY})
 			target_include_directories(${PROJECT_NAME}_jni PRIVATE ${JNI_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 
 			install(
-				TARGETS cbip39
+				TARGETS ${PROJECT_NAME}_jni
+				RUNTIME DESTINATION bin
 				LIBRARY DESTINATION lib
 				ARCHIVE DESTINATION lib
 				PUBLIC_HEADER DESTINATION include
@@ -275,11 +309,12 @@ endif ()
 
 if (ENABLE_BIP39_TESTS)
 
-	set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-	if(NOT ENABLE_BIP39_CONAN)
+	set(gtest_force_shared_crt ${ENABLE_BIP39_SHARED} CACHE BOOL "" FORCE)
+
+	if (NOT ENABLE_BIP39_CONAN)
 		add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/gtest)
 		add_library(CONAN_PKG::gtest ALIAS gtest)
-	endif()
+	endif ()
 
 	if (MSVC)
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++14")

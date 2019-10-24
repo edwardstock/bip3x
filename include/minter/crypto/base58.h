@@ -27,19 +27,20 @@
 
 #include "hasher.h"
 #include "options.h"
+#include "minter/bip39/bip39_core.h"
 
-int base58_encode_check(const uint8_t *data, size_t len, HasherType hasher_type, char *str, size_t strsize);
+BIP39_CORE_API int base58_encode_check(const uint8_t *data, size_t len, HasherType hasher_type, char *str, size_t strsize);
 int base58_decode_check(const char *str, HasherType hasher_type, uint8_t *data, int datalen);
 
 // Private
-bool b58tobin(uint8_t *bin, size_t *binszp, const char *b58);
-int b58check(const uint8_t *bin, size_t binsz, HasherType hasher_type, const char *base58str);
-bool b58enc(char *outb58, size_t *b58sz, const uint8_t *data, size_t binsz);
+BIP39_CORE_API bool b58tobin(uint8_t *bin, size_t *binszp, const char *b58);
+BIP39_CORE_API int b58check(const uint8_t *bin, size_t binsz, HasherType hasher_type, const char *base58str);
+BIP39_CORE_API bool b58enc(char *outb58, size_t *b58sz, const uint8_t *data, size_t binsz);
 
 #if USE_GRAPHENE
-int base58gph_encode_check(const uint8_t *data, int datalen, char *str, int strsize);
-int base58gph_decode_check(const char *str, uint8_t *data, int datalen);
-int b58gphcheck(const uint8_t *bin, size_t binsz, const char *base58str);
+BIP39_CORE_API int base58gph_encode_check(const uint8_t *data, int datalen, char *str, int strsize);
+BIP39_CORE_API int base58gph_decode_check(const char *str, uint8_t *data, int datalen);
+BIP39_CORE_API int b58gphcheck(const uint8_t *bin, size_t binsz, const char *base58str);
 #endif
 
 #endif

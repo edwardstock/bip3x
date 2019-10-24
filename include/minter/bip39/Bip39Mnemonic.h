@@ -11,13 +11,14 @@
 #include <vector>
 #include <iostream>
 #include <random>
+#include "bip39_core.h"
 #include "bip39.h"
 #include "wordlist.h"
 #include "utils.h"
 
 namespace minter {
 
-class Bip39Mnemonic {
+class BIP39_CORE_API Bip39Mnemonic {
  public:
     enum MnemonicStatus {
       Ok,
@@ -44,7 +45,6 @@ class Bip39Mnemonic {
 
  private:
     static bool validateEntropy(size_t entropy);
-
 };
 
 }

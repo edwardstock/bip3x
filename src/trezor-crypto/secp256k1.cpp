@@ -23,6 +23,7 @@
 
 #include "minter/crypto/secp256k1.h"
 
+BIP39_CORE_API
 const ecdsa_curve secp256k1 = {
 	/* .prime */ {
 		/*.val =*/ {0x3ffffc2f, 0x3ffffffb, 0x3fffffff, 0x3fffffff, 0x3fffffff, 0x3fffffff, 0x3fffffff, 0x3fffffff, 0xffff}
@@ -50,11 +51,12 @@ const ecdsa_curve secp256k1 = {
 #if USE_PRECOMPUTED_CP
 	,
 	/* cp */ {
-#include "secp256k1.table"
+#include "minter/crypto/secp256k1.table"
 	}
 #endif
 };
 
+BIP39_CORE_API
 const curve_info secp256k1_info = {
 	"Bitcoin seed",
 	&secp256k1,
@@ -64,6 +66,7 @@ const curve_info secp256k1_info = {
 	HASHER_SHA2,
 };
 
+BIP39_CORE_API
 const curve_info secp256k1_decred_info = {
 	"Decred seed",
 	&secp256k1,
@@ -73,6 +76,7 @@ const curve_info secp256k1_decred_info = {
 	HASHER_BLAKE,
 };
 
+BIP39_CORE_API
 const curve_info secp256k1_groestl_info = {
 	"Bitcoin seed",
 	&secp256k1,

@@ -27,11 +27,11 @@ minter_hdkey *copy_hdkey(minter::HDKey &&res) {
 
 minter_hdkey *encoder_make_bip32_root_key(const struct minter_data64 *seed) {
     return copy_hdkey(minter::HDKeyEncoder::makeBip32RootKey(minter::Data64(seed->data),
-                                                             minter::HDKeyEncoder::MainNet));
+                                                             minter::MainNet));
 }
 minter_hdkey *encoder_make_ext_key(const struct minter_hdkey *root_key, const char *derivation_path) {
     minter::HDKey in;
-    in.net = minter::HDKeyEncoder::MainNet;
+    in.net = minter::MainNet;
     in.publicKey.get().assign(root_key->public_key.data, root_key->public_key.data + 33);
     in.privateKey.get().assign(root_key->private_key.data, root_key->private_key.data + 32);
     in.chainCode.get().assign(root_key->chain_code.data, root_key->chain_code.data + 32);

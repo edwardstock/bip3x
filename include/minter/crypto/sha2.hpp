@@ -31,9 +31,9 @@
 #ifndef __SHA2_H__
 #define __SHA2_H__
 
-//#include <cstddef>
 #include <string>
 #include <cstdint>
+#include "minter/bip39/bip39_core.h"
 
 
 #define   SHA1_BLOCK_LENGTH		64
@@ -95,28 +95,28 @@ typedef struct _SHA512_CTX {
 extern const uint32_t sha256_initial_hash_value[8];
 extern const uint64_t sha512_initial_hash_value[8];
 
-void sha1_Transform(const uint32_t* state_in, const uint32_t* data, uint32_t* state_out);
-void sha1_Init(trezor::SHA1_CTX *);
-void sha1_Update(trezor::SHA1_CTX*, const uint8_t*, size_t);
-void sha1_Final(trezor::SHA1_CTX*, uint8_t[SHA1_DIGEST_LENGTH]);
-char* sha1_End(trezor::SHA1_CTX*, char[SHA1_DIGEST_STRING_LENGTH]);
-void sha1_Raw(const uint8_t*, std::size_t, uint8_t[SHA1_DIGEST_LENGTH]);
-char* sha1_Data(const uint8_t*, std::size_t, char[SHA1_DIGEST_STRING_LENGTH]);
+BIP39_CORE_API void sha1_Transform(const uint32_t* state_in, const uint32_t* data, uint32_t* state_out);
+BIP39_CORE_API void sha1_Init(trezor::SHA1_CTX *);
+BIP39_CORE_API void sha1_Update(trezor::SHA1_CTX*, const uint8_t*, size_t);
+BIP39_CORE_API void sha1_Final(trezor::SHA1_CTX*, uint8_t[SHA1_DIGEST_LENGTH]);
+BIP39_CORE_API char* sha1_End(trezor::SHA1_CTX*, char[SHA1_DIGEST_STRING_LENGTH]);
+BIP39_CORE_API void sha1_Raw(const uint8_t*, std::size_t, uint8_t[SHA1_DIGEST_LENGTH]);
+BIP39_CORE_API char* sha1_Data(const uint8_t*, std::size_t, char[SHA1_DIGEST_STRING_LENGTH]);
 
-void sha256_Transform(const uint32_t* state_in, const uint32_t* data, uint32_t* state_out);
-void sha256_Init(trezor::SHA256_CTX *);
-void sha256_Update(trezor::SHA256_CTX*, const uint8_t*, size_t);
-void sha256_Final(trezor::SHA256_CTX*, uint8_t[SHA256_DIGEST_LENGTH]);
-char* sha256_End(trezor::SHA256_CTX*, char[SHA256_DIGEST_STRING_LENGTH]);
-void sha256_Raw(const uint8_t*, std::size_t, uint8_t[SHA256_DIGEST_LENGTH]);
-char* sha256_Data(const uint8_t*, std::size_t, char[SHA256_DIGEST_STRING_LENGTH]);
+BIP39_CORE_API void sha256_Transform(const uint32_t* state_in, const uint32_t* data, uint32_t* state_out);
+BIP39_CORE_API void sha256_Init(trezor::SHA256_CTX *);
+BIP39_CORE_API void sha256_Update(trezor::SHA256_CTX*, const uint8_t*, size_t);
+BIP39_CORE_API void sha256_Final(trezor::SHA256_CTX*, uint8_t[SHA256_DIGEST_LENGTH]);
+BIP39_CORE_API char* sha256_End(trezor::SHA256_CTX*, char[SHA256_DIGEST_STRING_LENGTH]);
+BIP39_CORE_API void sha256_Raw(const uint8_t*, std::size_t, uint8_t[SHA256_DIGEST_LENGTH]);
+BIP39_CORE_API char* sha256_Data(const uint8_t*, std::size_t, char[SHA256_DIGEST_STRING_LENGTH]);
 
-void sha512_Transform(const uint64_t* state_in, const uint64_t* data, uint64_t* state_out);
-void sha512_Init(trezor::SHA512_CTX*);
-void sha512_Update(trezor::SHA512_CTX*, const uint8_t*, size_t);
-void sha512_Final(trezor::SHA512_CTX*, uint8_t[SHA512_DIGEST_LENGTH]);
-char* sha512_End(trezor::SHA512_CTX*, char[SHA512_DIGEST_STRING_LENGTH]);
-void sha512_Raw(const uint8_t*, size_t, uint8_t[SHA512_DIGEST_LENGTH]);
-char* sha512_Data(const uint8_t*, size_t, char[SHA512_DIGEST_STRING_LENGTH]);
+BIP39_CORE_API void sha512_Transform(const uint64_t* state_in, const uint64_t* data, uint64_t* state_out);
+BIP39_CORE_API void sha512_Init(trezor::SHA512_CTX*);
+BIP39_CORE_API void sha512_Update(trezor::SHA512_CTX*, const uint8_t*, size_t);
+BIP39_CORE_API void sha512_Final(trezor::SHA512_CTX*, uint8_t[SHA512_DIGEST_LENGTH]);
+BIP39_CORE_API char* sha512_End(trezor::SHA512_CTX*, char[SHA512_DIGEST_STRING_LENGTH]);
+BIP39_CORE_API void sha512_Raw(const uint8_t*, size_t, uint8_t[SHA512_DIGEST_LENGTH]);
+BIP39_CORE_API char* sha512_Data(const uint8_t*, size_t, char[SHA512_DIGEST_STRING_LENGTH]);
 
 #endif

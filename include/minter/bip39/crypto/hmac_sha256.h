@@ -10,9 +10,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <minter/crypto/hmac.h>
+#include "minter/bip39/bip39_core.h"
 
 /** A hasher class for HMAC-SHA-256. */
-class CHMAC_SHA256
+class BIP39_CORE_API CHMAC_SHA256
 {
 private:
     HMAC_SHA256_CTX m_ctx;

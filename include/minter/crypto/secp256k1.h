@@ -25,8 +25,8 @@
 #define __SECP256K1_H__
 
 #include <cstdint>
-
 #include "ecdsa.h"
+#include "minter/bip39/bip39_core.h"
 
 typedef struct {
   const char *bip32_name;    // string for generating BIP32 xprv from seed
@@ -38,9 +38,9 @@ typedef struct {
   HasherType hasher_pubkey;
 } curve_info;
 
-extern const ecdsa_curve secp256k1;
-extern const curve_info secp256k1_info;
-extern const curve_info secp256k1_decred_info;
-extern const curve_info secp256k1_groestl_info;
+BIP39_CORE_API extern const ecdsa_curve secp256k1;
+BIP39_CORE_API extern const curve_info secp256k1_info;
+BIP39_CORE_API extern const curve_info secp256k1_decred_info;
+BIP39_CORE_API extern const curve_info secp256k1_groestl_info;
 
 #endif
