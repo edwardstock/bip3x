@@ -1,3 +1,6 @@
+## 1.2.5
+ - Fixed conanfile.py
+
 ## 1.2.4
  - Fixed definitions generation
 

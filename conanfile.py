@@ -99,10 +99,13 @@ class Bip39Conan(ConanFile):
 
     def package_info(self):
         self.cpp_info.includedirs = ['include']
-        self.cpp_info.libs = ['bip39.lib']
-        if self.options.enableC:
-            self.cpp_info.libs.append('cbip39.lib')
+        if self.settings.os == "Windows":
+            self.cpp_info.libs = ['bip39.lib']
+            if self.options.enableC:
+                self.cpp_info.libs.append('cbip39.lib')
 
-        if self.options.enableJNI:
-            self.cpp_info.libs.append('bip39_jni.dll')
+            if self.options.enableJNI:
+                self.cpp_info.libs.append('bip39_jni.dll')
+        else:
+            self.cpp_info.libs = self.collect_libs(folder="lib")
 
