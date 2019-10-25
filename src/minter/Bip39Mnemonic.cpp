@@ -46,7 +46,7 @@ minter::Bip39Mnemonic::MnemonicResult minter::Bip39Mnemonic::generate(const char
 minter::Bip39Mnemonic::MnemonicResult minter::Bip39Mnemonic::encodeBytes(const uint8_t *src,
                                                                          const char *lang,
                                                                          size_t entropy) {
-    MnemonicResult result{Ok};
+    MnemonicResult result{Ok, std::vector<std::string>(0), "", 0};
 
     if (!validateEntropy(entropy)) {
         result.status = UnsupportedEntropy;

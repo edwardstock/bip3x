@@ -228,8 +228,7 @@ void bn_read_uint64(uint64_t in_number, bignum256 *out_number)
 // a must be normalized
 uint32_t bn_bitcount(const bignum256 *a)
 {
-	uint32_t i;
-	for (i = 8; i >= 0; i--) {
+	for (int32_t i = 8; i >= 0; i--) {
 		uint32_t tmp = a->val[i];
 		if (tmp != 0) {
 			return i * 30 + (32 - clz(tmp));

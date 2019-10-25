@@ -86,7 +86,7 @@ Java_network_minter_core_bip39_NativeBip39_bip39EncodeBytes(
 JNIEXPORT jobject JNICALL
 Java_network_minter_core_bip39_NativeBip39_bip39Generate(
     JNIEnv *env,
-    jclass type,
+    jclass,
     jstring language_,
     jint entropy) {
     const char *language = env->GetStringUTFChars(language_, 0);

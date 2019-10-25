@@ -91,11 +91,11 @@ class Data {
         return m_data;
     }
 
-    const std::string toHex() const {
+    std::string toHex() const {
         return bytesToHex(&m_data[0], size());
     }
 
-    const size_t size() const {
+    size_t size() const {
         return m_data.size();
     }
 
