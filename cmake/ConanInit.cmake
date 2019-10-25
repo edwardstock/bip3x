@@ -3,7 +3,7 @@ find_program(BASH_BIN bash)
 find_program(GREP_BIN grep)
 
 macro (check_conan_remote_exist NAME)
-	if (MSVC)
+	if (WIN32)
 		#it's not important, anyway, this function works wrong
 		set(CONAN_REMOTE_GREP_RES "${NAME}")
 	else ()

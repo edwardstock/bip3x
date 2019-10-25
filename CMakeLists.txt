@@ -12,6 +12,11 @@ set(ENABLE_BIP39_JNI ON CACHE BOOL "Enable compiling for android/jre")
 set(ENABLE_BIP39_C ON CACHE BOOL "Enable compiling pure C for other language bindings")
 set(ENABLE_BIP39_CONAN ON CACHE BOOL "Enable conan dependencies instead of system")
 
+if (CYGWIN AND ENABLE_BIP39_CONAN)
+	message(FATAL_ERROR "Conan does not support Cygwin binaries")
+endif ()
+
+
 if (WIN32)
 	execute_process(
 		COMMAND cmd /C "echo ${CMAKE_PROJECT_VERSION} > ${CMAKE_CURRENT_SOURCE_DIR}/version"
