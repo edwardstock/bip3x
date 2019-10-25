@@ -1,7 +1,7 @@
 # native-bip39 (with java bindings)
 Bip39 mnemonic C++ implementation. Contains java bindings.
 
-[![CircleCI](https://circleci.com/gh/edwardstock/native-bip39.svg?style=svg)](https://circleci.com/gh/edwardstock/native-bip39)
+[![CircleCI](https://circleci.com/gh/edwardstock/native-bip39.svg?style=svg)](https://circleci.com/gh/edwardstock/native-bip39)    [ ![Download](https://api.bintray.com/packages/edwardstock/conan-public/bip39:edwardstock/images/download.svg) ](https://bintray.com/edwardstock/conan-public/bip39:edwardstock/)
 
 
 

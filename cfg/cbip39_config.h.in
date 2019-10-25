@@ -11,6 +11,8 @@
 #define BIP39_BIP39_CONFIG_H_IN
 
 #cmakedefine BIP39_SHARED
+#cmakedefine BIP39_EXPORTING
+
 #ifdef BIP39_SHARED
 #  ifdef BIP39_EXPORTING
 #   if _MSC_VER

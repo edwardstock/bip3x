@@ -1,3 +1,9 @@
+## 1.2.4
+ - Fixed definitions generation
+
+## 1.2.3
+ - Fixed creating shared DLLs on windows
+
 ## 1.2.1
  - Correct packaging MSVC built libraries
 
