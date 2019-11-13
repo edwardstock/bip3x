@@ -22,11 +22,11 @@ minter_hdkey *makeExtKey(const minter_hdkey *rootHdKey) {
 
 void print_hdkey_data(minter_hdkey *key, std::string name) {
     std::cout << "=== Key " << name << " ===" << std::endl;
-    std::cout << " pubkey: " << minter::bytesToHex(key->public_key.data, 33) << std::endl;
-    std::cout << "privkey: " << minter::bytesToHex(key->private_key.data, 32) << std::endl;
-    std::cout << "chain_code: " << minter::bytesToHex(key->chain_code.data, 32) << std::endl;
-    std::cout << "ext_pub_key: " << minter::bytesToHex(key->ext_public_key.data, 112) << std::endl;
-    std::cout << "ext_priv_key: " << minter::bytesToHex(key->ext_private_key.data, 112) << std::endl;
+    std::cout << " pubkey: " << toolboxpp::data::bytesToHex(key->public_key.data, 33) << std::endl;
+    std::cout << "privkey: " << toolboxpp::data::bytesToHex(key->private_key.data, 32) << std::endl;
+    std::cout << "chain_code: " << toolboxpp::data::bytesToHex(key->chain_code.data, 32) << std::endl;
+    std::cout << "ext_pub_key: " << toolboxpp::data::bytesToHex(key->ext_public_key.data, 112) << std::endl;
+    std::cout << "ext_priv_key: " << toolboxpp::data::bytesToHex(key->ext_private_key.data, 112) << std::endl;
 
     std::cout << "=== END KEY " << name << " ===" << std::endl;
 }
@@ -39,7 +39,7 @@ TEST(CMinter, PrivateKeyFromMnemonic) {
                          seed.data,
                          &written);
 
-    std::cout << "SEED: " << minter::bytesToHex(seed.data, 64) << std::endl;
+    std::cout << "SEED: " << toolboxpp::data::bytesToHex(seed.data, 64) << std::endl;
 
     minter_hdkey *rootKey = makeRootKey(&seed);
     print_hdkey_data(rootKey, "ROOT");
@@ -51,7 +51,7 @@ TEST(CMinter, PrivateKeyFromMnemonic) {
     auto *givenPrivate = new uint8_t[32];
     memcpy(givenPrivate, privateKey.data, 32);
 
-    ASSERT_STREQ(expectedPrivateKey, minter::bytesToHex(givenPrivate, 32).c_str());
+    ASSERT_STREQ(expectedPrivateKey, toolboxpp::data::bytesToHex(givenPrivate, 32).c_str());
 
     free_hdkey(rootKey);
     free_hdkey(extKey);

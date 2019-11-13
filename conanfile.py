@@ -48,6 +48,9 @@ class Bip39Conan(ConanFile):
     default_user = "edwardstock"
     default_channel = "latest"
 
+    requires = (
+        "toolboxpp/2.3.1@scatter/latest"
+    )
     build_requires = (
         "gtest/1.8.1@bincrafters/stable",
     )

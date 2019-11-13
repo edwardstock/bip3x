@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 project(bip39
-        VERSION 1.2.5
+        VERSION 1.3.0
         DESCRIPTION "Native BIP39 Mnemonic implementation (with JNI and pure C bindings)"
         LANGUAGES CXX)
 
@@ -344,7 +344,7 @@ if (ENABLE_BIP39_TESTS)
 		add_executable(
 			${PROJECT_CC_TEST_NAME}
 			tests/main.cpp
-			tests/minter_c_mnemonic_test.cpp
+			tests/minter_cc_test.cpp
 		)
 		target_link_libraries(${PROJECT_CC_TEST_NAME} ${PROJECT_NAME})
 		target_link_libraries(${PROJECT_CC_TEST_NAME} cbip39)

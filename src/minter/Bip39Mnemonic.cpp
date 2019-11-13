@@ -64,7 +64,8 @@ minter::Bip39Mnemonic::MnemonicResult minter::Bip39Mnemonic::encodeBytes(const u
         return result;
     }
 
-    result.words = splitString(std::string(output[0]), " ");
+
+    result.words = toolboxpp::strings::split(output[0], " ");
     result.len = result.words.size();
     result.raw = std::string(output[0]);
 

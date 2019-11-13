@@ -16,7 +16,7 @@ minter::Data64 minter::HDKeyEncoder::makeBip39Seed(const std::string &mnemonicWo
     return out;
 }
 minter::Data64 minter::HDKeyEncoder::makeBip39Seed(const std::vector<std::string> &mnemonicWords) {
-    return makeBip39Seed(glueStrings(mnemonicWords, " "));
+    return makeBip39Seed(toolboxpp::strings::glue(" ", mnemonicWords));
 }
 
 minter::HDKey minter::HDKeyEncoder::makeBip32RootKey(const char *mnemonic, minter::BTCNetwork net) {
@@ -96,14 +96,14 @@ void minter::HDKeyEncoder::derive(minter::HDKey &key, uint32_t index) {
             }
 
             buff.write(0, (uint8_t) 1);
-            buff.insert(1, I.takeLastBytes(32));
+            buff.write(1, I.take_last(32));
             hmac_sha512(key.chainCode.cdata(), 32, buff.cdata(), buff.size(), I.data());
         }
     } else {
-        key.privateKey = I.takeFirstBytes(32);
+        key.privateKey = I.take_first(32);
     }
 
-    key.chainCode = I.takeLastBytes(32);
+    key.chainCode = I.take_last(32);
     key.depth++;
     key.index = index;
     key.publicKey.clear();
@@ -116,7 +116,7 @@ void minter::HDKeyEncoder::derive(minter::HDKey &key, uint32_t index) {
 }
 
 void minter::HDKeyEncoder::derivePath(HDKey &key, const std::string &path, bool priv) {
-    std::vector<std::string> pathBits = minter::splitString(path, "/");
+    std::vector<std::string> pathBits = toolboxpp::strings::split(path, "/");
     for (const auto &bit: pathBits) {
         if (bit == "m" || bit == "'") {
             continue;
@@ -126,10 +126,10 @@ void minter::HDKeyEncoder::derivePath(HDKey &key, const std::string &path, bool 
         uint32_t index;
         if (hardened) {
             const std::string tmp(bit.begin(), bit.end() - 1);
-            index = stou(tmp);
+            index = str_to_uint32_t(tmp);
 
         } else {
-            index = stou(bit);
+            index = str_to_uint32_t(bit);
         }
 
         bool isPrivateKey = priv;
@@ -163,7 +163,7 @@ uint32_t minter::HDKeyEncoder::fetchFingerprint(minter::HDKey &key) {
     sha256_Final(&ctx, digest.data());
 
     ripemd160(digest.data(), 32, digest.data());
-    fingerprint = digest.to<uint32_t>();
+    fingerprint = digest.to_num<uint32_t>();
     digest.clear();
 
     return fingerprint;
@@ -194,7 +194,7 @@ void minter::HDKeyEncoder::serialize(minter::HDKey &key, uint32_t fingerprint, u
         outKey = &key.extPrivateKey;
     }
 
-    outKey->clearReset();
+    outKey->clear();
 
     base58_encode_check(
         data.cdata(), static_cast<int>(data.size()), // input
@@ -237,9 +237,9 @@ minter::HDKey minter::HDKeyEncoder::fromSeed(const minter::Data &seed) {
         a.clear();
     }
 
-    out.privateKey = I.takeFirstBytes(32);
-    out.chainCode = I.takeLastBytes(32);
-    out.publicKey.clearReset();
+    out.privateKey = I.take_first(32);
+    out.chainCode = I.take_last(32);
+    out.publicKey.clear();
     I.clear();
 
     return out;

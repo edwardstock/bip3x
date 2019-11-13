@@ -22,22 +22,22 @@ class uint256_t {
 
  public:
     uint256_t(): m_val() {
-        const auto v = Data::readNumber(0, 32);
+        const auto v = Data::read_number(0, 32);
         bn_read_be(v.cdata(), &m_val);
     }
 
     uint256_t(uint8_t val): m_val() {
-        const auto v = Data::readNumber(val, 32);
+        const auto v = Data::read_number(val, 32);
         bn_read_be(v.cdata(), &m_val);
     }
 
     uint256_t(int8_t val): m_val() {
-        const auto v = Data::readNumber(val, 32);
+        const auto v = Data::read_number(val, 32);
         bn_read_be(v.cdata(), &m_val);
     }
 
     uint256_t(uint16_t val): m_val() {
-        const auto v = Data::readNumber(val, 32);
+        const auto v = Data::read_number(val, 32);
         bn_read_be(v.cdata(), &m_val);
     }
 
@@ -45,13 +45,13 @@ class uint256_t {
         if(val < 0) {
             val = val & 0xFFFF;
         }
-        const auto v = Data::readNumber(val, 32);
+        const auto v = Data::read_number(val, 32);
 
         bn_read_be(v.cdata(), &m_val);
     }
 
     uint256_t(uint32_t val): m_val() {
-        const auto v = Data::readNumber(val, 32);
+        const auto v = Data::read_number(val, 32);
         bn_read_be(v.cdata(), &m_val);
     }
 
@@ -59,13 +59,13 @@ class uint256_t {
         if(val < 0) {
             val = val & 0xFFFFFFFF;
         }
-        const auto v = Data::readNumber(val, 32);
+        const auto v = Data::read_number(val, 32);
 
         bn_read_be(v.cdata(), &m_val);
     }
 
     uint256_t(uint64_t val): m_val() {
-        const auto v = Data::readNumber(val, 32);
+        const auto v = Data::read_number(val, 32);
         bn_read_be(v.cdata(), &m_val);
     }
 
@@ -73,7 +73,7 @@ class uint256_t {
         if(val < 0) {
             val = val & 0xFFFFFFFFFFFFFFFFULL;
         }
-        const auto v = Data::readNumber(val, 32);
+        const auto v = Data::read_number(val, 32);
         bn_read_be(v.cdata(), &m_val);
     }
 

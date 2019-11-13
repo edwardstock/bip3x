@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
 //    std::cout << "Bip44 extended priv key: " << bip44ExtKey.extPrivateKey.toString() << std::endl;
 //    std::cout << "Bip44 extended pub key:  " << bip44ExtKey.extPublicKey.toString() << std::endl;
 //    std::cout << "address:                 " << HDKeyEncoder::getAddress(bip44ExtKey) << std::endl;
-//
+//https://github.com/LairdCP/UwTerminalX/wiki/Granting-non-root-USB-device-access-(Linux)
 //    bip32RootKey.clear();
 //    bip32ExtKey.clear();
 //    bip44ExtKey.clear();

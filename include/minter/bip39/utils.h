@@ -19,6 +19,7 @@
 #include <minter/crypto/base58.h>
 #include <minter/crypto/hasher.h>
 #include <minter/crypto/sha3.h>
+#include <toolboxpp.hpp>
 #include "bip39_core.h"
 #include "minter/bip39/crypto/hmac_sha512.h"
 #include "minter/bip39/crypto/hmac_sha256.h"
@@ -27,115 +28,24 @@
 
 namespace minter {
 
-BIP39_CORE_API std::vector<uint8_t> hexToBytes(const std::string &hex);
-BIP39_CORE_API std::string bytesToHex(const uint8_t *data, size_t len);
-BIP39_CORE_API std::vector<std::string> splitString(const std::string &source, const std::string &delimiter);
-BIP39_CORE_API const std::string glueStrings(const std::vector<std::string> &input, const std::string &g);
-BIP39_CORE_API uint32_t stou(std::string const &str, size_t *idx = 0, int base = 10);
+BIP39_CORE_API uint32_t str_to_uint32_t(std::string const &str, size_t *idx = 0, int base = 10);
 
-template<typename NumT>
-void numToBytes(const NumT num, std::vector<uint8_t> &out) {
-    static_assert(std::is_integral<NumT>::value, "Only integral types can be passed");
-
-    size_t sz = sizeof(num);
-    for (size_t i = 0; i < sz; i++) {
-        out[(out.size() - 1) - i] = (num >> (i * 8));
-    }
-}
-
-class Data {
- protected:
-    std::vector<uint8_t> m_data;
-
+class Data : public toolboxpp::data::bytes_data {
  public:
-    template<typename NumT>
-    static Data readNumber(NumT num) {
-        Data out(sizeof(num));
-        numToBytes<NumT>(num, out.get());
-        return out;
-    }
-
-    template<typename NumT>
-    static Data readNumber(NumT num, size_t outSize) {
-        assert(outSize >= sizeof(num));
-        Data out(outSize);
-        numToBytes<NumT>(num, out.get());
-        return out;
-    }
-
     Data() = default;
-    Data(std::size_t size) {
-        m_data.resize(size);
-    }
+    Data(size_t size) : bytes_data(size) { }
+    Data(const char *hexString) : bytes_data(hexString) { }
+    Data(const std::string &hexString) : bytes_data(hexString) { }
+    Data(const std::vector<uint8_t> &data) : bytes_data(data) { }
+    Data(std::vector<uint8_t> &&data) : bytes_data(data) { }
+    Data(const uint8_t *data, size_t len) : bytes_data(data, len) { }
+    Data(const bytes_data &other) : bytes_data(other) { }
+    Data(bytes_data &&other) : bytes_data(other) { }
 
-    Data(const char *hexString) : m_data(hexToBytes(hexString)) { }
-    Data(const std::string &hexString) : m_data(hexToBytes(hexString)) { }
-    Data(const std::vector<uint8_t> &data) : m_data(data) { }
-    Data(std::vector<uint8_t> &&data) : m_data(std::move(data)) { }
-    Data(const uint8_t *data, size_t len) {
-        m_data.resize(len);
-        memcpy(this->data(), data, len);
-    }
-
-    Data(const Data &other) = default;
-    Data(Data &&other) = default;
-    Data &operator=(const Data &other) = default;
-    Data &operator=(Data &&other) = default;
-    virtual ~Data() = default;
-
-    const std::vector<uint8_t> &get() const {
-        return m_data;
-    }
-
-    std::vector<uint8_t> &get() {
-        return m_data;
-    }
-
-    std::string toHex() const {
-        return bytesToHex(&m_data[0], size());
-    }
-
-    size_t size() const {
-        return m_data.size();
-    }
-
-    bool empty() const {
-        return size() != 0;
-    }
-
-    operator bool() const noexcept {
-        return !empty();
-    }
-
-    uint8_t *data() {
-        return &m_data[0];
-    }
-
-    const uint8_t *cdata() const {
-        return &m_data[0];
-    }
-
-    const std::string toString() {
-        return std::string(get().begin(), get().end());
-    }
-
-    std::vector<uint8_t> takeFirstBytes(size_t n) const {
-        std::vector<uint8_t> out;
-        out.insert(out.begin(), m_data.begin(), m_data.begin() + n);
-        return out;
-    }
-
-    std::vector<uint8_t> takeLastBytes(size_t n) const {
-        std::vector<uint8_t> out;
-        out.insert(out.begin(), m_data.end() - n, m_data.end());
-        return out;
-    }
-
-    const std::string toBase58() {
+    std::string toBase58() const {
         std::vector<char> out(112);
-        base58_encode_check(cdata(), size(), HASHER_SHA3K, &out[0], 112);
-        const char *res = &out[0];
-        return std::string(res);
+        base58_encode_check(cdata(), size(), HASHER_SHA3K, out.data(), 112);
+        return std::string(out.begin(), out.end());
     }
 
     Data &toHmac512Mutable(const char *key) {
@@ -143,7 +53,7 @@ class Data {
         CHMAC_SHA512 hm(reinterpret_cast<const unsigned char *>(key), strlen(key));
         hm.Write(data(), size());
         hm.Finalize(&out[0]);
-        clearReset();
+        clear();
         m_data = std::move(out);
 
         return *this;
@@ -189,164 +99,6 @@ class Data {
         ripemd160(cdata(), size(), &out[0]);
         return out;
     }
-
-    void write(size_t pos, const uint8_t *data, size_t dataLen) {
-        for (size_t i = 0; i < dataLen; i++) {
-            m_data[i + pos] = data[i];
-        }
-    }
-
-    void write(size_t pos, uint8_t data) {
-        m_data[pos] = data;
-    }
-
-    void write(size_t pos, uint32_t data) {
-        writeUint32BE(pos, data);
-    }
-
-    void write(size_t pos, const Data &data) {
-        insert(pos, data.get());
-    }
-
-    void insert(size_t pos, const std::vector<uint8_t> &data) {
-        for (size_t i = 0; i < data.size(); i++) {
-            m_data[pos + i] = data[i];
-        }
-    }
-
-    inline uint8_t &operator[](std::size_t idx) noexcept {
-        return m_data[idx];
-    }
-
-    inline uint8_t operator[](std::size_t idx) const noexcept {
-        return m_data[idx];
-    }
-
-    bool operator==(const Data &other) const noexcept {
-        return m_data == other.m_data;
-    }
-
-    bool operator!=(const Data &other) const noexcept {
-        return m_data != other.m_data;
-    }
-
-    bool operator==(const uint8_t *other) const noexcept {
-        if (!other || !other[0] || !other[m_data.size() - 1]) {
-            return false;
-        }
-
-        for (size_t i = 0; i < m_data.size(); i++) {
-            if (m_data[i] != other[i]) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    bool operator!=(const uint8_t *other) const noexcept {
-        return !operator==(other);
-    }
-
-    void writeUint64BE(size_t pos, uint64_t val) {
-        m_data[pos] = val >> 56u;
-        m_data[pos + 1] = val >> 48u;
-        m_data[pos + 2] = val >> 40u;
-        m_data[pos + 3] = val >> 32u;
-        m_data[pos + 4] = val >> 24u;
-        m_data[pos + 5] = val >> 16u;
-        m_data[pos + 6] = val >> 8u;
-        m_data[pos + 7] = val;
-    }
-
-    void writeUint32BE(size_t pos, uint32_t val) {
-        m_data[pos] = val >> 24;
-        m_data[pos + 1] = val >> 16;
-        m_data[pos + 2] = val >> 8;
-        m_data[pos + 3] = val;
-    }
-
-    void writeUint8(size_t pos, uint8_t *ptr, uint8_t val) {
-        ptr[pos] = val;
-    }
-
-    void clear() {
-        std::fill(m_data.begin(), m_data.end(), 0);
-        m_data.clear();
-    }
-
-    void clearReset() {
-        size_t sz = size();
-        clear();
-        resize(sz);
-    }
-
-    void resize(size_t sz) {
-        m_data.resize(sz);
-    }
-
-    template<typename T>
-    const T to() const {
-        size_t len = sizeof(T);
-        if (len == 1) {
-            return m_data[0];
-        } else if (len == 2) {
-            uint16_t out = m_data[0] << 8u;
-            out <<= 8;
-            out |= m_data[1];
-            return out;
-        } else if (len == 4) {
-            uint32_t out = (static_cast<uint64_t>(m_data[0]) << 24u) | (m_data[1] << 16u) | (m_data[2] << 8u) | (m_data[3] & 0xFFu);
-            return out;
-        } else if (sizeof(uint64_t) == len) {
-
-            uint64_t out = static_cast<uint64_t>(m_data[0]) << 56u |
-                static_cast<uint64_t>(m_data[1]) << 48u |
-                static_cast<uint64_t>(m_data[2]) << 40u |
-                static_cast<uint64_t>(m_data[3]) << 32u |
-                static_cast<uint64_t>(m_data[4]) << 24u |
-                static_cast<uint64_t>(m_data[5]) << 16u |
-                static_cast<uint64_t>(m_data[6]) << 8u |
-                static_cast<uint64_t>(m_data[7]);
-
-            return out;
-        }
-
-        return 0;
-    }
-
-    explicit operator uint8_t() const {
-        return to<uint8_t>();
-    }
-
-    explicit operator char() const {
-        return to<char>();
-    }
-
-    explicit operator uint16_t() const {
-        return to<uint16_t>();
-    }
-
-    explicit operator int16_t() const {
-        return to<int16_t>();
-    }
-
-    explicit operator uint32_t() const {
-        return to<uint32_t>();
-    }
-
-    explicit operator int32_t() const {
-        return to<int32_t>();
-    }
-
-    explicit operator uint64_t() const {
-        return to<uint64_t>();
-    }
-
-    explicit operator int64_t() const {
-        return to<int64_t>();
-    }
-
 };
 
 template<size_t N>
@@ -364,16 +116,6 @@ class FixedData : public Data {
     FixedData(const std::vector<uint8_t> &data) : Data(data) { }
 
     FixedData(const uint8_t *data, size_t len) : Data(data, len) {
-
-    }
-    template<size_t NN>
-    FixedData<NN> takeFirstData() const {
-        return FixedData<NN>(takeFirstBytes(NN));
-    }
-
-    template<size_t NN>
-    FixedData<NN> takeLastData() const {
-        return FixedData<NN>(takeLastBytes(NN));
     }
 };
 
