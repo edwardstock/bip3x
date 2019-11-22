@@ -1,8 +1,8 @@
 version: 2
 jobs:
-  build_jessie_amd64:
+  build_buster_amd64:
     docker:
-      - image: debian:jessie
+      - image: debian:buster
         environment:
           CXX: /usr/bin/g++
           CC: /usr/bin/gcc
@@ -92,3 +92,4 @@ workflows:
   build_on_debian:
     jobs:
       - build_stretch_amd64
+      - build_buster_amd64
