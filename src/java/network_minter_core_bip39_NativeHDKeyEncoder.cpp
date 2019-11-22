@@ -68,45 +68,43 @@ Java_network_minter_core_bip39_NativeHDKeyEncoder_encoderMakeExtendedKey(
     net.bip32[1] = nets[1];
 
     // instancing native HDKey from java HDKey
-    minter::HDKey rootHdKey;
-    minter::nobject rk(env, _rootHdKey);
+    minter::HDKey hdkey;
+    minter::nobject inkey(env, _rootHdKey);
 
-    rootHdKey.net = net;
-    rootHdKey.publicKey = rk.getFieldUint8Array<33>("publicKey");
-    rootHdKey.privateKey = rk.getFieldUint8Array<32>("privateKey");
-    rootHdKey.chainCode = rk.getFieldUint8Array<32>("chainCode");
-    rootHdKey.extPrivateKey = rk.getFieldUint8Array<112>("extPrivateKey");
-    rootHdKey.extPublicKey = rk.getFieldUint8Array<112>("extPublicKey");
-    rootHdKey.depth = rk.getFieldUint8("depth");
-    rootHdKey.index = rk.getFieldUint32("index");
-    rootHdKey.fingerprint = rk.getFieldUint32("fingerprint");
-
+    hdkey.net = net;
+    hdkey.publicKey = inkey.getFieldUint8Array<33>("publicKey");
+    hdkey.privateKey = inkey.getFieldUint8Array<32>("privateKey");
+    hdkey.chainCode = inkey.getFieldUint8Array<32>("chainCode");
+    hdkey.extPrivateKey = inkey.getFieldUint8Array<112>("extPrivateKey");
+    hdkey.extPublicKey = inkey.getFieldUint8Array<112>("extPublicKey");
+    hdkey.depth = inkey.getFieldUint8("depth");
+    hdkey.index = inkey.getFieldUint32("index");
+    hdkey.fingerprint = inkey.getFieldUint32("fingerprint");
 
     const char *derivation_path = env->GetStringUTFChars(_derivation_path, 0);
-    minter::HDKey extHdKey = minter::HDKeyEncoder::makeExtendedKey(rootHdKey, derivation_path);
+    minter::HDKeyEncoder::makeExtendedKey(hdkey, derivation_path);
     env->ReleaseStringUTFChars(_derivation_path, derivation_path);
 
 
     // instancing java HDKey from native
     minter::nobject out(env, env->GetObjectClass(_rootHdKey));
-//    jobject outHDKey = env->AllocObject(keyCls);
 
     // private key
-    out.setFieldUint8Array<32>("privateKey", extHdKey.privateKey);
+    out.setFieldUint8Array<32>("privateKey", hdkey.privateKey);
     // public key
-    out.setFieldUint8Array<33>("publicKey", extHdKey.publicKey);
+    out.setFieldUint8Array<33>("publicKey", hdkey.publicKey);
     // chain code
-    out.setFieldUint8Array<32>("chainCode", extHdKey.chainCode);
+    out.setFieldUint8Array<32>("chainCode", hdkey.chainCode);
     // ext private key
-    out.setFieldUint8Array<112>("extPrivateKey", extHdKey.extPrivateKey);
+    out.setFieldUint8Array<112>("extPrivateKey", hdkey.extPrivateKey);
     // ext public key
-    out.setFieldUint8Array<112>("extPublicKey", extHdKey.extPublicKey);
+    out.setFieldUint8Array<112>("extPublicKey", hdkey.extPublicKey);
 
-    out.setField("depth", extHdKey.depth);
-    out.setField("index", extHdKey.index);
-    out.setField("fingerprint", extHdKey.fingerprint);
+    out.setField("depth", hdkey.depth);
+    out.setField("index", hdkey.index);
+    out.setField("fingerprint", hdkey.fingerprint);
 
     // clear root
-    rootHdKey.clear();
+    hdkey.clear();
     return out.getObject();
 }
