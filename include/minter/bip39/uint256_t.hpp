@@ -83,15 +83,6 @@ class uint256_t {
 
     uint256_t(const bignum256 &data): m_val(data) { }
     uint256_t(bignum256 &&data): m_val(std::move(data)) { }
-
-    uint256_t(const std::string &num, uint32_t base = 10) {
-        if(base == 10) {
-            Data d(num.length());
-
-        }
-
-    }
-
     uint256_t(const minter::Data &d): m_val() {
         if(d.size() < 32) {
             std::vector<uint8_t> out(32);
@@ -105,19 +96,17 @@ class uint256_t {
         bn_read_be(d.cdata(), &m_val);
     }
 
-    uint256_t(const std::vector<uint8_t> &data): m_val() {
-        if(data.size() > 32) {
+    explicit uint256_t(const std::vector<uint8_t> &data) : m_val() {
+        if (data.size() > 32) {
             std::vector<uint8_t> out(32);
-            out.insert(out.begin(), data.begin(), data.begin()+32);
+            out.insert(out.begin(), data.begin(), data.begin() + 32);
             return;
         } else {
             std::vector<uint8_t> out(32);
-            out.insert(out.end()-data.size(), data.begin(), data.end());
+            out.insert(out.end() - data.size(), data.begin(), data.end());
             bn_read_be(&out[0], &m_val);
             return;
         }
-
-        bn_read_be(&data[0], &m_val);
     }
 
 

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 project(bip39
-        VERSION 1.3.0
+        VERSION 1.4.0
         DESCRIPTION "Native BIP39 Mnemonic implementation (with JNI and pure C bindings)"
         LANGUAGES CXX)
 
@@ -101,8 +101,6 @@ set(TREZOR_HEADERS
     include/minter/crypto/check_mem.h
     include/minter/crypto/curves.h
     include/minter/crypto/ecdsa.h
-    include/minter/crypto/groestl.h
-    include/minter/crypto/groestl_internal.h
     include/minter/crypto/hasher.h
     include/minter/crypto/hmac.h
     include/minter/crypto/memzero.h
@@ -128,7 +126,6 @@ set(TREZOR_SOURCES
     src/trezor-crypto/blake2s.cpp
     src/trezor-crypto/curves.cpp
     src/trezor-crypto/ecdsa.cpp
-    src/trezor-crypto/groestl.cpp
     src/trezor-crypto/hasher.cpp
     src/trezor-crypto/hmac.cpp
     src/trezor-crypto/memzero.cpp
@@ -316,6 +313,16 @@ if (${RUN})
 	#	target_compile_options(bip39dev PUBLIC -fsanitize=address -m64 -pipe -ffunction-sections -fdata-sections  -O0 -g -fno-omit-frame-pointer)
 endif ()
 
+if (ENABLE_PVS)
+	include(cmake/PVS-Studio.cmake)
+
+	pvs_studio_add_target(TARGET ${PROJECT_NAME}.analyze ALL
+	                      OUTPUT FORMAT errorfile
+	                      CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/pvs.cfg
+	                      ANALYZE ${PROJECT_NAME}
+	                      LOG target_main.err)
+endif ()
+
 
 if (ENABLE_BIP39_TESTS)
 
@@ -353,6 +360,10 @@ if (ENABLE_BIP39_TESTS)
 		target_include_directories(${PROJECT_CC_TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 		target_include_directories(${PROJECT_CC_TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 		gtest_add_tests(TARGET ${PROJECT_CC_TEST_NAME})
+		if (ENABLE_BIP39_SANITIZE)
+			target_link_libraries(${PROJECT_CC_TEST_NAME} asan)
+			target_compile_options(${PROJECT_CC_TEST_NAME} PUBLIC -fsanitize=address -m64 -pipe -ffunction-sections -fdata-sections -O0 -g -fno-omit-frame-pointer)
+		endif ()
 	endif ()
 
 	add_executable(
@@ -365,6 +376,11 @@ if (ENABLE_BIP39_TESTS)
 	target_include_directories(${PROJECT_TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 	target_include_directories(${PROJECT_TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 	gtest_add_tests(TARGET ${PROJECT_TEST_NAME})
+
+	if (ENABLE_BIP39_SANITIZE)
+		target_link_libraries(${PROJECT_TEST_NAME} asan)
+		target_compile_options(${PROJECT_TEST_NAME} PUBLIC -fsanitize=address -m64 -pipe -ffunction-sections -fdata-sections -O0 -g -fno-omit-frame-pointer)
+	endif ()
 
 endif ()
 

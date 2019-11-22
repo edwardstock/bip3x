@@ -40,7 +40,5 @@ typedef struct {
 
 BIP39_CORE_API extern const ecdsa_curve secp256k1;
 BIP39_CORE_API extern const curve_info secp256k1_info;
-BIP39_CORE_API extern const curve_info secp256k1_decred_info;
-BIP39_CORE_API extern const curve_info secp256k1_groestl_info;
 
 #endif

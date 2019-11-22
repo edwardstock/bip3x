@@ -99,6 +99,10 @@ class Data : public toolboxpp::data::bytes_data {
         ripemd160(cdata(), size(), &out[0]);
         return out;
     }
+
+    void clear() {
+        std::fill(begin(), end(), 0);
+    }
 };
 
 template<size_t N>

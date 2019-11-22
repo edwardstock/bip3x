@@ -23,18 +23,25 @@ void Transform(uint32_t* s, const unsigned char* chunk, size_t blocks);
 namespace
 {
 /// Internal SHA-256 implementation.
-namespace sha256
-{
-uint32_t inline Ch(uint32_t x, uint32_t y, uint32_t z) { return z ^ (x & (y ^ z)); }
-uint32_t inline Maj(uint32_t x, uint32_t y, uint32_t z) { return (x & y) | (z & (x | y)); }
-uint32_t inline Sigma0(uint32_t x) { return (x >> 2 | x << 30) ^ (x >> 13 | x << 19) ^ (x >> 22 | x << 10); }
-uint32_t inline Sigma1(uint32_t x) { return (x >> 6 | x << 26) ^ (x >> 11 | x << 21) ^ (x >> 25 | x << 7); }
-uint32_t inline sigma0(uint32_t x) { return (x >> 7 | x << 25) ^ (x >> 18 | x << 14) ^ (x >> 3); }
-uint32_t inline sigma1(uint32_t x) { return (x >> 17 | x << 15) ^ (x >> 19 | x << 13) ^ (x >> 10); }
+namespace sha256 {
+constexpr uint32_t inline Ch(uint32_t x, uint32_t y, uint32_t z) { return z ^ (x & (y ^ z)); }
+constexpr uint32_t inline Maj(uint32_t x, uint32_t y, uint32_t z) { return (x & y) | (z & (x | y)); }
+constexpr uint32_t inline Sigma0(uint32_t x) { return (x >> 2 | x << 30) ^ (x >> 13 | x << 19) ^ (x >> 22 | x << 10); }
+constexpr uint32_t inline Sigma1(uint32_t x) { return (x >> 6 | x << 26) ^ (x >> 11 | x << 21) ^ (x >> 25 | x << 7); }
+constexpr uint32_t inline sigma0(uint32_t x) { return (x >> 7 | x << 25) ^ (x >> 18 | x << 14) ^ (x >> 3); }
+constexpr uint32_t inline sigma1(uint32_t x) { return (x >> 17 | x << 15) ^ (x >> 19 | x << 13) ^ (x >> 10); }
 
 /** One round of SHA-256. */
-void inline Round(uint32_t a, uint32_t b, uint32_t c, uint32_t& d, uint32_t e, uint32_t f, uint32_t g, uint32_t& h, uint32_t k, uint32_t w)
-{
+void inline Round(uint32_t a,
+                  uint32_t b,
+                  uint32_t c,
+                  uint32_t &d,
+                  uint32_t e,
+                  uint32_t f,
+                  uint32_t g,
+                  uint32_t &h,
+                  uint32_t k,
+                  uint32_t w) {
     uint32_t t1 = h + Sigma1(e) + Ch(e, f, g) + k + w;
     uint32_t t2 = Sigma0(a) + Maj(a, b, c);
     d += t1;
@@ -42,8 +49,7 @@ void inline Round(uint32_t a, uint32_t b, uint32_t c, uint32_t& d, uint32_t e, u
 }
 
 /** Initialize SHA-256 state. */
-void inline Initialize(uint32_t* s)
-{
+constexpr void inline Initialize(uint32_t *s) {
     s[0] = 0x6a09e667ul;
     s[1] = 0xbb67ae85ul;
     s[2] = 0x3c6ef372ul;
@@ -193,7 +199,7 @@ std::string SHA256AutoDetect()
 
 ////// SHA-256
 
-CSHA256::CSHA256() : bytes(0)
+CSHA256::CSHA256() : s{}, buf{}, bytes(0)
 {
     sha256::Initialize(s);
 }
@@ -224,9 +230,8 @@ CSHA256& CSHA256::Write(const unsigned char* data, size_t len)
     return *this;
 }
 
-void CSHA256::Finalize(unsigned char hash[OUTPUT_SIZE])
-{
-    static const unsigned char pad[64] = {0x80};
+void CSHA256::Finalize(unsigned char hash[OUTPUT_SIZE]) {
+    static const unsigned char pad[64] = {0x80}; //-V1009
     unsigned char sizedesc[8];
     WriteBE64(sizedesc, bytes << 3);
     Write(pad, 1 + ((119 - (bytes % 64)) % 64));

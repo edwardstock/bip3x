@@ -61,6 +61,9 @@ class BIP39_CORE_API HDKey {
  public:
     HDKey();
     ~HDKey();
+    HDKey(const HDKey &other);
+    HDKey(HDKey &&other) noexcept;
+    HDKey &operator=(minter::HDKey other);
 
     void clear();
 
@@ -82,9 +85,7 @@ class BIP39_CORE_API HDKeyEncoder {
     static Data64 makeBip39Seed(const std::vector<std::string> &mnemonicWords);
     static HDKey makeBip32RootKey(const char* mnemonic, BTCNetwork net = minter::MainNet);
     static HDKey makeBip32RootKey(const Data64 &seed, BTCNetwork net = minter::MainNet);
-    static HDKey makeExtendedKey(const HDKey &rootKey, const Derivation &derivation);
-
-    static std::string getAddress(const HDKey &key);
+    static void makeExtendedKey(HDKey &rootKey, const Derivation &derivation);
  private:
     static void derive(HDKey &key, uint32_t index);
     static HDKey fromSeed(const Data &seed);

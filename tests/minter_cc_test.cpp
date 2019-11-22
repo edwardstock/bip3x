@@ -12,14 +12,6 @@
 #include <cbip39_hdkey_encoder.h>
 #include <minter/bip39/utils.h>
 
-minter_hdkey *makeRootKey(const struct minter_data64 *seed) {
-    return encoder_make_bip32_root_key(seed);
-}
-
-minter_hdkey *makeExtKey(const minter_hdkey *rootHdKey) {
-    return encoder_make_ext_key(rootHdKey, "m/44'/60'/0'/0/0");
-}
-
 void print_hdkey_data(minter_hdkey *key, std::string name) {
     std::cout << "=== Key " << name << " ===" << std::endl;
     std::cout << " pubkey: " << toolboxpp::data::bytesToHex(key->public_key.data, 33) << std::endl;
@@ -41,20 +33,22 @@ TEST(CMinter, PrivateKeyFromMnemonic) {
 
     std::cout << "SEED: " << toolboxpp::data::bytesToHex(seed.data, 64) << std::endl;
 
-    minter_hdkey *rootKey = makeRootKey(&seed);
-    print_hdkey_data(rootKey, "ROOT");
-    minter_hdkey *extKey = makeExtKey(rootKey);
-    print_hdkey_data(extKey, "EXT KEY");
-    minter_data32 privateKey = extKey->private_key;
+    minter_hdkey hdkey;
+    encoder_make_bip32_root_key(&seed, &hdkey);
+    print_hdkey_data(&hdkey, "ROOT");
+
+    encoder_make_ext_key(&hdkey, "m/44'/60'/0'/0/0");
+    print_hdkey_data(&hdkey, "EXT KEY");
+
+    minter_data32 privateKey = hdkey.private_key;
 
     const char *expectedPrivateKey = "fd90261f5bd702ffbe7483c3b5aa7b76b1f40c1582cc6a598120b16067d3cb9a";
-    auto *givenPrivate = new uint8_t[32];
+    uint8_t givenPrivate[32];
     memcpy(givenPrivate, privateKey.data, 32);
 
     ASSERT_STREQ(expectedPrivateKey, toolboxpp::data::bytesToHex(givenPrivate, 32).c_str());
 
-    free_hdkey(rootKey);
-    free_hdkey(extKey);
+    free_hdkey(&hdkey);
 }
 
 TEST(CMinter, GetLanguages) {

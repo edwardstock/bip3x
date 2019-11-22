@@ -10,6 +10,10 @@
 
 std::vector<std::string> minter::Bip39Mnemonic::getLanguages() {
     int sz = bip39_get_languages_size();
+    if (sz <= 0) {
+        return std::vector<std::string>(0);
+    }
+
     std::vector<std::string> languages(static_cast<size_t>(sz));
     bip39_get_languages(languages);
 

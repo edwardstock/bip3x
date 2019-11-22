@@ -18,8 +18,8 @@ HDKey makeRootKey(const Data64 &seed) {
     return minter::HDKeyEncoder::makeBip32RootKey(seed, minter::MainNet);
 }
 
-HDKey makeExtKey(const HDKey &rootHdKey) {
-    return minter::HDKeyEncoder::makeExtendedKey(rootHdKey, "m/44'/60'/0'/0/0");
+void makeExtKey(HDKey &rootHdKey) {
+    minter::HDKeyEncoder::makeExtendedKey(rootHdKey, "m/44'/60'/0'/0/0");
 }
 
 TEST(Minter, PrivateKeyFromMnemonic) {
@@ -29,30 +29,30 @@ TEST(Minter, PrivateKeyFromMnemonic) {
     minter::Bip39Mnemonic::wordsToSeed("lock silly satisfy version solution bleak rain candy phone loan powder dose",
                                        seed.data(),
                                        &written);
-    HDKey rootKey = makeRootKey(seed);
-    HDKey extKey = makeExtKey(rootKey);
-    Data32 privateKey = extKey.privateKey;
+    HDKey key = makeRootKey(seed);
+    makeExtKey(key);
 
     const char *expectedPrivateKey = "fd90261f5bd702ffbe7483c3b5aa7b76b1f40c1582cc6a598120b16067d3cb9a";
 
-    ASSERT_STREQ(expectedPrivateKey, privateKey.to_hex().c_str());
+    ASSERT_STREQ(expectedPrivateKey, key.privateKey.to_hex().c_str());
 }
 
 TEST(Minter, StringCopyToCharPtr) {
     std::string ascii = "hello world";
-    char* asciiPtr = new char[ascii.size()+1];
-    ascii.copy(asciiPtr, ascii.size());
-    asciiPtr[ascii.size()] = '\0';
+    char *asciiPtr = (char *) malloc(sizeof(char) * ascii.length() + 1);
+    memcpy(asciiPtr, ascii.data(), ascii.length());
+    asciiPtr[ascii.length()] = '\0';
 
     std::string unicoded = "константная юникодная строка";
-    char* unicodePtr = new char[unicoded.size()];
-    unicoded.copy(unicodePtr, unicoded.size());
-    unicodePtr[unicoded.size()] = '\0';
+    char *unicodePtr = (char *) malloc(sizeof(char) * unicoded.length() + 1);
+    memcpy(unicodePtr, unicoded.data(), unicoded.length());
+    unicodePtr[unicoded.length()] = '\0';
 
     ASSERT_STREQ("hello world", asciiPtr);
     ASSERT_STREQ("константная юникодная строка", unicodePtr);
 
-
+    free(asciiPtr);
+    free(unicodePtr);
 }
 
  

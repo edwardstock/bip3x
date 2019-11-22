@@ -36,18 +36,15 @@ minter::HDKey minter::HDKeyEncoder::makeBip32RootKey(const minter::Data64 &seed,
     return out;
 }
 
-minter::HDKey minter::HDKeyEncoder::makeExtendedKey(const minter::HDKey &rootKey, const Derivation &derivation) {
-    HDKey out = rootKey;
-    derivePath(out, derivation.path, true);
+void minter::HDKeyEncoder::makeExtendedKey(minter::HDKey &rootKey, const Derivation &derivation) {
+    derivePath(rootKey, derivation.path, true);
 
-    serialize(out, out.fingerprint, out.net.bip32[1], false);
+    serialize(rootKey, rootKey.fingerprint, rootKey.net.bip32[1], false);
 
-    fillPublicKey(out);
-    serialize(out, out.fingerprint, out.net.bip32[0], true);
-    fillPublicKey(out);
-    return out;
+    fillPublicKey(rootKey);
+    serialize(rootKey, rootKey.fingerprint, rootKey.net.bip32[0], true);
+    fillPublicKey(rootKey);
 }
-
 
 void minter::HDKeyEncoder::derive(minter::HDKey &key, uint32_t index) {
     CONFIDENTIAL Data buff(37);
@@ -70,8 +67,6 @@ void minter::HDKeyEncoder::derive(minter::HDKey &key, uint32_t index) {
     buff.write(33, index);
 
     a = key.privateKey;
-
-
 
     CONFIDENTIAL hmac_sha512(key.chainCode.cdata(), 32, buff.cdata(), buff.size(), I.data());
 
@@ -170,7 +165,7 @@ uint32_t minter::HDKeyEncoder::fetchFingerprint(minter::HDKey &key) {
 }
 void minter::HDKeyEncoder::fillPublicKey(minter::HDKey &key) {
     if (key.curve->params) {
-        if(key.publicKey.size() == 0) {
+        if (key.publicKey.size() == 0) {
             key.publicKey.resize(33);
         }
         ecdsa_get_public_key33(key.curve->params, key.privateKey.cdata(), key.publicKey.data());
@@ -228,7 +223,7 @@ minter::HDKey minter::HDKeyEncoder::fromSeed(const minter::Data &seed) {
         while (true) {
             a = I;
 
-            if(a != 0 && a < out.curve->params->order) {
+            if (a != 0 && a < out.curve->params->order) {
                 break;
             }
 
@@ -244,21 +239,60 @@ minter::HDKey minter::HDKeyEncoder::fromSeed(const minter::Data &seed) {
 
     return out;
 }
-std::string minter::HDKeyEncoder::getAddress(const minter::HDKey &key) {
-    HDKey k = key;
-    fillPublicKey(k);
-    char addr[64];
-    ecdsa_get_address(k.publicKey.cdata(), key.net.bip32[0], key.curve->hasher_pubkey, key.curve->hasher_base58, addr, sizeof(addr));
-
-    return std::string(addr);
-}
-
 
 minter::HDKey::HDKey() :
+    publicKey(),
+    privateKey(),
+    chainCode(),
+    extPrivateKey(),
+    extPublicKey(),
+    net(MainNet),
     depth(0),
     index(0),
     fingerprint(0),
     curve(&secp256k1_info) { }
+
+minter::HDKey::HDKey(const minter::HDKey &other) :
+    publicKey(other.publicKey),
+    privateKey(other.privateKey),
+    chainCode(other.chainCode),
+    extPrivateKey(other.extPrivateKey),
+    extPublicKey(other.extPublicKey),
+    net(other.net),
+    depth(other.depth),
+    index(other.index),
+    fingerprint(other.fingerprint),
+    curve(&secp256k1_info) {
+
+}
+
+minter::HDKey::HDKey(minter::HDKey &&other) noexcept :
+    publicKey(std::move(other.publicKey)),
+    privateKey(std::move(other.privateKey)),
+    chainCode(std::move(other.chainCode)),
+    extPrivateKey(std::move(other.extPrivateKey)),
+    extPublicKey(std::move(other.extPublicKey)),
+    net(std::move(other.net)),
+    depth(other.depth),
+    index(other.index),
+    fingerprint(other.fingerprint),
+    curve(&secp256k1_info) {
+
+}
+
+minter::HDKey &minter::HDKey::operator=(minter::HDKey other) {
+    std::swap(publicKey, other.publicKey);
+    std::swap(privateKey, other.privateKey);
+    std::swap(chainCode, other.chainCode);
+    std::swap(extPrivateKey, other.extPrivateKey);
+    std::swap(extPublicKey, other.extPublicKey);
+    std::swap(net, other.net);
+    std::swap(depth, other.depth);
+    std::swap(index, other.index);
+    std::swap(fingerprint, other.fingerprint);
+    curve = &secp256k1_info;
+    return *this;
+}
 
 minter::HDKey::~HDKey() {
     clear();

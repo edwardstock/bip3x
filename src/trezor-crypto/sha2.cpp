@@ -513,9 +513,6 @@ void sha1_Transform(const sha2_word32* state_in, const sha2_word32* data, sha2_w
 	state_out[2] = state_in[2] + c;
 	state_out[3] = state_in[3] + d;
 	state_out[4] = state_in[4] + e;
-
-	/* Clean up */
-	a = b = c = d = e = T1 = 0;
 }
 
 #endif /* SHA2_UNROLL_TRANSFORM */
@@ -574,8 +571,6 @@ void sha1_Update(trezor::SHA1_CTX* context, const sha2_byte *data, size_t len) {
 		MEMCPY_BCOPY(context->buffer, data, len);
 		context->bitcount += len << 3;
 	}
-	/* Clean up: */
-	usedspace = freespace = 0;
 }
 
 void sha1_Final(trezor::SHA1_CTX* context, sha2_byte digest[]) {
@@ -629,7 +624,6 @@ void sha1_Final(trezor::SHA1_CTX* context, sha2_byte digest[]) {
 
 	/* Clean up state data: */
 	memzero(context, sizeof(trezor::SHA1_CTX));
-	usedspace = 0;
 }
 
 char *sha1_End(trezor::SHA1_CTX* context, char buffer[]) {
@@ -820,9 +814,6 @@ void sha256_Transform(const sha2_word32* state_in, const sha2_word32* data, sha2
 	state_out[5] = state_in[5] + f;
 	state_out[6] = state_in[6] + g;
 	state_out[7] = state_in[7] + h;
-
-	/* Clean up */
-	a = b = c = d = e = f = g = h = T1 = T2 = 0;
 }
 
 #endif /* SHA2_UNROLL_TRANSFORM */
@@ -881,8 +872,6 @@ void sha256_Update(trezor::SHA256_CTX* context, const sha2_byte *data, size_t le
 		MEMCPY_BCOPY(context->buffer, data, len);
 		context->bitcount += len << 3;
 	}
-	/* Clean up: */
-	usedspace = freespace = 0;
 }
 
 void sha256_Final(trezor::SHA256_CTX* context, sha2_byte digest[]) {
@@ -936,7 +925,6 @@ void sha256_Final(trezor::SHA256_CTX* context, sha2_byte digest[]) {
 
 	/* Clean up state data: */
 	memzero(context, sizeof(trezor::SHA256_CTX));
-	usedspace = 0;
 }
 
 char *sha256_End(trezor::SHA256_CTX* context, char buffer[]) {
@@ -1125,9 +1113,6 @@ void sha512_Transform(const sha2_word64* state_in, const sha2_word64* data, sha2
 	state_out[5] = state_in[5] + f;
 	state_out[6] = state_in[6] + g;
 	state_out[7] = state_in[7] + h;
-
-	/* Clean up */
-	a = b = c = d = e = f = g = h = T1 = T2 = 0;
 }
 
 #endif /* SHA2_UNROLL_TRANSFORM */
@@ -1186,8 +1171,6 @@ void sha512_Update(trezor::SHA512_CTX* context, const sha2_byte *data, size_t le
 		MEMCPY_BCOPY(context->buffer, data, len);
 		ADDINC128(context->bitcount, len << 3);
 	}
-	/* Clean up: */
-	usedspace = freespace = 0;
 }
 
 static void sha512_Last(trezor::SHA512_CTX* context) {

@@ -273,27 +273,27 @@ void point_jacobian_add(const curve_point *p1, jacobian_curve_point *p2, const e
 	 *    and y3 = 1/2 r * (2x3 - h^2*(x1' + x2)) + h^3*(y1' + y2)
 	 */
 
-	/* h = x1 - x2
-	 * r = y1 - y2
-	 * x3 = r^2 - h^3 - 2*h^2*x2
-	 * y3 = r*(h^2*x2 - x3) - h^3*y2
-	 * z3 = h*z2
-	 */
+    /* h = x1 - x2
+     * r = y1 - y2
+     * x3 = r^2 - h^3 - 2*h^2*x2
+     * y3 = r*(h^2*x2 - x3) - h^3*y2
+     * z3 = h*z2
+     */
 
-	xz = p2->z;
-	bn_multiply(&xz, &xz, prime); // xz = z2^2
-	yz = p2->z;
-	bn_multiply(&xz, &yz, prime); // yz = z2^3
-	
-	if (a != 0) {
-		az  = xz;
-		bn_multiply(&az, &az, prime);   // az = z2^4
-		bn_mult_k(&az, -a, prime);      // az = -az2^4
-	}
-	
-	bn_multiply(&p1->x, &xz, prime);        // xz = x1' = x1*z2^2;
-	h = xz;
-	bn_subtractmod(&h, &p2->x, &h, prime);
+    xz = p2->z;
+    bn_multiply(&xz, &xz, prime); // xz = z2^2
+    yz = p2->z;
+    bn_multiply(&xz, &yz, prime); //-V778 yz = z2^3
+
+    if (a != 0) {
+        az = xz;
+        bn_multiply(&az, &az, prime);   // az = z2^4
+        bn_mult_k(&az, -a, prime);      // az = -az2^4
+    }
+
+    bn_multiply(&p1->x, &xz, prime);        // xz = x1' = x1*z2^2;
+    h = xz;
+    bn_subtractmod(&h, &p2->x, &h, prime);
 	bn_fast_mod(&h, prime);
 	// h = x1' - x2;
 
@@ -321,26 +321,26 @@ void point_jacobian_add(const curve_point *p1, jacobian_curve_point *p2, const e
 		// subtract -a z2^4, i.e, add a z2^4
 		bn_subtractmod(&r2, &az, &r2, prime);
 	}
-	bn_cmov(&r, is_doubling, &r2, &r);
-	bn_cmov(&h, is_doubling, &yz, &h);
-	
+    bn_cmov(&r, is_doubling, &r2, &r);
+    bn_cmov(&h, is_doubling, &yz, &h);
 
-	// hsqx = h^2
-	hsqx = h;
-	bn_multiply(&hsqx, &hsqx, prime);
 
-	// hcby = h^3
-	hcby = h;
-	bn_multiply(&hsqx, &hcby, prime);
+    // hsqx = h^2
+    hsqx = h;
+    bn_multiply(&hsqx, &hsqx, prime);
 
-	// hsqx = h^2 * (x1 + x2)
-	bn_multiply(&xz, &hsqx, prime);
+    // hcby = h^3
+    hcby = h;
+    bn_multiply(&hsqx, &hcby, prime); //-V778
 
-	// hcby = h^3 * (y1 + y2)
-	bn_multiply(&yz, &hcby, prime);
+    // hsqx = h^2 * (x1 + x2)
+    bn_multiply(&xz, &hsqx, prime);
 
-	// z3 = h*z2
-	bn_multiply(&h, &p2->z, prime);
+    // hcby = h^3 * (y1 + y2)
+    bn_multiply(&yz, &hcby, prime);
+
+    // z3 = h*z2
+    bn_multiply(&h, &p2->z, prime);
 
 	// x3 = r^2 - h^2 (x1 + x2)
 	p2->x = r;
@@ -395,27 +395,27 @@ void point_jacobian_double(jacobian_curve_point *p, const ecdsa_curve *curve) {
 	bn_multiply(&az4, &az4, prime);
 	bn_mult_k(&az4, -curve->a, prime);
 	bn_subtractmod(&m, &az4, &m, prime);
-	bn_mult_half(&m, prime);
+    bn_mult_half(&m, prime);
 
-	// msq = m^2
-	msq = m;
-	bn_multiply(&msq, &msq, prime);
-	// ysq = y^2
-	ysq = p->y;
-	bn_multiply(&ysq, &ysq, prime);
-	// xysq = xy^2
-	xysq = p->x;
-	bn_multiply(&ysq, &xysq, prime);
+    // msq = m^2
+    msq = m;
+    bn_multiply(&msq, &msq, prime);
+    // ysq = y^2
+    ysq = p->y;
+    bn_multiply(&ysq, &ysq, prime);
+    // xysq = xy^2
+    xysq = p->x;
+    bn_multiply(&ysq, &xysq, prime); //-V778
 
-	// z3 = yz
-	bn_multiply(&p->y, &p->z, prime);
+    // z3 = yz
+    bn_multiply(&p->y, &p->z, prime);
 
-	// x3 = m^2 - 2*xy^2
-	p->x = xysq;
-	bn_lshift(&p->x);
-	bn_fast_mod(&p->x, prime);
-	bn_subtractmod(&msq, &p->x, &p->x, prime);
-	bn_fast_mod(&p->x, prime);
+    // x3 = m^2 - 2*xy^2
+    p->x = xysq;
+    bn_lshift(&p->x);
+    bn_fast_mod(&p->x, prime);
+    bn_subtractmod(&msq, &p->x, &p->x, prime);
+    bn_fast_mod(&p->x, prime);
 
 	// y3 = m*(xy^2 - x3) - y^4
 	bn_subtractmod(&xysq, &p->x, &p->y, prime);

@@ -26,7 +26,6 @@
 #include "sha2.hpp"
 #include "sha3.h"
 #include "blake256.h"
-#include "groestl.h"
 #include "minter/bip39/bip39_core.h"
 
 #define HASHER_DIGEST_LENGTH 32
@@ -34,17 +33,10 @@
 typedef enum {
     HASHER_SHA2,
     HASHER_BLAKE,
-
     HASHER_SHA2D,
     HASHER_BLAKED,
-
-    HASHER_GROESTLD_TRUNC, /* Double Groestl512 hasher truncated to 256 bits */
-
     HASHER_SHA3,
-
-#if USE_KECCAK
     HASHER_SHA3K,
-#endif
 } HasherType;
 
 typedef struct {
@@ -54,7 +46,6 @@ typedef struct {
         trezor::SHA256_CTX sha2;
         SHA3_CTX sha3;
         BLAKE256_CTX blake;
-        GROESTL512_CTX groestl;
     } ctx;
 } Hasher;
 

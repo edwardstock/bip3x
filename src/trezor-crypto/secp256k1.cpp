@@ -65,23 +65,3 @@ const curve_info secp256k1_info = {
 	HASHER_SHA2D,
 	HASHER_SHA2,
 };
-
-BIP39_CORE_API
-const curve_info secp256k1_decred_info = {
-	"Decred seed",
-	&secp256k1,
-	HASHER_BLAKE,
-	HASHER_BLAKED,
-	HASHER_BLAKE,
-	HASHER_BLAKE,
-};
-
-BIP39_CORE_API
-const curve_info secp256k1_groestl_info = {
-	"Bitcoin seed",
-	&secp256k1,
-	HASHER_SHA2,
-	HASHER_GROESTLD_TRUNC,
-	HASHER_SHA2,
-	HASHER_SHA2,
-};
