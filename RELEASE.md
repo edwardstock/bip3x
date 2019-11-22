@@ -1,3 +1,6 @@
+## 1.4.1
+ - Improved FixedData
+
 ## 1.4.0
  - Changed behavior of making extended key - now `makeExtendedKey` passes `rootHdKey` by reference to make from it extended key, no more copies.
  The same behavior for c-library.
