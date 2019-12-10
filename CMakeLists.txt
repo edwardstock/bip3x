@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 project(bip39
-        VERSION 1.4.2
+        VERSION 1.4.3
         DESCRIPTION "Native BIP39 Mnemonic implementation (with JNI and pure C bindings)"
         LANGUAGES CXX)
 
@@ -16,7 +16,6 @@ if (CYGWIN AND ENABLE_BIP39_CONAN)
 	message(FATAL_ERROR "Conan does not support Cygwin binaries")
 endif ()
 
-
 if (WIN32)
 	execute_process(COMMAND cmd /C "echo ${CMAKE_PROJECT_VERSION} > ${CMAKE_CURRENT_SOURCE_DIR}/version")
 else ()
@@ -30,17 +29,6 @@ if (MSVC)
 	string(REGEX REPLACE "\\/W3" " " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 	add_compile_options(/wd4146)
 	add_compile_options(/wd4251)
-
-	if (NOT ENABLE_BIP39_SHARED)
-		foreach (flag_var
-		         CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
-		         CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-			if (${flag_var} MATCHES "/MD")
-				string(REGEX REPLACE "MD" "MT" ${flag_var} "${${flag_var}}")
-			endif (${flag_var} MATCHES "/MD")
-		endforeach (flag_var)
-	endif ()
-
 elseif (MINGW)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wno-unknown-pragmas")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra -pedantic")
@@ -244,6 +232,8 @@ if (ENABLE_BIP39_C)
 	else ()
 		add_library(cbip39 STATIC ${BIP39_C_SOURCES})
 	endif ()
+	# link toolbox again, as we don't link main library, only using sources directly
+	target_link_libraries(cbip39 CONAN_PKG::toolbox)
 
 	set_target_properties(cbip39 PROPERTIES
 	                      PUBLIC_HEADER "${BIP39_C_HEADERS}"

@@ -50,7 +50,7 @@ class Bip39Conan(ConanFile):
     default_channel = "latest"
 
     requires = (
-        "toolbox/3.0.1@edwardstock/latest"
+        "toolbox/3.0.2@edwardstock/latest"
     )
     build_requires = (
         "gtest/1.8.1@bincrafters/stable",
@@ -60,6 +60,10 @@ class Bip39Conan(ConanFile):
         if "CONAN_LOCAL" not in os.environ:
             self.run("rm -rf *")
             self.run("git clone --recursive https://github.com/edwardstock/native-bip39.git .")
+
+    def configure(self):
+        if self.settings.compiler == "Visual Studio":
+            del self.settings.compiler.runtime
 
     def build(self):
         cmake = CMake(self)
@@ -103,13 +107,9 @@ class Bip39Conan(ConanFile):
 
     def package_info(self):
         self.cpp_info.includedirs = ['include']
-        if self.settings.os == "Windows":
-            self.cpp_info.libs = ['bip39.lib']
-            if self.options.enableC:
-                self.cpp_info.libs.append('cbip39.lib')
+        self.cpp_info.libs = ['bip39']
+        if self.options.enableC:
+            self.cpp_info.libs.append('cbip39')
 
-            if self.options.enableJNI:
-                self.cpp_info.libs.append('bip39_jni.dll')
-        else:
-            self.cpp_info.libs = self.collect_libs(folder="lib")
-
+        if self.options.enableJNI:
+            self.cpp_info.libs.append('bip39_jni')

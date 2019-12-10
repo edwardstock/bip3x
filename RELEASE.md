@@ -1,3 +1,6 @@
+## 1.4.3
+ - Updates for Windows
+
 ## 1.4.2
  - Updated toolbox (new lightweight api)
  - Clean-up
