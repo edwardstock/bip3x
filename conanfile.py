@@ -50,7 +50,7 @@ class Bip39Conan(ConanFile):
     default_channel = "latest"
 
     requires = (
-        "toolbox/3.0.2@edwardstock/latest"
+        "toolbox/3.0.3@edwardstock/latest"
     )
     build_requires = (
         "gtest/1.8.1@bincrafters/stable",
