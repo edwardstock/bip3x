@@ -29,7 +29,7 @@ class Bip39Conan(ConanFile):
     default_options = {
         "shared": False,
         "enableJNI": False,
-        "enableC": True,
+        "enableC": False,
         "toolbox:shared": False,
     }
     exports = "version"
@@ -66,7 +66,7 @@ class Bip39Conan(ConanFile):
         opts = {
             'ENABLE_BIP39_TESTS': 'Off',
             'CMAKE_BUILD_TYPE': 'Release',
-            'ENABLE_BIP39_C': 'On',
+            'ENABLE_BIP39_C': 'Off',
             'ENABLE_BIP39_JNI': 'Off',
             'ENABLE_BIP39_SHARED': 'Off'
         }
