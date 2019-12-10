@@ -30,6 +30,7 @@ class Bip39Conan(ConanFile):
         "shared": False,
         "enableJNI": False,
         "enableC": True,
+        "toolbox:shared": False,
     }
     exports = "version"
     exports_sources = (
@@ -49,7 +50,7 @@ class Bip39Conan(ConanFile):
     default_channel = "latest"
 
     requires = (
-        "toolboxpp/2.3.2@edwardstock/latest"
+        "toolbox/3.0.1@edwardstock/latest"
     )
     build_requires = (
         "gtest/1.8.1@bincrafters/stable",

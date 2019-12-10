@@ -66,7 +66,7 @@ macro (conan_init)
 
 	if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake)
 		include(${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake)
-		conan_basic_setup(TARGETS)
+		conan_basic_setup(TARGETS KEEP_RPATHS)
 	else ()
 		message(WARNING "The file ${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake doesn't exist, you have to run conan install first")
 	endif ()

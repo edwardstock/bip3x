@@ -1,3 +1,7 @@
+## 1.4.2
+ - Updated toolbox (new lightweight api)
+ - Clean-up
+
 ## 1.4.1
  - Improved FixedData
 

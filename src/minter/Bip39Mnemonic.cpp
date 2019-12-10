@@ -6,7 +6,10 @@
  */
 
 #include "minter/bip39/Bip39Mnemonic.h"
+
 #include "minter/bip39/PCGRand.hpp"
+
+#include <toolbox/strings.hpp>
 
 std::vector<std::string> minter::Bip39Mnemonic::getLanguages() {
     int sz = bip39_get_languages_size();
@@ -68,8 +71,7 @@ minter::Bip39Mnemonic::MnemonicResult minter::Bip39Mnemonic::encodeBytes(const u
         return result;
     }
 
-
-    result.words = toolboxpp::strings::split(output[0], " ");
+    result.words = toolbox::strings::split(output[0], " ");
     result.len = result.words.size();
     result.raw = std::string(output[0]);
 

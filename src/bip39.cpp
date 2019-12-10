@@ -26,10 +26,6 @@ static const struct {
 };
 
 int bip39_get_languages(std::vector<std::string> &output) {
-//    if (!output) {
-//        return MINTER_EINVAL;
-//    }
-
     auto len = (size_t) bip39_get_languages_size();
     for (size_t i = 0; i < len; i++) {
         output[i] = std::string(lookup[i].name);

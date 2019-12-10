@@ -34,4 +34,8 @@ fi
 
 CONAN_LOCAL=1 conan create . edwardstock/latest -s compiler.libcxx=${stdlibname} -s build_type=Debug --build=missing
 CONAN_LOCAL=1 conan create . edwardstock/latest -s compiler.libcxx=${stdlibname} -s build_type=Release --build=missing
+
+if [ "${NOUPLOAD}" != "1" ]
+then
 CONAN_LOCAL=1 conan upload bip39/${VERS}@edwardstock/latest --all -r=edwardstock
+fi

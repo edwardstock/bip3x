@@ -14,16 +14,16 @@
 
 void print_hdkey_data(minter_hdkey *key, std::string name) {
     std::cout << "=== Key " << name << " ===" << std::endl;
-    std::cout << " pubkey: " << toolboxpp::data::bytesToHex(key->public_key.data, 33) << std::endl;
-    std::cout << "privkey: " << toolboxpp::data::bytesToHex(key->private_key.data, 32) << std::endl;
-    std::cout << "chain_code: " << toolboxpp::data::bytesToHex(key->chain_code.data, 32) << std::endl;
-    std::cout << "ext_pub_key: " << toolboxpp::data::bytesToHex(key->ext_public_key.data, 112) << std::endl;
-    std::cout << "ext_priv_key: " << toolboxpp::data::bytesToHex(key->ext_private_key.data, 112) << std::endl;
+    std::cout << " pubkey: " << toolbox::data::bytes_to_hex(key->public_key.data, 33) << std::endl;
+    std::cout << "privkey: " << toolbox::data::bytes_to_hex(key->private_key.data, 32) << std::endl;
+    std::cout << "chain_code: " << toolbox::data::bytes_to_hex(key->chain_code.data, 32) << std::endl;
+    std::cout << "ext_pub_key: " << toolbox::data::bytes_to_hex(key->ext_public_key.data, 112) << std::endl;
+    std::cout << "ext_priv_key: " << toolbox::data::bytes_to_hex(key->ext_private_key.data, 112) << std::endl;
 
     std::cout << "=== END KEY " << name << " ===" << std::endl;
 }
 
-TEST(CMinter, PrivateKeyFromMnemonic) {
+TEST(CBIP39, PrivateKeyFromMnemonic) {
 
     minter_data64 seed;
     size_t written;
@@ -31,7 +31,7 @@ TEST(CMinter, PrivateKeyFromMnemonic) {
                          seed.data,
                          &written);
 
-    std::cout << "SEED: " << toolboxpp::data::bytesToHex(seed.data, 64) << std::endl;
+    std::cout << "SEED: " << toolbox::data::bytes_to_hex(seed.data, 64) << std::endl;
 
     minter_hdkey hdkey;
     encoder_make_bip32_root_key(&seed, &hdkey);
@@ -42,18 +42,18 @@ TEST(CMinter, PrivateKeyFromMnemonic) {
 
     minter_data32 privateKey = hdkey.private_key;
 
-    const char *expectedPrivateKey = "fd90261f5bd702ffbe7483c3b5aa7b76b1f40c1582cc6a598120b16067d3cb9a";
+    const char* expectedPrivateKey = "fd90261f5bd702ffbe7483c3b5aa7b76b1f40c1582cc6a598120b16067d3cb9a";
     uint8_t givenPrivate[32];
     memcpy(givenPrivate, privateKey.data, 32);
 
-    ASSERT_STREQ(expectedPrivateKey, toolboxpp::data::bytesToHex(givenPrivate, 32).c_str());
+    ASSERT_STREQ(expectedPrivateKey, toolbox::data::bytes_to_hex(givenPrivate, 32).c_str());
 
     free_hdkey(&hdkey);
 }
 
-TEST(CMinter, GetLanguages) {
+TEST(CBIP39, GetLanguages) {
     size_t n;
-    char **langs = minter_get_languages(&n);
+    char** langs = minter_get_languages(&n);
 
     ASSERT_EQ(n, 7);
     ASSERT_STREQ(langs[0], "en");
@@ -67,25 +67,24 @@ TEST(CMinter, GetLanguages) {
     minter_free_string_array(langs, n);
 }
 
-TEST(CMinter, GetLanguageWords) {
+TEST(CBIP39, GetLanguageWords) {
     size_t n;
-    char **words = minter_get_words_from_language("en", &n);
+    char** words = minter_get_words_from_language("en", &n);
 
     ASSERT_EQ(2048, n);
     std::cout << "First word: " << words[0] << std::endl;
-    std::cout << "Last word:  " << words[n-1] << std::endl;
+    std::cout << "Last word:  " << words[n - 1] << std::endl;
     ASSERT_STREQ(words[0], "abandon");
     ASSERT_STREQ(words[n - 1], "zoo");
 
     minter_free_string_array(words, n);
 }
 
-TEST(CMinter, ValidateWords) {
-    const char *seed = "lock silly satisfy version solution bleak rain candy phone loan powder dose";
+TEST(CBIP39, ValidateWords) {
+    const char* seed = "lock silly satisfy version solution bleak rain candy phone loan powder dose";
     bool res1 = minter_validate_words("en", seed);
     ASSERT_TRUE(res1);
 
     bool res2 = minter_validate_words("en", "wtf wtf wtf wtf wtf wtf wtf wtf wtf wtf wtf wtf");
     ASSERT_FALSE(res2);
 }
- 

@@ -6,17 +6,21 @@
  */
 
 #include "minter/bip39/HDKeyEncoder.h"
+
 #include "minter/bip39/uint256_t.hpp"
 #include "minter/crypto/ripemd160.h"
 
-minter::Data64 minter::HDKeyEncoder::makeBip39Seed(const std::string &mnemonicWords) {
+#include <toolbox/data/bytes_data.h>
+#include <toolbox/strings.hpp>
+
+minter::Data64 minter::HDKeyEncoder::makeBip39Seed(const std::string& mnemonicWords) {
     size_t n;
     Data64 out;
     Bip39Mnemonic::wordsToSeed(mnemonicWords.c_str(), out.data(), &n);
     return out;
 }
-minter::Data64 minter::HDKeyEncoder::makeBip39Seed(const std::vector<std::string> &mnemonicWords) {
-    return makeBip39Seed(toolboxpp::strings::glue(" ", mnemonicWords));
+minter::Data64 minter::HDKeyEncoder::makeBip39Seed(const std::vector<std::string>& mnemonicWords) {
+    return makeBip39Seed(toolbox::strings::glue(" ", mnemonicWords));
 }
 
 minter::HDKey minter::HDKeyEncoder::makeBip32RootKey(const char *mnemonic, minter::BTCNetwork net) {
@@ -111,7 +115,7 @@ void minter::HDKeyEncoder::derive(minter::HDKey &key, uint32_t index) {
 }
 
 void minter::HDKeyEncoder::derivePath(HDKey &key, const std::string &path, bool priv) {
-    std::vector<std::string> pathBits = toolboxpp::strings::split(path, "/");
+    std::vector<std::string> pathBits = toolbox::strings::split(path, "/");
     for (const auto &bit: pathBits) {
         if (bit == "m" || bit == "'") {
             continue;

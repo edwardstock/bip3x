@@ -42,7 +42,7 @@ class nobject {
 
     template<size_t N>
     void setFieldUint8Array(const char *fname, const minter::FixedData<N> &data) {
-        jsize sz = static_cast<jsize>(data.size());
+        auto sz = static_cast<jsize>(data.size());
         jbyteArray arr = env->NewByteArray(sz);
         env->SetByteArrayRegion(arr, 0, sz, reinterpret_cast<const jbyte *>(data.cdata()));
 
@@ -68,7 +68,7 @@ class nobject {
 
     template<size_t N>
     minter::FixedData<N> getFieldUint8Array(const char *fname) {
-        jbyteArray tmpArr = getFieldObject<jbyteArray>(fname, "[B" /*byte[]*/);
+        auto tmpArr = getFieldObject<jbyteArray>(fname, "[B" /*byte[]*/);
         return minter::FixedData<N>(reinterpret_cast<uint8_t *>(env->GetByteArrayElements(tmpArr, 0)));
     }
 

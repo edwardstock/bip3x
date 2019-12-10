@@ -94,7 +94,7 @@ void minter::nobject::setField(const char *fname, const jobject &value) {
 }
 
 void minter::nobject::setFieldUint8Array(const char *fname, const minter::Data &data) {
-    jsize sz = static_cast<jsize>(data.size());
+    auto sz = static_cast<jsize>(data.size());
     jbyteArray arr = env->NewByteArray(sz);
     env->SetByteArrayRegion(arr, 0, sz, reinterpret_cast<const jbyte *>(data.cdata()));
     env->SetObjectField(obj, env->GetFieldID(cls, fname, "[B"), arr);

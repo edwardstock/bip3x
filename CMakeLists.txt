@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 project(bip39
-        VERSION 1.4.1
+        VERSION 1.4.2
         DESCRIPTION "Native BIP39 Mnemonic implementation (with JNI and pure C bindings)"
         LANGUAGES CXX)
 
@@ -18,13 +18,9 @@ endif ()
 
 
 if (WIN32)
-	execute_process(
-		COMMAND cmd /C "echo ${CMAKE_PROJECT_VERSION} > ${CMAKE_CURRENT_SOURCE_DIR}/version"
-	)
+	execute_process(COMMAND cmd /C "echo ${CMAKE_PROJECT_VERSION} > ${CMAKE_CURRENT_SOURCE_DIR}/version")
 else ()
-	execute_process(
-		COMMAND bash -c "echo ${CMAKE_PROJECT_VERSION} > ${CMAKE_CURRENT_SOURCE_DIR}/version"
-	)
+	execute_process(COMMAND bash -c "echo ${CMAKE_PROJECT_VERSION} > ${CMAKE_CURRENT_SOURCE_DIR}/version")
 endif ()
 
 if (MSVC)
@@ -49,10 +45,16 @@ elseif (MINGW)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wno-unknown-pragmas")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra -pedantic")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -g0 -O2")
-
+elseif (APPLE)
+	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+		set(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS} -undefined dynamic_lookup")
+	endif ()
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shift-count-overflow -fPIC -Wno-c99-extensions")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra -pedantic -Wunused-function")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -g0 -O2")
 else ()
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shift-count-overflow -fPIC -Wno-c99-extensions -Wno-unused-function")
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra -pedantic")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shift-count-overflow -fPIC -Wno-c99-extensions")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra -pedantic -Wunused-function")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -g0 -O2")
 endif ()
 
@@ -64,6 +66,10 @@ if (ENABLE_BIP39_CONAN)
 	add_conan_remote(bincrafters https://api.bintray.com/conan/bincrafters/public-conan)
 	add_conan_remote(edwardstock https://api.bintray.com/conan/edwardstock/conan-public)
 	conan_init()
+else ()
+	include(cmake/conan_fallback.cmake)
+	conan_fallback(NAME toolbox)
+	conan_fallback(NAME gtest LOCAL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/gtest/googletest/include)
 endif ()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -95,11 +101,7 @@ set(TREZOR_HEADERS
     include/minter/crypto/base58.h
     include/minter/crypto/bignum.h
     include/minter/crypto/blake256.h
-    include/minter/crypto/blake2_common.h
-    include/minter/crypto/blake2b.h
-    include/minter/crypto/blake2s.h
     include/minter/crypto/check_mem.h
-    include/minter/crypto/curves.h
     include/minter/crypto/ecdsa.h
     include/minter/crypto/hasher.h
     include/minter/crypto/hmac.h
@@ -109,7 +111,6 @@ set(TREZOR_HEADERS
     include/minter/crypto/rfc6979.h
     include/minter/crypto/rand.h
     include/minter/crypto/ripemd160.h
-    include/minter/crypto/script.h
     include/minter/crypto/secp256k1.h
     include/minter/crypto/sha2.hpp
     include/minter/crypto/sha3.h
@@ -122,9 +123,6 @@ set(TREZOR_SOURCES
     src/trezor-crypto/base58.cpp
     src/trezor-crypto/bignum.cpp
     src/trezor-crypto/blake256.cpp
-    src/trezor-crypto/blake2b.cpp
-    src/trezor-crypto/blake2s.cpp
-    src/trezor-crypto/curves.cpp
     src/trezor-crypto/ecdsa.cpp
     src/trezor-crypto/hasher.cpp
     src/trezor-crypto/hmac.cpp
@@ -132,7 +130,6 @@ set(TREZOR_SOURCES
     src/trezor-crypto/pbkdf2.cpp
     src/trezor-crypto/rand.cpp
     src/trezor-crypto/ripemd160.cpp
-    src/trezor-crypto/script.cpp
     src/trezor-crypto/secp256k1.cpp
     src/trezor-crypto/sha2.cpp
     src/trezor-crypto/sha3.cpp
@@ -201,7 +198,7 @@ configure_file(
 	${CMAKE_CURRENT_SOURCE_DIR}/src/bindings/cbip39_config.h
 )
 
-# Core
+
 if (ENABLE_BIP39_SHARED)
 	message(STATUS "Build shared libs")
 	add_library(${PROJECT_NAME} SHARED ${SOURCES})
@@ -209,14 +206,16 @@ else ()
 	add_library(${PROJECT_NAME} STATIC ${SOURCES})
 endif ()
 
+target_link_libraries(${PROJECT_NAME} CONAN_PKG::toolbox)
+
 if (MSVC)
 	set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY LINK_FLAGS /version:${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR})
 endif ()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LANGUAGE CXX)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs)
 
 install(
 	TARGETS bip39
@@ -328,11 +327,6 @@ if (ENABLE_BIP39_TESTS)
 
 	set(gtest_force_shared_crt ${ENABLE_BIP39_SHARED} CACHE BOOL "" FORCE)
 
-	if (NOT ENABLE_BIP39_CONAN)
-		add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/gtest)
-		add_library(CONAN_PKG::gtest ALIAS gtest)
-	endif ()
-
 	if (MSVC)
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++14")
 	elseif (APPLE)
@@ -343,35 +337,27 @@ if (ENABLE_BIP39_TESTS)
 	include(GoogleTest)
 
 	# main test
-	set(PROJECT_TEST_NAME "bip39_test_cxx")
-	set(PROJECT_CC_TEST_NAME "bip39_test_cc")
+	set(PROJECT_TEST_NAME "bip39_test")
 	enable_testing()
 
+	set(TEST_SOURCES
+	    tests/main.cpp
+	    tests/minter_cxx_test.cpp
+	    )
+
 	if (ENABLE_BIP39_C)
-		add_executable(
-			${PROJECT_CC_TEST_NAME}
-			tests/main.cpp
-			tests/minter_cc_test.cpp
-		)
-		target_link_libraries(${PROJECT_CC_TEST_NAME} ${PROJECT_NAME})
-		target_link_libraries(${PROJECT_CC_TEST_NAME} cbip39)
-		target_link_libraries(${PROJECT_CC_TEST_NAME} CONAN_PKG::gtest)
-		target_include_directories(${PROJECT_CC_TEST_NAME} PUBLIC ${BIP39_C_HEADERS})
-		target_include_directories(${PROJECT_CC_TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-		target_include_directories(${PROJECT_CC_TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs)
-		gtest_add_tests(TARGET ${PROJECT_CC_TEST_NAME})
-		if (ENABLE_BIP39_SANITIZE)
-			target_link_libraries(${PROJECT_CC_TEST_NAME} asan)
-			target_compile_options(${PROJECT_CC_TEST_NAME} PUBLIC -fsanitize=address -m64 -pipe -ffunction-sections -fdata-sections -O0 -g -fno-omit-frame-pointer)
-		endif ()
+		set(TEST_SOURCES ${TEST_SOURCES}
+		    tests/minter_cc_test.cpp)
 	endif ()
 
-	add_executable(
-		${PROJECT_TEST_NAME}
-		tests/main.cpp
-		tests/minter_cxx_test.cpp
-	)
+	add_executable(${PROJECT_TEST_NAME} ${TEST_SOURCES})
 	target_link_libraries(${PROJECT_TEST_NAME} ${PROJECT_NAME})
+
+	if (ENABLE_BIP39_C)
+		target_link_libraries(${PROJECT_TEST_NAME} cbip39)
+		target_include_directories(${PROJECT_TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/bindings)
+	endif ()
+
 	target_link_libraries(${PROJECT_TEST_NAME} CONAN_PKG::gtest)
 	target_include_directories(${PROJECT_TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 	target_include_directories(${PROJECT_TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs)

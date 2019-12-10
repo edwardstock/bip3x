@@ -15,20 +15,25 @@
 #include <random>
 
 class PCGRand {
- public:
+public:
     using result_type = uint32_t;
-    static constexpr result_type (min)() { return 0; }
-    static constexpr result_type (max)() { return UINT32_MAX; }
-//    friend bool operator==(PCGRand const &, PCGRand const &);
-//    friend bool operator!=(PCGRand const &, PCGRand const &);
+    static constexpr result_type(min)() {
+        return 0;
+    }
+    static constexpr result_type(max)() {
+        return UINT32_MAX;
+    }
+    //    friend bool operator==(PCGRand const &, PCGRand const &);
+    //    friend bool operator!=(PCGRand const &, PCGRand const &);
 
     PCGRand()
-        : m_state(0x853c49e6748fea9bULL), m_inc(0xda3e39cb94b95bdbULL) { }
-    explicit PCGRand(std::random_device &rd) {
+        : m_state(0x853c49e6748fea9bULL), m_inc(0xda3e39cb94b95bdbULL) {
+    }
+    explicit PCGRand(std::random_device& rd) {
         seed(rd);
     }
 
-    void seed(std::random_device &rd) {
+    void seed(std::random_device& rd) {
         uint64_t s0 = uint64_t(rd()) << 31u | uint64_t(rd());
         uint64_t s1 = uint64_t(rd()) << 31u | uint64_t(rd());
 
@@ -52,7 +57,7 @@ class PCGRand {
             operator()();
     }
 
- private:
+private:
     uint64_t m_state;
     uint64_t m_inc;
 };

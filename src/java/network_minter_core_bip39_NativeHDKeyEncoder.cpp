@@ -3,10 +3,8 @@
 // Eduard Maximovich <edward.vstock@gmail.com>
 //
 
-#include <minter/bip39/Bip39Mnemonic.h>
 #include <minter/bip39/HDKeyEncoder.h>
 #include <minter/bip39/utils.h>
-#include <type_traits>
 #include "network_minter_core_bip39_NativeHDKeyEncoder.h"
 #include "nobject.h"
 
