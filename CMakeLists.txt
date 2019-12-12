@@ -173,7 +173,7 @@ set(JNI_SOURCES
 
 configure_file(
 	${CMAKE_CURRENT_SOURCE_DIR}/cfg/bip39_core.h.in
-	include/bip3x/bip39_core.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bip3x/bip39_core.h
 )
 
 configure_file(
