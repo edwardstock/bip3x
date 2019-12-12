@@ -1,12 +1,17 @@
 function (conan_fallback)
 	set(options)
-	set(single NAME LOCAL_INCLUDE_DIR SYSTEM_INCLUDE_DIR TARGET_NAME LOCAL_LIBS_PREFIX)
+	set(single NAME LOCAL_INCLUDE_DIR SUBDIR SYSTEM_INCLUDE_DIR TARGET_NAME LOCAL_LIBS_PREFIX)
 	set(multi)
 	cmake_parse_arguments("FF" "${options}" "${single}" "${multi}" ${ARGN})
 
 	set(LOCAL_LIBS_PREFIX "libs")
 	if (FF_LOCAL_LIBS_PREFIX)
 		set(LOCAL_LIBS_PREFIX ${FF_LOCAL_LIBS_PREFIX})
+	endif ()
+
+	set(LOCAL_SUBDIR_${FF_NAME} ${FF_NAME})
+	if (FF_SUBDIR)
+		set(LOCAL_SUBDIR_${FF_NAME} ${FF_SUBDIR})
 	endif ()
 
 
@@ -26,7 +31,7 @@ function (conan_fallback)
 
 	#	If not found, trying to add subdirectory
 	if (NOT FF_FIND_LIB_${FF_NAME})
-		add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/${LOCAL_LIBS_PREFIX}/${FF_NAME})
+		add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/${LOCAL_LIBS_PREFIX}/${LOCAL_SUBDIR_${FF_NAME}})
 		#		if set local path where includes stored, adding it to global includes
 		if (FF_LOCAL_INCLUDE_DIR)
 			set(${FF_NAME}_INCLUDE_DIR ${FF_LOCAL_INCLUDE_DIR})
