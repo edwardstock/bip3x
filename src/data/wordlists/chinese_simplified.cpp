@@ -1,5 +1,5 @@
 /* Generated file - do not edit! */
-#include "minter/bip39/wordlist.h"
+#include "bip3x/wordlist.h"
 
 static const unsigned char zhs_[] = {
     0xe7, 0x9a, 0x84, 0,

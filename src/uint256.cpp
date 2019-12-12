@@ -3,15 +3,15 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "minter/bip39/uint256.h"
-#include "minter/bip39/utils.h"
+#include "bip3x/uint256.h"
+
+#include "bip3x/utils.h"
 
 #include <cstdio>
 #include <string>
 
-template <unsigned int BITS>
-base_blob<BITS>::base_blob(const std::vector<unsigned char>& vch)
-{
+template<unsigned int BITS>
+base_blob<BITS>::base_blob(const std::vector<unsigned char>& vch) {
     assert(vch.size() == sizeof(data));
     memcpy(data, vch.data(), sizeof(data));
 }

@@ -1,3 +1,8 @@
+## 2.0.0
+ - Breaking: Removed minter:Data* types, now using toolbox bytes buffer
+ - Breaking: Unified headers location, now all locations starts with bip3x and bip3x/crypto.
+ - Breaking: Renamed minter namespace to bip3x. The same for JNI.
+
 ## 1.4.3
  - Updates for Windows
 
@@ -6,7 +11,7 @@
  - Clean-up
 
 ## 1.4.1
- - Improved FixedData
+ - Improved bytes_array
 
 ## 1.4.0
  - Changed behavior of making extended key - now `makeExtendedKey` passes `rootHdKey` by reference to make from it extended key, no more copies.

@@ -17,18 +17,19 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  Use this program  at  your own risk!
  */
 
-#include <cassert>
-#include <string>
-#include <cstring>
+#include "bip3x/crypto/sha3.h"
 
-#include "minter/crypto/sha3.h"
-#include "minter/crypto/memzero.h"
+#include "bip3x/crypto/memzero.h"
+
+#include <cassert>
+#include <cstring>
+#include <string>
 
 #define I64(x) x##LL
 #define ROTL64(qword, n) ((qword) << (n) ^ ((qword) >> (64 - (n))))
 #define le2me_64(x) (x)
-#define IS_ALIGNED_64(p) (0 == (7 & ((const char*)(p) - (const char*)0)))
-# define me64_to_le_str(to, from, length) memcpy((to), (from), (length))
+#define IS_ALIGNED_64(p) (0 == (7 & ((const char*) (p) - (const char*) 0)))
+#define me64_to_le_str(to, from, length) memcpy((to), (from), (length))
 
 /* constants */
 #define NumberOfRounds 24

@@ -21,23 +21,24 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <string>
-#include <cstring>
-#include "minter/crypto/pbkdf2.hpp"
-#include "minter/crypto/hmac.h"
-#include "minter/crypto/sha2.hpp"
-#include "minter/crypto/memzero.h"
+#include "bip3x/crypto/pbkdf2.hpp"
 
-void pbkdf2_hmac_sha256_Init(PBKDF2_HMAC_SHA256_CTX *pctx, const uint8_t *pass, int passlen, const uint8_t *salt, int saltlen)
-{
+#include "bip3x/crypto/hmac.h"
+#include "bip3x/crypto/memzero.h"
+#include "bip3x/crypto/sha2.hpp"
+
+#include <cstring>
+#include <string>
+
+void pbkdf2_hmac_sha256_Init(PBKDF2_HMAC_SHA256_CTX* pctx, const uint8_t* pass, int passlen, const uint8_t* salt, int saltlen) {
     trezor::SHA256_CTX ctx;
-	uint32_t blocknr = 1;
+    uint32_t blocknr = 1;
 #if BYTE_ORDER == LITTLE_ENDIAN
-	REVERSE32(blocknr, blocknr);
+    REVERSE32(blocknr, blocknr);
 #endif
 
-	hmac_sha256_prepare(pass, passlen, pctx->odig, pctx->idig);
-	memset(pctx->g, 0, sizeof(pctx->g));
+    hmac_sha256_prepare(pass, passlen, pctx->odig, pctx->idig);
+    memset(pctx->g, 0, sizeof(pctx->g));
 	pctx->g[8] = 0x80000000;
 	pctx->g[15] = (SHA256_BLOCK_LENGTH + SHA256_DIGEST_LENGTH) * 8;
 

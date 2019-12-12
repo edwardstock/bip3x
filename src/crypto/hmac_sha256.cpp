@@ -2,7 +2,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "minter/bip39/crypto/hmac_sha256.h"
+#include "bip3x/crypto/hmac_sha256.h"
 
 CHMAC_SHA256::CHMAC_SHA256(const unsigned char *key, size_t keylen) : m_ctx() {
     hmac_sha256_Init(&m_ctx, key, keylen);

@@ -17,7 +17,7 @@ class Bip39Conan(ConanFile):
     version = get_version()
     license = "MIT"
     author = "Eduard Maximovich edward.vstock@gmail.com"
-    url = "https://github.com/edwardstock/native-bip39"
+    url = "https://github.com/edwardstock/bip3x"
     description = "Bip39 mnemonic C++ implementation. Contains java and pure C bindings."
     topics = ("bip39", "bip39-mnemonic", "bip44", "bip39-java")
     settings = "os", "compiler", "build_type", "arch"
@@ -50,7 +50,7 @@ class Bip39Conan(ConanFile):
     default_channel = "latest"
 
     requires = (
-        "toolbox/3.0.4@edwardstock/latest"
+        "toolbox/3.1.0@edwardstock/latest"
     )
     build_requires = (
         "gtest/1.8.1@bincrafters/stable",
@@ -59,7 +59,7 @@ class Bip39Conan(ConanFile):
     def source(self):
         if "CONAN_LOCAL" not in os.environ:
             self.run("rm -rf *")
-            self.run("git clone --recursive https://github.com/edwardstock/native-bip39.git .")
+            self.run("git clone --recursive https://github.com/edwardstock/bip3x.git .")
 
     def configure(self):
         if self.settings.compiler == "Visual Studio":

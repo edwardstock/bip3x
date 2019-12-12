@@ -7,27 +7,27 @@
  * \link   https://github.com/edwardstock
  */
 
-#include <iostream>
+#include <bip3x/HDKeyEncoder.h>
+#include <bip3x/utils.h>
 #include <gtest/gtest.h>
-#include <minter/bip39/utils.h>
-#include <minter/bip39/HDKeyEncoder.h>
+#include <iostream>
 
-using namespace minter;
+using namespace bip3x;
 
-HDKey makeRootKey(const Data64& seed) {
-    return minter::HDKeyEncoder::makeBip32RootKey(seed, minter::MainNet);
+HDKey makeRootKey(const bytes_64& seed) {
+    return HDKeyEncoder::makeBip32RootKey(seed, bip3x::MainNet);
 }
 
 void makeExtKey(HDKey& rootHdKey) {
-    minter::HDKeyEncoder::makeExtendedKey(rootHdKey, "m/44'/60'/0'/0/0");
+    HDKeyEncoder::makeExtendedKey(rootHdKey, "m/44'/60'/0'/0/0");
 }
 
 TEST(BIP39, PrivateKeyFromMnemonic) {
-    minter::Data64 seed;
+    bytes_64 seed;
     size_t written;
-    minter::Bip39Mnemonic::wordsToSeed("lock silly satisfy version solution bleak rain candy phone loan powder dose",
-                                       seed.data(),
-                                       &written);
+    Bip39Mnemonic::wordsToSeed("lock silly satisfy version solution bleak rain candy phone loan powder dose",
+                               seed.data(),
+                               &written);
     HDKey key = makeRootKey(seed);
     makeExtKey(key);
 
@@ -35,5 +35,3 @@ TEST(BIP39, PrivateKeyFromMnemonic) {
 
     ASSERT_STREQ(expectedPrivateKey, key.privateKey.to_hex().c_str());
 }
-
- 

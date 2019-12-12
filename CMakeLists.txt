@@ -1,10 +1,15 @@
 cmake_minimum_required(VERSION 3.4)
 project(bip39
-        VERSION 1.4.5
+        VERSION 2.0.0
         DESCRIPTION "Native BIP39 Mnemonic implementation (with JNI and pure C bindings)"
         LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY lib)
+set(CMAKE_PDB_OUTPUT_DIRECTORY lib)
 
 set(ENABLE_BIP39_SHARED OFF CACHE BOOL "Build shared core library instead of static")
 set(ENABLE_BIP39_TESTS OFF CACHE BOOL "Compile unit google tests")
@@ -42,15 +47,14 @@ endif ()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(ConanInit)
+include(conan_fallback)
 
 if (ENABLE_BIP39_CONAN)
 	add_conan_remote(bincrafters https://api.bintray.com/conan/bincrafters/public-conan)
 	add_conan_remote(edwardstock https://api.bintray.com/conan/edwardstock/conan-public)
 	conan_init()
 else ()
-	include(cmake/conan_fallback.cmake)
 	conan_fallback(NAME toolbox)
-	conan_fallback(NAME gtest LOCAL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/gtest/googletest/include)
 endif ()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -67,7 +71,7 @@ set(BTC_HEADERS)
 
 if (WIN32)
 	set(BTC_HEADERS
-	    include/minter/bip39/crypto/win_endian.h
+	    include/bip3x/crypto/win_endian.h
 	    )
 endif ()
 
@@ -78,24 +82,24 @@ else ()
 endif ()
 
 set(TREZOR_HEADERS
-    include/minter/crypto/address.h
-    include/minter/crypto/base58.h
-    include/minter/crypto/bignum.h
-    include/minter/crypto/blake256.h
-    include/minter/crypto/check_mem.h
-    include/minter/crypto/ecdsa.h
-    include/minter/crypto/hasher.h
-    include/minter/crypto/hmac.h
-    include/minter/crypto/memzero.h
-    include/minter/crypto/options.h
-    include/minter/crypto/pbkdf2.hpp
-    include/minter/crypto/rfc6979.h
-    include/minter/crypto/rand.h
-    include/minter/crypto/ripemd160.h
-    include/minter/crypto/secp256k1.h
-    include/minter/crypto/sha2.hpp
-    include/minter/crypto/sha3.h
-    include/minter/crypto/packed_attr.h
+    include/bip3x/crypto/address.h
+    include/bip3x/crypto/base58.h
+    include/bip3x/crypto/bignum.h
+    include/bip3x/crypto/blake256.h
+    include/bip3x/crypto/check_mem.h
+    include/bip3x/crypto/ecdsa.h
+    include/bip3x/crypto/hasher.h
+    include/bip3x/crypto/hmac.h
+    include/bip3x/crypto/memzero.h
+    include/bip3x/crypto/options.h
+    include/bip3x/crypto/pbkdf2.hpp
+    include/bip3x/crypto/rfc6979.h
+    include/bip3x/crypto/rand.h
+    include/bip3x/crypto/ripemd160.h
+    include/bip3x/crypto/secp256k1.h
+    include/bip3x/crypto/sha2.hpp
+    include/bip3x/crypto/sha3.h
+    include/bip3x/crypto/packed_attr.h
     )
 
 set(TREZOR_SOURCES
@@ -118,21 +122,20 @@ set(TREZOR_SOURCES
 
 set(HEADERS
     ${BTC_HEADERS}
-    include/minter/bip39/crypto/common.h
-    include/minter/bip39/crypto/sha256.h
-    include/minter/bip39/crypto/hmac_sha256.h
-    include/minter/bip39/crypto/hmac_sha512.h
-    include/minter/bip39/crypto/sha512.h
-    include/minter/bip39/bip39.h
-    include/minter/bip39/wordlist.h
-    include/minter/bip39/internal.h
-    include/minter/bip39/bip39_core.h
-    include/minter/bip39/config.h
-    include/minter/bip39/uint256_t.hpp
-    include/minter/bip39/PCGRand.hpp
-    include/minter/bip39/utils.h
-    include/minter/bip39/Bip39Mnemonic.h
-    include/minter/bip39/HDKeyEncoder.h
+    include/bip3x/crypto/common.h
+    include/bip3x/crypto/sha256.h
+    include/bip3x/crypto/hmac_sha256.h
+    include/bip3x/crypto/hmac_sha512.h
+    include/bip3x/crypto/sha512.h
+    include/bip3x/bip39.h
+    include/bip3x/wordlist.h
+    include/bip3x/bip39_core.h
+    include/bip3x/config.h
+    include/bip3x/uint256_t.hpp
+    include/bip3x/PCGRand.hpp
+    include/bip3x/utils.h
+    include/bip3x/Bip39Mnemonic.h
+    include/bip3x/HDKeyEncoder.h
     )
 
 set(SOURCES
@@ -154,24 +157,23 @@ set(SOURCES
     src/data/wordlists/spanish.cpp
     src/wordlist.cpp
     src/mnemonic.cpp
-    src/internal.cpp
     src/minter/utils.cpp
     src/minter/HDKeyEncoder.cpp
     src/minter/Bip39Mnemonic.cpp
     )
 
 set(JNI_SOURCES
-    src/java/network_minter_core_bip39_NativeBip39.h
-    src/java/network_minter_core_bip39_NativeBip39.cpp
-    src/java/network_minter_core_bip39_NativeHDKeyEncoder.h
-    src/java/network_minter_core_bip39_NativeHDKeyEncoder.cpp
+    src/java/com_edwardstock_bip3x_NativeBip39.h
+    src/java/com_edwardstock_bip3x_NativeBip39.cpp
+    src/java/com_edwardstock_bip3x_NativeHDKeyEncoder.h
+    src/java/com_edwardstock_bip3x_NativeHDKeyEncoder.cpp
     src/java/nobject.h
     src/java/nobject.cpp
     )
 
 configure_file(
 	${CMAKE_CURRENT_SOURCE_DIR}/cfg/bip39_core.h.in
-	${CMAKE_CURRENT_SOURCE_DIR}/include/minter/bip39/bip39_core.h
+	include/bip3x/bip39_core.h
 )
 
 configure_file(
@@ -207,7 +209,7 @@ install(
 )
 
 install(
-	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/minter
+	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/bip3x
 	DESTINATION include
 	COMPONENT main)
 
@@ -307,7 +309,7 @@ endif ()
 
 
 if (ENABLE_BIP39_TESTS)
-
+	conan_fallback(NAME gtest LOCAL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/gtest/googletest/include)
 	set(gtest_force_shared_crt ${ENABLE_BIP39_SHARED} CACHE BOOL "" FORCE)
 
 	if (MSVC)

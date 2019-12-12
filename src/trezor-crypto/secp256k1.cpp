@@ -21,9 +21,8 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "minter/crypto/secp256k1.h"
+#include "bip3x/crypto/secp256k1.h"
 
-BIP39_CORE_API
 const ecdsa_curve secp256k1 = {
 	/* .prime */ {
 		/*.val =*/ {0x3ffffc2f, 0x3ffffffb, 0x3fffffff, 0x3fffffff, 0x3fffffff, 0x3fffffff, 0x3fffffff, 0x3fffffff, 0xffff}
@@ -51,12 +50,11 @@ const ecdsa_curve secp256k1 = {
 #if USE_PRECOMPUTED_CP
 	,
 	/* cp */ {
-#include "minter/crypto/secp256k1.table"
-	}
+#include "bip3x/crypto/secp256k1.table"
+    }
 #endif
 };
 
-BIP39_CORE_API
 const curve_info secp256k1_info = {
 	"Bitcoin seed",
 	&secp256k1,

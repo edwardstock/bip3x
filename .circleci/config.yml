@@ -11,7 +11,7 @@ jobs:
       - run: apt-get install -y git
       - run:
           name: Cloning repo
-          command: git clone --recursive https://github.com/edwardstock/native-bip39.git .
+          command: git clone --recursive https://github.com/edwardstock/bip3x.git .
       - restore_cache:
           keys:
             - custom-pkgs-{{ checksum ".circleci/setup.sh" }}
@@ -53,7 +53,7 @@ jobs:
       - run: apt-get install -y git
       - run:
           name: Cloning repo
-          command: git clone --recursive https://github.com/edwardstock/native-bip39.git .
+          command: git clone --recursive https://github.com/edwardstock/bip3x.git .
       - restore_cache:
           keys:
             - custom-pkgs-{{ checksum ".circleci/setup.sh" }}

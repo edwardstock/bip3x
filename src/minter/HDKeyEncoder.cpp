@@ -5,29 +5,29 @@
  * \link https://github.com/edwardstock
  */
 
-#include "minter/bip39/HDKeyEncoder.h"
+#include "bip3x/HDKeyEncoder.h"
 
-#include "minter/bip39/uint256_t.hpp"
-#include "minter/crypto/ripemd160.h"
+#include "bip3x/crypto/ripemd160.h"
+#include "bip3x/uint256_t.hpp"
 
 #include <toolbox/data/bytes_data.h>
 #include <toolbox/strings.hpp>
 
-minter::Data64 minter::HDKeyEncoder::makeBip39Seed(const std::string& mnemonicWords) {
+bip3x::bytes_64 bip3x::HDKeyEncoder::makeBip39Seed(const std::string& mnemonicWords) {
     size_t n;
-    Data64 out;
+    bytes_64 out;
     Bip39Mnemonic::wordsToSeed(mnemonicWords.c_str(), out.data(), &n);
     return out;
 }
-minter::Data64 minter::HDKeyEncoder::makeBip39Seed(const std::vector<std::string>& mnemonicWords) {
+bip3x::bytes_64 bip3x::HDKeyEncoder::makeBip39Seed(const std::vector<std::string>& mnemonicWords) {
     return makeBip39Seed(toolbox::strings::glue(" ", mnemonicWords));
 }
 
-minter::HDKey minter::HDKeyEncoder::makeBip32RootKey(const char *mnemonic, minter::BTCNetwork net) {
+bip3x::HDKey bip3x::HDKeyEncoder::makeBip32RootKey(const char* mnemonic, bip3x::BTCNetwork net) {
     return makeBip32RootKey(makeBip39Seed(mnemonic), net);
 }
 
-minter::HDKey minter::HDKeyEncoder::makeBip32RootKey(const minter::Data64 &seed, minter::BTCNetwork net) {
+bip3x::HDKey bip3x::HDKeyEncoder::makeBip32RootKey(const bip3x::bytes_64& seed, bip3x::BTCNetwork net) {
     HDKey out;
 
     out = fromSeed(seed);
@@ -40,7 +40,7 @@ minter::HDKey minter::HDKeyEncoder::makeBip32RootKey(const minter::Data64 &seed,
     return out;
 }
 
-void minter::HDKeyEncoder::makeExtendedKey(minter::HDKey &rootKey, const Derivation &derivation) {
+void bip3x::HDKeyEncoder::makeExtendedKey(bip3x::HDKey& rootKey, const Derivation& derivation) {
     derivePath(rootKey, derivation.path, true);
 
     serialize(rootKey, rootKey.fingerprint, rootKey.net.bip32[1], false);
@@ -50,10 +50,10 @@ void minter::HDKeyEncoder::makeExtendedKey(minter::HDKey &rootKey, const Derivat
     fillPublicKey(rootKey);
 }
 
-void minter::HDKeyEncoder::derive(minter::HDKey &key, uint32_t index) {
-    CONFIDENTIAL Data buff(37);
+void bip3x::HDKeyEncoder::derive(bip3x::HDKey& key, uint32_t index) {
+    CONFIDENTIAL bytes_data buff(37);
     CONFIDENTIAL uint256_t a, b;
-    CONFIDENTIAL Data64 I;
+    CONFIDENTIAL bytes_64 I;
 
     // fetching parent fingerprint
     key.fingerprint = fetchFingerprint(key);
@@ -114,9 +114,9 @@ void minter::HDKeyEncoder::derive(minter::HDKey &key, uint32_t index) {
     buff.clear();
 }
 
-void minter::HDKeyEncoder::derivePath(HDKey &key, const std::string &path, bool priv) {
+void bip3x::HDKeyEncoder::derivePath(HDKey& key, const std::string& path, bool priv) {
     std::vector<std::string> pathBits = toolbox::strings::split(path, "/");
-    for (const auto &bit: pathBits) {
+    for (const auto& bit : pathBits) {
         if (bit == "m" || bit == "'") {
             continue;
         }
@@ -151,8 +151,8 @@ void minter::HDKeyEncoder::derivePath(HDKey &key, const std::string &path, bool 
     }
 }
 
-uint32_t minter::HDKeyEncoder::fetchFingerprint(minter::HDKey &key) {
-    Data32 digest;
+uint32_t bip3x::HDKeyEncoder::fetchFingerprint(bip3x::HDKey& key) {
+    bytes_32 digest;
     uint32_t fingerprint;
     fillPublicKey(key);
 
@@ -167,7 +167,7 @@ uint32_t minter::HDKeyEncoder::fetchFingerprint(minter::HDKey &key) {
 
     return fingerprint;
 }
-void minter::HDKeyEncoder::fillPublicKey(minter::HDKey &key) {
+void bip3x::HDKeyEncoder::fillPublicKey(bip3x::HDKey& key) {
     if (key.curve->params) {
         if (key.publicKey.size() == 0) {
             key.publicKey.resize(33);
@@ -175,15 +175,15 @@ void minter::HDKeyEncoder::fillPublicKey(minter::HDKey &key) {
         ecdsa_get_public_key33(key.curve->params, key.privateKey.cdata(), key.publicKey.data());
     }
 }
-void minter::HDKeyEncoder::serialize(minter::HDKey &key, uint32_t fingerprint, uint32_t version, bool publicKey) {
-    Data data(78);
+void bip3x::HDKeyEncoder::serialize(bip3x::HDKey& key, uint32_t fingerprint, uint32_t version, bool publicKey) {
+    bytes_data data(78);
     data.write(0, version);
     data.write(4, key.depth);
     data.write(5, fingerprint);
     data.write(9, key.index);
     data.write(13, key.chainCode);
 
-    Bip32Key *outKey;
+    bip32_key* outKey;
     if (publicKey) {
         data.write(45, key.publicKey.cdata(), 33);
         outKey = &key.extPublicKey;
@@ -204,23 +204,23 @@ void minter::HDKeyEncoder::serialize(minter::HDKey &key, uint32_t fingerprint, u
     data.clear();
 }
 
-minter::HDKey minter::HDKeyEncoder::fromSeed(const char *seed) {
-    return fromSeed(Data(reinterpret_cast<const uint8_t *>(seed), strlen(seed)));
+bip3x::HDKey bip3x::HDKeyEncoder::fromSeed(const char* seed) {
+    return fromSeed(bytes_data(reinterpret_cast<const uint8_t*>(seed), strlen(seed)));
 }
 
-minter::HDKey minter::HDKeyEncoder::fromSeed(const uint8_t *seed, size_t seedLength) {
-    return fromSeed(Data(seed, seedLength));
+bip3x::HDKey bip3x::HDKeyEncoder::fromSeed(const uint8_t* seed, size_t seedLength) {
+    return fromSeed(bytes_data(seed, seedLength));
 }
-minter::HDKey minter::HDKeyEncoder::fromSeed(const minter::Data &seed) {
+bip3x::HDKey bip3x::HDKeyEncoder::fromSeed(const bip3x::bytes_data& seed) {
     HDKey out;
-    Data64 I;
+    bytes_64 I;
     out.depth = 0;
     out.index = 0;
     if (out.curve == nullptr) {
         return out; // @TODO error handling
     }
 
-    I = seed.toHmac512(out.curve->bip32_name);
+    I = seed.switch_map_c(to_hmac_sha512(out.curve->bip32_name));
 
     if (out.curve->params) {
         uint256_t a;
@@ -231,7 +231,7 @@ minter::HDKey minter::HDKeyEncoder::fromSeed(const minter::Data &seed) {
                 break;
             }
 
-            I.toHmac512Mutable(out.curve->bip32_name);
+            I.switch_map(to_hmac_sha512(out.curve->bip32_name));
         }
         a.clear();
     }
@@ -244,47 +244,47 @@ minter::HDKey minter::HDKeyEncoder::fromSeed(const minter::Data &seed) {
     return out;
 }
 
-minter::HDKey::HDKey() :
-    publicKey(),
-    privateKey(),
-    chainCode(),
-    extPrivateKey(),
-    extPublicKey(),
-    net(MainNet),
-    depth(0),
-    index(0),
-    fingerprint(0),
-    curve(&secp256k1_info) { }
+bip3x::HDKey::HDKey()
+    : publicKey(),
+      privateKey(),
+      chainCode(),
+      extPrivateKey(),
+      extPublicKey(),
+      net(MainNet),
+      depth(0),
+      index(0),
+      fingerprint(0),
+      curve(&secp256k1_info) { }
 
-minter::HDKey::HDKey(const minter::HDKey &other) :
-    publicKey(other.publicKey),
-    privateKey(other.privateKey),
-    chainCode(other.chainCode),
-    extPrivateKey(other.extPrivateKey),
-    extPublicKey(other.extPublicKey),
-    net(other.net),
-    depth(other.depth),
-    index(other.index),
-    fingerprint(other.fingerprint),
-    curve(&secp256k1_info) {
-
-}
-
-minter::HDKey::HDKey(minter::HDKey &&other) noexcept :
-    publicKey(std::move(other.publicKey)),
-    privateKey(std::move(other.privateKey)),
-    chainCode(std::move(other.chainCode)),
-    extPrivateKey(std::move(other.extPrivateKey)),
-    extPublicKey(std::move(other.extPublicKey)),
-    net(std::move(other.net)),
-    depth(other.depth),
-    index(other.index),
-    fingerprint(other.fingerprint),
-    curve(&secp256k1_info) {
+bip3x::HDKey::HDKey(const bip3x::HDKey& other)
+    : publicKey(other.publicKey),
+      privateKey(other.privateKey),
+      chainCode(other.chainCode),
+      extPrivateKey(other.extPrivateKey),
+      extPublicKey(other.extPublicKey),
+      net(other.net),
+      depth(other.depth),
+      index(other.index),
+      fingerprint(other.fingerprint),
+      curve(&secp256k1_info) {
 
 }
 
-minter::HDKey &minter::HDKey::operator=(minter::HDKey other) {
+bip3x::HDKey::HDKey(bip3x::HDKey&& other) noexcept
+    : publicKey(std::move(other.publicKey)),
+      privateKey(std::move(other.privateKey)),
+      chainCode(std::move(other.chainCode)),
+      extPrivateKey(std::move(other.extPrivateKey)),
+      extPublicKey(std::move(other.extPublicKey)),
+      net(std::move(other.net)),
+      depth(other.depth),
+      index(other.index),
+      fingerprint(other.fingerprint),
+      curve(&secp256k1_info) {
+
+}
+
+bip3x::HDKey& bip3x::HDKey::operator=(bip3x::HDKey other) {
     std::swap(publicKey, other.publicKey);
     std::swap(privateKey, other.privateKey);
     std::swap(chainCode, other.chainCode);
@@ -298,11 +298,11 @@ minter::HDKey &minter::HDKey::operator=(minter::HDKey other) {
     return *this;
 }
 
-minter::HDKey::~HDKey() {
+bip3x::HDKey::~HDKey() {
     clear();
 }
 
-void minter::HDKey::clear() {
+void bip3x::HDKey::clear() {
     publicKey.clear();
     privateKey.clear();
     chainCode.clear();
@@ -310,6 +310,12 @@ void minter::HDKey::clear() {
     extPublicKey.clear();
 }
 
-minter::Derivation::Derivation(const std::string &path) : path(path) { }
-minter::Derivation::Derivation(std::string &&path) : path(std::move(path)) { }
-minter::Derivation::Derivation(const char *path) : path(std::string(path)) { }
+bip3x::Derivation::Derivation(const std::string& path)
+    : path(path) {
+}
+bip3x::Derivation::Derivation(std::string&& path)
+    : path(std::move(path)) {
+}
+bip3x::Derivation::Derivation(const char* path)
+    : path(std::string(path)) {
+}

@@ -1,22 +1,22 @@
-#include <cstring>
-#include <minter/crypto/pbkdf2.hpp>
-#include <minter/crypto/hmac.h>
-#include "minter/bip39/internal.h"
-#include "minter/bip39/mnemonic.h"
-#include "minter/bip39/wordlist.h"
+#include "bip3x/bip39.h"
 
-#include "minter/bip39/bip39.h"
-#include "minter/bip39/crypto/sha256.h"
+#include "bip3x/crypto/sha256.h"
+#include "bip3x/mnemonic.h"
+#include "bip3x/wordlist.h"
+
+#include <bip3x/crypto/hmac.h>
+#include <bip3x/crypto/pbkdf2.hpp>
+#include <cstring>
 
 /* Maximum length including up to 2 bytes for checksum */
 #define BIP39_ENTROPY_LEN_MAX (BIP39_ENTROPY_LEN_320 + sizeof(unsigned char) * 2)
 
 static const struct {
-  const char name[4];
-  const struct words *words;
+    const char name[4];
+    const struct words* words;
 } lookup[] = {
-    {"en",  &en_words},
-    {"es",  &es_words},
+    {"en", &en_words},
+    {"es", &es_words},
     {"fr",  &fr_words},
     {"it",  &it_words},
     {"jp",  &jp_words},

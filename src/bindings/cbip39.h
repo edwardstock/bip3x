@@ -15,31 +15,31 @@ extern "C" {
 #define BIP39_ENTROPY_LEN_288 36
 #define BIP39_ENTROPY_LEN_320 40
 
-typedef enum minter_mnemonic_status {
-  Ok,
-  UnsupportedEntropy,
-  UnknownError
+typedef enum bip3x_mnemonic_status {
+    Ok,
+    UnsupportedEntropy,
+    UnknownError
 } minter_mnemonic_status;
 
-typedef struct minter_mnemonic_result {
-  char **words;
-  size_t len;
-  char *raw;
-  enum minter_mnemonic_status status;
+typedef struct bip3x_mnemonic_result {
+    char** words;
+    size_t len;
+    char* raw;
+    enum bip3x_mnemonic_status status;
 } minter_mnemonic_result;
 
-BIP39_API char **minter_get_languages(size_t *num_written);
-BIP39_API void minter_free_string_array(char **arr, size_t len);
-BIP39_API char **minter_get_words_from_language(const char *lang, size_t *num_written);
+BIP39_API char** bip3x_get_languages(size_t* num_written);
+BIP39_API void bip3x_free_string_array(char** arr, size_t len);
+BIP39_API char** bip3x_get_words_from_language(const char* lang, size_t* num_written);
 /// \brief
 /// \param lang
 /// \param entropy use by default: BIP39_ENTROPY_LEN_128
 /// \return
-BIP39_API minter_mnemonic_result *minter_generate_mnemonic(const char *lang, size_t entropy);
-BIP39_API void minter_free_mnemonic(minter_mnemonic_result *mnemonic);
-BIP39_API minter_mnemonic_result *minter_encode_bytes(const uint8_t *src, const char *lang, size_t entropy);
-BIP39_API void minter_words_to_seed(const char *words, uint8_t *out64, size_t *num_written);
-BIP39_API bool minter_validate_words(const char *lang, const char *mnemonic);
+BIP39_API bip3x_mnemonic_result* bip3x_generate_mnemonic(const char* lang, size_t entropy);
+BIP39_API void bip3x_free_mnemonic(bip3x_mnemonic_result* mnemonic);
+BIP39_API bip3x_mnemonic_result* minter_encode_bytes(const uint8_t* src, const char* lang, size_t entropy);
+BIP39_API void bip3x_words_to_seed(const char* words, uint8_t* out64, size_t* num_written);
+BIP39_API bool bip3x_validate_words(const char* lang, const char* mnemonic);
 
 #ifdef __cplusplus
 }

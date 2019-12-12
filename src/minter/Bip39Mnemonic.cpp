@@ -5,13 +5,13 @@
  * \link https://github.com/edwardstock
  */
 
-#include "minter/bip39/Bip39Mnemonic.h"
+#include "bip3x/Bip39Mnemonic.h"
 
-#include "minter/bip39/PCGRand.hpp"
+#include "bip3x/PCGRand.hpp"
 
 #include <toolbox/strings.hpp>
 
-std::vector<std::string> minter::Bip39Mnemonic::getLanguages() {
+std::vector<std::string> bip3x::Bip39Mnemonic::getLanguages() {
     int sz = bip39_get_languages_size();
     if (sz <= 0) {
         return std::vector<std::string>(0);
@@ -22,8 +22,8 @@ std::vector<std::string> minter::Bip39Mnemonic::getLanguages() {
 
     return languages;
 }
-std::vector<std::string> minter::Bip39Mnemonic::getWordsFromLanguage(const char *lang) {
-    words *wl[1];
+std::vector<std::string> bip3x::Bip39Mnemonic::getWordsFromLanguage(const char* lang) {
+    words* wl[1];
     bip39_get_wordlist(lang, wl);
     if (!wl[0]) {
         return {};
@@ -37,12 +37,12 @@ std::vector<std::string> minter::Bip39Mnemonic::getWordsFromLanguage(const char 
     return wordsList;
 }
 
-minter::Bip39Mnemonic::MnemonicResult minter::Bip39Mnemonic::generate(const char *lang, size_t entropy) {
+bip3x::Bip39Mnemonic::MnemonicResult bip3x::Bip39Mnemonic::generate(const char* lang, size_t entropy) {
     std::random_device dev;
     PCGRand rand(dev);
     std::uniform_int_distribution<> udist(0, 255);
 
-    Data bts(entropy);
+    bytes_data bts(entropy);
     for (size_t i = 0; i < entropy; ++i) {
         bts.write(i, (uint8_t) udist(rand));
     }
@@ -50,9 +50,9 @@ minter::Bip39Mnemonic::MnemonicResult minter::Bip39Mnemonic::generate(const char
     return encodeBytes(bts.cdata(), lang, entropy);
 }
 
-minter::Bip39Mnemonic::MnemonicResult minter::Bip39Mnemonic::encodeBytes(const uint8_t *src,
-                                                                         const char *lang,
-                                                                         size_t entropy) {
+bip3x::Bip39Mnemonic::MnemonicResult bip3x::Bip39Mnemonic::encodeBytes(const uint8_t* src,
+                                                                       const char* lang,
+                                                                       size_t entropy) {
     MnemonicResult result{Ok, std::vector<std::string>(0), "", 0};
 
     if (!validateEntropy(entropy)) {
@@ -60,7 +60,7 @@ minter::Bip39Mnemonic::MnemonicResult minter::Bip39Mnemonic::encodeBytes(const u
         return result;
     }
 
-    struct words *wordList[1];
+    struct words* wordList[1];
     bip39_get_wordlist(lang, wordList);
 
     char *output[1];
@@ -79,15 +79,15 @@ minter::Bip39Mnemonic::MnemonicResult minter::Bip39Mnemonic::encodeBytes(const u
 
     return result;
 }
-minter::Data minter::Bip39Mnemonic::decodeMnemonic(const char *mnemonic, const char *lang, size_t entropy) {
-    struct words *wordList[1];
+bip3x::bytes_data bip3x::Bip39Mnemonic::decodeMnemonic(const char* mnemonic, const char* lang, size_t entropy) {
+    struct words* wordList[1];
     bip39_get_wordlist(lang, wordList);
 
     if (!validateEntropy(entropy)) {
         return nullptr;
     }
 
-    Data data;
+    bytes_data data;
     data.resize(entropy);
 
     size_t written = 0;
@@ -99,26 +99,27 @@ minter::Data minter::Bip39Mnemonic::decodeMnemonic(const char *mnemonic, const c
 
     return nullptr;
 }
-void minter::Bip39Mnemonic::wordsToSeed(const char *words, uint8_t *out64, size_t *writtenSz) {
+void bip3x::Bip39Mnemonic::wordsToSeed(const char* words, uint8_t* out64, size_t* writtenSz) {
     bip39_mnemonic_to_seed(words, nullptr, out64, 64, writtenSz);
-
 }
-bool minter::Bip39Mnemonic::validateEntropy(size_t entropy) {
+bool bip3x::Bip39Mnemonic::validateEntropy(size_t entropy) {
     switch (entropy) {
-        case BIP39_ENTROPY_LEN_128:
-        case BIP39_ENTROPY_LEN_160:
-        case BIP39_ENTROPY_LEN_192:
-        case BIP39_ENTROPY_LEN_224:
-        case BIP39_ENTROPY_LEN_256:
-        case BIP39_ENTROPY_LEN_288:
-        case BIP39_ENTROPY_LEN_320:return true;
-        default:break;
+    case BIP39_ENTROPY_LEN_128:
+    case BIP39_ENTROPY_LEN_160:
+    case BIP39_ENTROPY_LEN_192:
+    case BIP39_ENTROPY_LEN_224:
+    case BIP39_ENTROPY_LEN_256:
+    case BIP39_ENTROPY_LEN_288:
+    case BIP39_ENTROPY_LEN_320:
+        return true;
+    default:
+        break;
     }
 
     return false;
 }
-bool minter::Bip39Mnemonic::validateWords(const char *lang, const char *mnemonic) {
-    words *wl[1];
+bool bip3x::Bip39Mnemonic::validateWords(const char* lang, const char* mnemonic) {
+    words* wl[1];
     bip39_get_wordlist(lang, wl);
     if (!wl[0]) {
         return false;

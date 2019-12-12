@@ -1,14 +1,14 @@
+#include "bip3x/mnemonic.h"
+
+#include "bip3x/wordlist.h"
+
 #include <cstring>
-#include "minter/bip39/internal.h"
-#include "minter/bip39/mnemonic.h"
-#include "minter/bip39/wordlist.h"
 
 #define U8_AT(bytes, pos) (bytes)[(pos) / 8u]
 #define U8_MASK(pos) (1u << (7u - (pos) % 8u))
 
 /* Get n'th value (of w->bits length) from bytes */
-static size_t extract_index(size_t bits, const unsigned char *bytes, size_t n)
-{
+static size_t extract_index(size_t bits, const unsigned char* bytes, size_t n) {
     size_t pos, end, value;
     for (pos = n * bits, end = pos + bits, value = 0; pos < end; ++pos)
         value = (value << 1u) | !!(U8_AT(bytes, pos) & U8_MASK(pos));

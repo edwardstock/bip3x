@@ -21,7 +21,7 @@ Logic almost completely taken from bitcoin-js library for generating mnemonic ph
 * Build
 ```bash
 mkdir build && cd build
-cmake ../ -DCMAKE_BUILD_TYPE=Release
+cmake ../ -DCMAKE_BUILD_TYPE=Release -DENABLE_BIP39_SHARED=On -DENABLE_BIP39_JNI=On -DENABLE_BIP39_C=Off -DENABLE_BIP39_TESTS=Off
 
 make
 ```
@@ -71,12 +71,12 @@ Then pick-up lib files and headers from **D:\path\you\want\to\install\libs**
 ## Examples
 ### C++
 ```c++
-#include <minter/utils.h>
-#include <minter/Bip39Mnemonic.h>
-#include <minter/HDKeyEncoder.h>
+#include <bip3x/utils.h>
+#include <bip3x/Bip39Mnemonic.h>
+#include <bip3x/HDKeyEncoder.h>
 #include <iostream>
 
-using namespace minter;
+using namespace bip3x;
 
 int main(int argc, char** argv) {
     // create random words
@@ -84,7 +84,7 @@ int main(int argc, char** argv) {
     std::cout << encodedMnemonic.words << std::endl;
     
     // create mnemonic seed
-    Data64 seed = HDKeyEncoder::makeBip39Seed(encodedMnemonic.words);
+    bytes_64 seed = HDKeyEncoder::makeBip39Seed(encodedMnemonic.words);
     
     // create root key from mnemonic seed
     HDKey bip32RootKey = HDKeyEncoder::makeBip32RootKey(seed);
@@ -121,7 +121,7 @@ tbd
 ```bash
 cd /path/to/project/app/src/main
 mkdir cpp && cd cpp
-git submodule add https://github.com/edwardstock/native-bip39.git bip39
+git submodule add https://github.com/edwardstock/bip3x.git bip39
 ```
  
 * Create root cmake project in `/path/to/project/[moduleName]/src/main/cpp`
@@ -159,7 +159,7 @@ android {
  
 * Initialize it
 ```java
-import network.minter.core.bip39.NativeBip39
+import com.edwardstock.bip3x.NativeBip39
 
 class Main {
     public static int main(String[] args) {
@@ -196,6 +196,6 @@ target_link_libraries(bip39)
 
 
 ## Documentation
-TBD (see [src/main.cpp](https://github.com/edwardstock/native-bip39/blob/master/src/main.cpp) for simple examples)
+TBD (see [src/main.cpp](https://github.com/edwardstock/bip3x/blob/master/src/main.cpp) for simple examples)
 
 

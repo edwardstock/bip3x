@@ -25,22 +25,20 @@
  *  http://ehash.iaik.tugraz.at/wiki/RIPEMD-160
  */
 
-#include <string>
-#include <cstring>
+#include "bip3x/crypto/ripemd160.h"
 
-#include "minter/crypto/ripemd160.h"
-#include "minter/crypto/memzero.h"
+#include "bip3x/crypto/memzero.h"
+
+#include <cstring>
+#include <string>
 
 /*
  * 32-bit integer manipulation macros (little endian)
  */
 #ifndef GET_UINT32_LE
-#define GET_UINT32_LE(n,b,i)                            \
-{                                                       \
-    (n) = ( (uint32_t) (b)[(i)    ]       )             \
-        | ( (uint32_t) (b)[(i) + 1] <<  8 )             \
-        | ( (uint32_t) (b)[(i) + 2] << 16 )             \
-        | ( (uint32_t) (b)[(i) + 3] << 24 );            \
+#define GET_UINT32_LE(n, b, i)                                                                                                        \
+    {                                                                                                                                 \
+        (n) = ((uint32_t)(b)[(i)]) | ((uint32_t)(b)[(i) + 1] << 8) | ((uint32_t)(b)[(i) + 2] << 16) | ( (uint32_t) (b)[(i) + 3] << 24 );            \
 }
 #endif
 

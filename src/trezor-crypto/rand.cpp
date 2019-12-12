@@ -21,14 +21,15 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "minter/crypto/rand.h"
+#include "bip3x/crypto/rand.h"
 
 #ifndef RAND_PLATFORM_INDEPENDENT
+
+#include "bip3x/PCGRand.hpp"
 
 #include <cstdio>
 #include <ctime>
 #include <random>
-#include "minter/bip39/PCGRand.hpp"
 
 uint32_t random32()
 {

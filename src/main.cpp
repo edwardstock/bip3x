@@ -6,16 +6,17 @@
  * @link https://github.com/edwardstock
  */
 
-#include <vector>
+#include "bip3x/Bip39Mnemonic.h"
+#include "bip3x/HDKeyEncoder.h"
+#include "bip3x/utils.h"
+
+#include <iomanip>
 #include <iostream>
 #include <sstream>
-#include <iomanip>
-#include "minter/bip39/utils.h"
-#include "minter/bip39/Bip39Mnemonic.h"
-#include "minter/bip39/HDKeyEncoder.h"
+#include <vector>
 using namespace minter;
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     /*
      * entropy: f0b9c942b9060af6a82d3ac340284d7e
      * words: vague soft expose improve gaze kitten pass point select access battle wish

@@ -6,21 +6,21 @@
 #ifndef MINTERWALLET_NOBJECT_H
 #define MINTERWALLET_NOBJECT_H
 
+#include <bip3x/utils.h>
 #include <jni.h>
 #include <string>
-#include <minter/bip39/utils.h>
 
-namespace minter {
+namespace bip3x {
 
 class nobject {
- private:
-    JNIEnv *env;
+private:
+    JNIEnv* env;
     jobject obj;
     jclass cls;
     bool instantiated;
 
- public:
-    nobject(JNIEnv *env, const jclass &cls);
+public:
+    nobject(JNIEnv* env, const jclass& cls);
 
     nobject(JNIEnv *env, const char *className);
     nobject(JNIEnv *env, const jobject &obj);
@@ -41,15 +41,15 @@ class nobject {
     void setField(const char *fname, const jobject &value);
 
     template<size_t N>
-    void setFieldUint8Array(const char *fname, const minter::FixedData<N> &data) {
+    void setFieldUint8Array(const char* fname, const bip3x::bytes_array<N>& data) {
         auto sz = static_cast<jsize>(data.size());
         jbyteArray arr = env->NewByteArray(sz);
-        env->SetByteArrayRegion(arr, 0, sz, reinterpret_cast<const jbyte *>(data.cdata()));
+        env->SetByteArrayRegion(arr, 0, sz, reinterpret_cast<const jbyte*>(data.cdata()));
 
         env->SetObjectField(obj, env->GetFieldID(cls, fname, "[B"), arr);
     }
 
-    void setFieldUint8Array(const char *fname, const minter::Data &data);
+    void setFieldUint8Array(const char* fname, const bip3x::bytes_data& data);
 
     uint8_t getFieldUint8(const char *fname);
     int8_t getFieldInt8(const char *fname);
@@ -67,9 +67,9 @@ class nobject {
     }
 
     template<size_t N>
-    minter::FixedData<N> getFieldUint8Array(const char *fname) {
+    bip3x::bytes_array<N> getFieldUint8Array(const char* fname) {
         auto tmpArr = getFieldObject<jbyteArray>(fname, "[B" /*byte[]*/);
-        return minter::FixedData<N>(reinterpret_cast<uint8_t *>(env->GetByteArrayElements(tmpArr, 0)));
+        return bip3x::bytes_array<N>(reinterpret_cast<uint8_t*>(env->GetByteArrayElements(tmpArr, 0)));
     }
 
     uint32_t *getFieldUint32Array(const char *fname) {

@@ -22,34 +22,33 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include "bip3x/crypto/ecdsa.h"
+
+#include "bip3x/crypto/address.h"
+#include "bip3x/crypto/base58.h"
+#include "bip3x/crypto/bignum.h"
+#include "bip3x/crypto/hmac.h"
+#include "bip3x/crypto/memzero.h"
+#include "bip3x/crypto/rand.h"
+#include "bip3x/crypto/rfc6979.h"
+#include "bip3x/crypto/ripemd160.h"
+#include "bip3x/crypto/secp256k1.h"
+#include "bip3x/crypto/sha2.hpp"
+
+#include <cassert>
 #include <cstdint>
 #include <cstdlib>
-#include <string>
-#include <cassert>
 #include <cstring>
-
-#include "minter/crypto/address.h"
-#include "minter/crypto/bignum.h"
-#include "minter/crypto/rand.h"
-#include "minter/crypto/sha2.hpp"
-#include "minter/crypto/ripemd160.h"
-#include "minter/crypto/hmac.h"
-#include "minter/crypto/ecdsa.h"
-#include "minter/crypto/base58.h"
-#include "minter/crypto/secp256k1.h"
-#include "minter/crypto/rfc6979.h"
-#include "minter/crypto/memzero.h"
+#include <string>
 
 // Set cp2 = cp1
-void point_copy(const curve_point *cp1, curve_point *cp2)
-{
-	*cp2 = *cp1;
+void point_copy(const curve_point* cp1, curve_point* cp2) {
+    *cp2 = *cp1;
 }
 
 // cp2 = cp1 + cp2
-void point_add(const ecdsa_curve *curve, const curve_point *cp1, curve_point *cp2)
-{
-	bignum256 lambda, inv, xr, yr;
+void point_add(const ecdsa_curve* curve, const curve_point* cp1, curve_point* cp2) {
+    bignum256 lambda, inv, xr, yr;
 
 	if (point_is_infinity(cp1)) {
 		return;

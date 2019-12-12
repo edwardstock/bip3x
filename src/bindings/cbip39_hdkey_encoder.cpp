@@ -7,10 +7,11 @@
  * \link   https://github.com/edwardstock
  */
 
-#include <minter/bip39/HDKeyEncoder.h>
 #include "cbip39_hdkey_encoder.h"
 
-static void copy_hdkey(const minter::HDKey &res, minter_hdkey *out) {
+#include <bip3x/HDKeyEncoder.h>
+
+static void copy_hdkey(const bip3x::HDKey& res, minter_hdkey* out) {
     memcpy(out->public_key.data, res.publicKey.cdata(), res.publicKey.size());
     memcpy(out->private_key.data, res.privateKey.cdata(), res.privateKey.size());
     memcpy(out->chain_code.data, res.chainCode.cdata(), res.chainCode.size());
@@ -29,16 +30,15 @@ static void minter_memset_s(uint8_t *dst, uint8_t val, size_t n) {
     }
 }
 
-void encoder_make_bip32_root_key(const struct minter_data64 *seed, minter_hdkey *hdkey) {
+void encoder_make_bip32_root_key(const struct bip3x_data64* seed, minter_hdkey* hdkey) {
     copy_hdkey(
-        minter::HDKeyEncoder::makeBip32RootKey(minter::Data64(seed->data, 64), minter::MainNet),
-        hdkey
-    );
+        bip3x::HDKeyEncoder::makeBip32RootKey(bip3x::bytes_64(seed->data, 64), bip3x::MainNet),
+        hdkey);
 }
 
 void encoder_make_ext_key(struct minter_hdkey *hdkey, const char *derivation_path) {
-    minter::HDKey in;
-    in.net = minter::MainNet;
+    bip3x::HDKey in;
+    in.net = bip3x::MainNet;
     in.publicKey.get().assign(hdkey->public_key.data, hdkey->public_key.data + 33);
     in.privateKey.get().assign(hdkey->private_key.data, hdkey->private_key.data + 32);
     in.chainCode.get().assign(hdkey->chain_code.data, hdkey->chain_code.data + 32);
@@ -48,7 +48,7 @@ void encoder_make_ext_key(struct minter_hdkey *hdkey, const char *derivation_pat
     in.index = hdkey->index;
     in.depth = hdkey->depth;
     in.fingerprint = hdkey->fingerprint;
-    minter::HDKeyEncoder::makeExtendedKey(in, derivation_path);
+    bip3x::HDKeyEncoder::makeExtendedKey(in, derivation_path);
 
     copy_hdkey(in, hdkey);
 }

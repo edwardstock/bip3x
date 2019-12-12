@@ -24,22 +24,23 @@
 #ifdef WIN32
 #include <cstring>
 #endif
+#include "bip3x/crypto/hmac.h"
+#include "bip3x/crypto/memzero.h"
+#include "bip3x/crypto/rfc6979.h"
+
 #include <cstring>
-#include "minter/crypto/rfc6979.h"
-#include "minter/crypto/hmac.h"
-#include "minter/crypto/memzero.h"
 
-void init_rfc6979(const uint8_t *priv_key, const uint8_t *hash, rfc6979_state *state) {
-	uint8_t bx[2*32];
-	uint8_t buf[32 + 1 + 2*32];
+void init_rfc6979(const uint8_t* priv_key, const uint8_t* hash, rfc6979_state* state) {
+    uint8_t bx[2 * 32];
+    uint8_t buf[32 + 1 + 2 * 32];
 
-	memcpy(bx, priv_key, 32);
-	memcpy(bx+32, hash, 32);
+    memcpy(bx, priv_key, 32);
+    memcpy(bx + 32, hash, 32);
 
-	memset(state->v, 1, sizeof(state->v));
-	memset(state->k, 0, sizeof(state->k));
+    memset(state->v, 1, sizeof(state->v));
+    memset(state->k, 0, sizeof(state->k));
 
-	memcpy(buf, state->v, sizeof(state->v));
+    memcpy(buf, state->v, sizeof(state->v));
 	buf[sizeof(state->v)] = 0x00;
 	memcpy(buf + sizeof(state->v) + 1, bx, 64);
 	hmac_sha256(state->k, sizeof(state->k), buf, sizeof(buf), state->k);

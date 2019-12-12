@@ -21,26 +21,27 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <string>
+#include "bip3x/crypto/bip39.h"
 
-#include "minter/crypto/bip39.h"
-#include "minter/crypto/hmac.h"
-#include "minter/crypto/rand.h"
-#include "minter/crypto/sha2.hpp"
-#include "minter/crypto/pbkdf2.hpp"
-#include "minter/crypto/bip39_english.h"
-#include "minter/crypto/options.h"
-#include "minter/crypto/memzero.h"
+#include "bip3x/crypto/bip39_english.h"
+#include "bip3x/crypto/hmac.h"
+#include "bip3x/crypto/memzero.h"
+#include "bip3x/crypto/options.h"
+#include "bip3x/crypto/pbkdf2.hpp"
+#include "bip3x/crypto/rand.h"
+#include "bip3x/crypto/sha2.hpp"
+
+#include <string>
 
 #if USE_BIP39_CACHE
 
 static int bip39_cache_index = 0;
 
 static CONFIDENTIAL struct {
-	bool set;
-	char mnemonic[256];
-	char passphrase[64];
-	uint8_t seed[512 / 8];
+    bool set;
+    char mnemonic[256];
+    char passphrase[64];
+    uint8_t seed[512 / 8];
 } bip39_cache[BIP39_CACHE_SIZE];
 
 #endif

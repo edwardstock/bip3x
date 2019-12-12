@@ -23,14 +23,16 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <cstdio>
-#include <string>
+#include "bip3x/crypto/bignum.h"
+
+#include "bip3x/crypto/memzero.h"
+
 #include <cassert>
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
+#include <cstdio>
 #include <cstring>
-#include "minter/crypto/bignum.h"
-#include "minter/crypto/memzero.h"
+#include <string>
 
 /* big number library */
 

@@ -1,8 +1,18 @@
-#include <stdlib.h>
+#include "bip3x/wordlist.h"
+
+#include <cstdlib>
 #include <cstring>
 #include <vector>
-#include "minter/bip39/internal.h"
-#include "minter/bip39/wordlist.h"
+
+static char* wally_strdup(const char* str) {
+    size_t len = strlen(str) + 1;
+    auto newStr = (char*) malloc(len);
+    if (newStr) {
+        memcpy(newStr, str, len); /* Copies terminating nul */
+    }
+
+    return newStr;
+}
 
 /* https://graphics.stanford.edu/~seander/bithacks.html#IntegerLogObvious */
 static int get_bits(size_t n) {

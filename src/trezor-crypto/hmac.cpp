@@ -21,23 +21,23 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <string>
+#include "bip3x/crypto/hmac.h"
+
+#include "bip3x/crypto/memzero.h"
+#include "bip3x/crypto/options.h"
+
 #include <cstring>
+#include <string>
 
-#include "minter/crypto/hmac.h"
-#include "minter/crypto/options.h"
-#include "minter/crypto/memzero.h"
-
-void hmac_sha256_Init(HMAC_SHA256_CTX *hctx, const uint8_t *key, const uint32_t keylen)
-{
-	static CONFIDENTIAL uint8_t i_key_pad[SHA256_BLOCK_LENGTH];
-	memset(i_key_pad, 0, SHA256_BLOCK_LENGTH);
-	if (keylen > SHA256_BLOCK_LENGTH) {
-		sha256_Raw(key, keylen, i_key_pad);
-	} else {
-		memcpy(i_key_pad, key, keylen);
-	}
-	for (int i = 0; i < SHA256_BLOCK_LENGTH; i++) {
+void hmac_sha256_Init(HMAC_SHA256_CTX* hctx, const uint8_t* key, const uint32_t keylen) {
+    static CONFIDENTIAL uint8_t i_key_pad[SHA256_BLOCK_LENGTH];
+    memset(i_key_pad, 0, SHA256_BLOCK_LENGTH);
+    if (keylen > SHA256_BLOCK_LENGTH) {
+        sha256_Raw(key, keylen, i_key_pad);
+    } else {
+        memcpy(i_key_pad, key, keylen);
+    }
+    for (int i = 0; i < SHA256_BLOCK_LENGTH; i++) {
 		hctx->o_key_pad[i] = i_key_pad[i] ^ 0x5c;
 		i_key_pad[i] ^= 0x36;
 	}

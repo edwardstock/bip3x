@@ -2,18 +2,18 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "bip3x/crypto/sha256.h"
+
+#include "bip3x/crypto/common.h"
+
+#include <atomic>
 #include <cassert>
 #include <cstring>
-#include <atomic>
-
-#include "minter/bip39/crypto/sha256.h"
-#include "minter/bip39/crypto/common.h"
 
 #if defined(__x86_64__) || defined(__amd64__)
 #if defined(USE_ASM)
 #include <cpuid.h>
-namespace sha256_sse4
-{
+namespace sha256_sse4 {
 void Transform(uint32_t* s, const unsigned char* chunk, size_t blocks);
 }
 #endif

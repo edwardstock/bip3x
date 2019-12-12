@@ -1,5 +1,5 @@
 /* Generated file - do not edit! */
-#include "minter/bip39/wordlist.h"
+#include "bip3x/wordlist.h"
 
 static const unsigned char fr_[] = {
     0x61, 0x62, 0x61, 0x69, 0x73, 0x73, 0x65, 0x72, 0,

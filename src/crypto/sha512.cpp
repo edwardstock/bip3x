@@ -2,18 +2,22 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <cstring>
-#include "minter/bip39/crypto/sha512.h"
-#include "minter/bip39/crypto/common.h"
+#include "bip3x/crypto/sha512.h"
 
+#include "bip3x/crypto/common.h"
+
+#include <cstring>
 
 // Internal implementation code.
-namespace
-{
+namespace {
 /// Internal SHA-512 implementation.
 namespace sha512 {
-constexpr uint64_t inline Ch(uint64_t x, uint64_t y, uint64_t z) { return z ^ (x & (y ^ z)); }
-constexpr uint64_t inline Maj(uint64_t x, uint64_t y, uint64_t z) { return (x & y) | (z & (x | y)); }
+constexpr uint64_t inline Ch(uint64_t x, uint64_t y, uint64_t z) {
+    return z ^ (x & (y ^ z));
+}
+constexpr uint64_t inline Maj(uint64_t x, uint64_t y, uint64_t z) {
+    return (x & y) | (z & (x | y));
+}
 constexpr uint64_t inline Sigma0(uint64_t x) {
     return (x >> 28u | x << 36u) ^ (x >> 34u | x << 30u) ^ (x >> 39u | x << 25u);
 }

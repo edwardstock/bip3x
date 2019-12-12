@@ -20,7 +20,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "minter/crypto/hasher.h"
+#include "bip3x/crypto/hasher.h"
 
 void hasher_Init(Hasher *hasher, HasherType type) {
     hasher->type = type;

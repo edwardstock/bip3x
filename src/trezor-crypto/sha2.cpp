@@ -28,11 +28,13 @@
  * SUCH DAMAGE.
  */
 
-#include <string>
+#include "bip3x/crypto/sha2.hpp"
+
+#include "bip3x/crypto/memzero.h"
+
 #include <cstdint>
 #include <cstring>
-#include "minter/crypto/sha2.hpp"
-#include "minter/crypto/memzero.h"
+#include <string>
 
 /*
  * ASSERT NOTE:

@@ -21,7 +21,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "minter/crypto/address.h"
+#include "bip3x/crypto/address.h"
 
 size_t address_prefix_bytes_len(uint32_t address_type)
 {
@@ -54,7 +54,7 @@ bool address_check_prefix(const uint8_t *addr, uint32_t address_type)
 }
 
 #if USE_ETHEREUM
-#include "minter/crypto/sha3.h"
+#include "bip3x/crypto/sha3.h"
 
 void ethereum_address_checksum(const uint8_t *addr, char *address)
 {

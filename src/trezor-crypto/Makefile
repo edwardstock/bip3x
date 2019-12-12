@@ -66,7 +66,7 @@ TESTSSLLIBS = $(shell pkg-config --libs openssl)
 
 all: tools tests
 
-%.o: %.c %.h ../../include/minter/crypto
+%.o: %.c %.h ../../include/bip3x/crypto
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 tests: tests/test_check tests/test_openssl tests/test_speed tests/libtrezor-crypto.so tests/aestst
