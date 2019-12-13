@@ -4,6 +4,10 @@ function (conan_fallback)
 	set(multi)
 	cmake_parse_arguments("FF" "${options}" "${single}" "${multi}" ${ARGN})
 
+	if (TARGET CONAN_PKG::${FF_NAME})
+		return()
+	endif ()
+
 	set(LOCAL_LIBS_PREFIX "libs")
 	if (FF_LOCAL_LIBS_PREFIX)
 		set(LOCAL_LIBS_PREFIX ${FF_LOCAL_LIBS_PREFIX})
@@ -68,6 +72,7 @@ function (conan_fallback)
 		message(STATUS "off-conan: ${FF_NAME} found ${FF_FIND_LIB_${FF_NAME}}.
 		libs: ${${FF_NAME}_LIBRARIES}
 		include: ${${FF_NAME}_INCLUDE_DIR}")
+
 		add_library(CONAN_PKG::${FF_NAME} STATIC IMPORTED)
 		set_target_properties(CONAN_PKG::${FF_NAME} PROPERTIES IMPORTED_LOCATION ${FF_FIND_LIB_${FF_NAME}})
 	endif ()
