@@ -1,7 +1,7 @@
 function (conan_fallback)
 	set(options)
 	set(single NAME LOCAL_INCLUDE_DIR SUBDIR SYSTEM_INCLUDE_DIR TARGET_NAME LOCAL_LIBS_PREFIX)
-	set(multi)
+	set(multi PROPERTIES)
 	cmake_parse_arguments("FF" "${options}" "${single}" "${multi}" ${ARGN})
 
 	if (TARGET CONAN_PKG::${FF_NAME})
@@ -35,8 +35,50 @@ function (conan_fallback)
 
 	#	If not found, trying to add subdirectory
 	if (NOT FF_FIND_LIB_${FF_NAME})
+		list(LENGTH FF_PROPERTIES OLD_PROPS_SZ)
+		set(OLD_PROPS)
+		if (${OLD_PROPS_SZ} GREATER 0)
+			math(EXPR OLD_PROPS_SZ "(${OLD_PROPS_SZ} / 2)-1")
+
+			set(it 0)
+			foreach (idx RANGE 0 ${OLD_PROPS_SZ})
+				math(EXPR idx "${idx} + ${it}")
+				list(GET FF_PROPERTIES ${idx} _PKEY)
+				list(APPEND OLD_PROPS "${_PKEY}")
+				list(APPEND OLD_PROPS "${${_PKEY}}")
+
+				math(EXPR it "${it}+1")
+			endforeach ()
+
+			set(it 0)
+			foreach (idx RANGE 0 ${OLD_PROPS_SZ})
+				math(EXPR idx "${idx} + ${it}")
+				math(EXPR _next_idx "${idx} + 1")
+				list(GET FF_PROPERTIES ${idx} _PKEY)
+				list(GET FF_PROPERTIES ${_next_idx} _PVALUE)
+				list(APPEND PRINT_PROPS_${FF_NAME} "-D${_PKEY}=${_PVALUE}")
+				set(${_PKEY} ${_PVALUE} CACHE BOOL "" FORCE)
+				math(EXPR it "${it}+1")
+			endforeach ()
+		endif ()
+
 		add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/${LOCAL_LIBS_PREFIX}/${LOCAL_SUBDIR_${FF_NAME}})
-		#		if set local path where includes stored, adding it to global includes
+
+		if (${OLD_PROPS_SZ} GREATER 0)
+			math(EXPR OLD_PROPS_SZ "(${OLD_PROPS_SZ} / 2)-1")
+			set(it 0)
+			foreach (idx RANGE 0 ${OLD_PROPS_SZ})
+				math(EXPR idx "${idx} + ${it}")
+				math(EXPR _next_idx "${idx} + 1")
+				list(GET OLD_PROPS ${idx} _PKEY)
+				list(GET OLD_PROPS ${_next_idx} _PVALUE)
+				set(${_PKEY} ${_PVALUE} CACHE BOOL "" FORCE)
+				math(EXPR it "${it}+1")
+			endforeach ()
+
+		endif ()
+
+		# if set local path where includes stored, adding it to global includes
 		if (FF_LOCAL_INCLUDE_DIR)
 			set(${FF_NAME}_INCLUDE_DIR ${FF_LOCAL_INCLUDE_DIR})
 		else ()
@@ -46,9 +88,10 @@ function (conan_fallback)
 		add_library(CONAN_PKG::${FF_NAME} ALIAS ${LOCAL_TARGET_NAME})
 
 		message(STATUS "off-conan: ${FF_NAME} not found.
-		Fallback to libs directory ${CMAKE_CURRENT_SOURCE_DIR}/${LOCAL_LIBS_PREFIX}/${FF_NAME};
-		target: ${FF_NAME}
-		include: ${${FF_NAME}_INCLUDE_DIR}")
+		Using directory: ${CMAKE_CURRENT_SOURCE_DIR}/${LOCAL_LIBS_PREFIX}/${LOCAL_SUBDIR_${FF_NAME}}
+		Target:          ${FF_NAME}
+		Include:         ${${FF_NAME}_INCLUDE_DIR}
+		Properties:      ${PRINT_PROPS_${FF_NAME}}")
 	else ()
 		set(${FF_NAME}_LIBRARIES "")
 		set(${FF_NAME}_LIBRARIES ${FF_FIND_LIB_${FF_NAME}})

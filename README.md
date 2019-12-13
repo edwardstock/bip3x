@@ -21,7 +21,7 @@ Logic almost completely taken from bitcoin-js library for generating mnemonic ph
 * Build
 ```bash
 mkdir build && cd build
-cmake ../ -DCMAKE_BUILD_TYPE=Release -DENABLE_BIP39_SHARED=On -DENABLE_BIP39_JNI=On -DENABLE_BIP39_C=Off -DENABLE_BIP39_TESTS=Off
+cmake ../ -DCMAKE_BUILD_TYPE=Release -DENABLE_SHARED=On -DENABLE_BIP39_JNI=On -DENABLE_BIP39_C=Off -DENABLE_TEST=Off
 
 make
 ```
@@ -55,7 +55,7 @@ make
 * CMake for Windows
 * Visual Studio (at least community edition), tested only version 2019
 * Visual Studio C++ compiler
-* To build tests, you could install Conan OR just set configure-time flag `-DENABLE_BIP39_CONAN=Off` and resolve submodules: `git submodule update --init --recursive`
+* To build tests, you could install Conan OR just set configure-time flag `-DENABLE_CONAN=Off` and resolve submodules: `git submodule update --init --recursive`
 
 Step-by-step:
 ```bash

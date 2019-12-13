@@ -68,15 +68,15 @@ class Bip39Conan(ConanFile):
     def build(self):
         cmake = CMake(self)
         opts = {
-            'ENABLE_BIP39_TESTS': 'Off',
+            'ENABLE_TEST': 'Off',
             'CMAKE_BUILD_TYPE': 'Release',
             'ENABLE_BIP39_C': 'Off',
             'ENABLE_BIP39_JNI': 'Off',
-            'ENABLE_BIP39_SHARED': 'Off'
+            'ENABLE_SHARED': 'Off'
         }
 
         if self.options.shared:
-            opts['ENABLE_BIP39_SHARED'] = 'On'
+            opts['ENABLE_SHARED'] = 'On'
 
         if self.options.enableJNI:
             opts['ENABLE_BIP39_JNI'] = 'On'
