@@ -82,9 +82,9 @@ function (conan_fallback)
 		if (FF_LOCAL_INCLUDE_DIR)
 			set(${FF_NAME}_INCLUDE_DIR ${FF_LOCAL_INCLUDE_DIR})
 		else ()
-			set(${FF_NAME}_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${LOCAL_LIBS_PREFIX}/${FF_NAME}/include)
+			set(${FF_NAME}_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${LOCAL_LIBS_PREFIX}/${LOCAL_SUBDIR_${FF_NAME}}/include)
 		endif ()
-		include_directories(${FF_NAME}_INCLUDE_DIR)
+		include_directories(${${FF_NAME}_INCLUDE_DIR})
 		add_library(CONAN_PKG::${FF_NAME} ALIAS ${LOCAL_TARGET_NAME})
 
 		message(STATUS "off-conan: ${FF_NAME} not found.
