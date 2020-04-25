@@ -1,3 +1,6 @@
+## 2.0.1
+ - Updated toolbox to 3.1.1
+
 ## 2.0.0
  - Breaking: Removed minter:Data* types, now using toolbox bytes buffer
  - Breaking: Unified headers location, now all locations starts with bip3x and bip3x/crypto.
