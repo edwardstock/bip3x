@@ -36,7 +36,7 @@ function (add_conan_remote NAME URL)
 	find_program(CONAN_BIN conan REQUIRED)
 
 	execute_process(
-		COMMAND ${CONAN_BIN} remote add ${NAME} ${URL}
+		COMMAND ${CONAN_BIN} remote add -f ${NAME} ${URL}
 		ERROR_VARIABLE CONAN_ADD_REMOTE_ERR
 		OUTPUT_VARIABLE CONAN_ADD_REMOTE_OUT
 		RESULT_VARIABLE CONAN_ADD_REMOTE_RES

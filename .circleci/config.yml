@@ -1,95 +1,120 @@
-version: 2
-jobs:
-  build_buster_amd64:
-    docker:
-      - image: debian:buster
-        environment:
-          CXX: /usr/bin/g++
-          CC: /usr/bin/gcc
+version: 2.1
+commands:
+  do_all:
     steps:
-      - run: apt-get update
-      - run: apt-get install -y git
-      - run:
-          name: Cloning repo
-          command: git clone --recursive https://github.com/edwardstock/bip3x.git .
-      - restore_cache:
-          keys:
-            - custom-pkgs-{{ checksum ".circleci/setup.sh" }}
-      - run:
-          name: Preparing
-          command: $(which bash) .circleci/setup.sh
-      - save_cache:
-          key: custom-pkgs-{{ checksum ".circleci/setup.sh" }}
-          paths:
-            - /tmp/pkgs
-      - run: pip3 install setuptools -U
-      - run: pip3 install conan
-      - run: conan remote add scatter https://api.bintray.com/conan/edwardstock/scatter
-      - run: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-      - run: conan remote add minter https://api.bintray.com/conan/minterteam/minter
-      - run: conan remote add edwardstock https://api.bintray.com/conan/edwardstock/conan-public
+      - run: cp -r /tmp/_circleci_local_build_repo/* ~/project/
+      - run: cp -r /tmp/_circleci_local_build_repo/.circleci ~/project/
+      - run: sudo apt update
+      - run: sudo apt -y install default-jdk
+      - run: conan remote add -f edwardstock https://api.bintray.com/conan/edwardstock/conan-public
       - run: conan user -p $BINTRAY_API_KEY -r edwardstock edwardstock
-      - run: mkdir -p _build
-      - run: export CC=/usr/bin/gcc
-      - run: export CXX=/usr/bin/g++
-      - run:
-          name: Configuring
-          command: conan remove --locks && cd _build && cmake .. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TEST=ON
-      - run:
-          name: Testing
-          command: $(which bash) .circleci/test.sh
-      - run:
-          name: Deploy
-          command: $(which bash) .circleci/deploy.sh
+      - run: git clone --recursive https://github.com/edwardstock/bip3x.git .
+      - run: bash .circleci/test.sh
+      - run: bash .circleci/setup.sh
+      - run: bash .circleci/deploy.sh
 
-  build_stretch_amd64:
-    docker:
-      - image: debian:stretch
-        environment:
-          CXX: /usr/bin/g++
-          CC: /usr/bin/gcc
+  do_all_centos:
     steps:
-      - run: apt-get update
-      - run: apt-get install -y git
-      - run:
-          name: Cloning repo
-          command: git clone --recursive https://github.com/edwardstock/bip3x.git .
-      - restore_cache:
-          keys:
-            - custom-pkgs-{{ checksum ".circleci/setup.sh" }}
-      - run:
-          name: Preparing
-          command: $(which bash) .circleci/setup.sh
-      - save_cache:
-          key: custom-pkgs-{{ checksum ".circleci/setup.sh" }}
-          paths:
-            - /tmp/pkgs
-      - run: pip3 install setuptools -U
-      - run: pip3 install conan
-      - run: conan remote add scatter https://api.bintray.com/conan/edwardstock/scatter
-      - run: conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-      - run: conan remote add minter https://api.bintray.com/conan/minterteam/minter
-      - run: conan remote add edwardstock https://api.bintray.com/conan/edwardstock/conan-public
+      - run: cp -r /tmp/_circleci_local_build_repo/* ~/project/
+      - run: cp -r /tmp/_circleci_local_build_repo/.circleci ~/project/
+      - run: yum -y install java-1.8.0-openjdk-devel
+      - run: conan remote add -f edwardstock https://api.bintray.com/conan/edwardstock/conan-public
       - run: conan user -p $BINTRAY_API_KEY -r edwardstock edwardstock
-      - run: mkdir -p _build
-      - run: export CC=/usr/bin/gcc
-      - run: export CXX=/usr/bin/g++
-      - run:
-          name: Configuring
-          command: conan remove --locks && cd _build && cmake .. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TEST=ON
-      - run:
-          name: Testing
-          command: $(which bash) .circleci/test.sh
-      - run:
-          name: Deploy
-          command: $(which bash) .circleci/deploy.sh
-      - run:
-          name: "Deploy to GH"
-          command: $(which bash) .circleci/package.sh
+      - run: git clone --recursive https://github.com/edwardstock/bip3x.git .
+      - run: bash .circleci/test.sh
+      - run: bash .circleci/setup.sh
+      - run: bash .circleci/deploy.sh
+
+jobs:
+  gcc-4_8_5:
+    docker:
+      - image: docker.edwardstock.com/gcc_dev_el7
+    steps:
+      - do_all_centos
+
+  gcc-5:
+    docker:
+      - image: conanio/gcc5
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_TOKEN
+        environment:
+          CONAN_CPU_COUNT: 4
+    steps:
+      - do_all
+  gcc-6:
+    docker:
+      - image: conanio/gcc6
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_TOKEN
+        environment:
+          CONAN_CPU_COUNT: 4
+    steps:
+      - do_all
+  gcc-7:
+    docker:
+      - image: conanio/gcc7
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_TOKEN
+        environment:
+          CONAN_CPU_COUNT: 4
+    steps:
+      - do_all
+  gcc-8:
+    docker:
+      - image: conanio/gcc8
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_TOKEN
+        environment:
+          CONAN_CPU_COUNT: 4
+    steps:
+      - do_all
+  gcc-9:
+    docker:
+      - image: conanio/gcc9
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_TOKEN
+        environment:
+          CONAN_CPU_COUNT: 4
+    steps:
+      - do_all
+  gcc-10:
+    docker:
+      - image: conanio/gcc10
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_TOKEN
+        environment:
+          CONAN_CPU_COUNT: 4
+    steps:
+      - do_all
 
 workflows:
-  version: 2
-  build_on_debian:
+  version: 2.1
+  build_and_test:
     jobs:
-      - build_stretch_amd64
-      - build_buster_amd64
+      - gcc-4_8_5:
+          context:
+            - remote_tokens
+      - gcc-5:
+          context:
+            - remote_tokens
+      - gcc-6:
+          context:
+            - remote_tokens
+      - gcc-7:
+          context:
+            - remote_tokens
+      - gcc-8:
+          context:
+            - remote_tokens
+      - gcc-9:
+          context:
+            - remote_tokens
+      - gcc-10:
+          context:
+            - remote_tokens

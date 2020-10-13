@@ -19,29 +19,46 @@ void Transform(uint32_t* s, const unsigned char* chunk, size_t blocks);
 #endif
 #endif
 
+#if defined(__GNUC__) && (__GNUC__ < 5)
+#define SHA256_CONSTEXPR_VOID
+#else
+#define SHA256_CONSTEXPR_VOID constexpr
+#endif
+
 // Internal implementation code.
-namespace
-{
+namespace {
 /// Internal SHA-256 implementation.
 namespace sha256 {
-constexpr uint32_t inline Ch(uint32_t x, uint32_t y, uint32_t z) { return z ^ (x & (y ^ z)); }
-constexpr uint32_t inline Maj(uint32_t x, uint32_t y, uint32_t z) { return (x & y) | (z & (x | y)); }
-constexpr uint32_t inline Sigma0(uint32_t x) { return (x >> 2 | x << 30) ^ (x >> 13 | x << 19) ^ (x >> 22 | x << 10); }
-constexpr uint32_t inline Sigma1(uint32_t x) { return (x >> 6 | x << 26) ^ (x >> 11 | x << 21) ^ (x >> 25 | x << 7); }
-constexpr uint32_t inline sigma0(uint32_t x) { return (x >> 7 | x << 25) ^ (x >> 18 | x << 14) ^ (x >> 3); }
-constexpr uint32_t inline sigma1(uint32_t x) { return (x >> 17 | x << 15) ^ (x >> 19 | x << 13) ^ (x >> 10); }
+constexpr uint32_t inline Ch(uint32_t x, uint32_t y, uint32_t z) {
+    return z ^ (x & (y ^ z));
+}
+constexpr uint32_t inline Maj(uint32_t x, uint32_t y, uint32_t z) {
+    return (x & y) | (z & (x | y));
+}
+constexpr uint32_t inline Sigma0(uint32_t x) {
+    return (x >> 2 | x << 30) ^ (x >> 13 | x << 19) ^ (x >> 22 | x << 10);
+}
+constexpr uint32_t inline Sigma1(uint32_t x) {
+    return (x >> 6 | x << 26) ^ (x >> 11 | x << 21) ^ (x >> 25 | x << 7);
+}
+constexpr uint32_t inline sigma0(uint32_t x) {
+    return (x >> 7 | x << 25) ^ (x >> 18 | x << 14) ^ (x >> 3);
+}
+constexpr uint32_t inline sigma1(uint32_t x) {
+    return (x >> 17 | x << 15) ^ (x >> 19 | x << 13) ^ (x >> 10);
+}
 
 /** One round of SHA-256. */
-void inline Round(uint32_t a,
-                  uint32_t b,
-                  uint32_t c,
-                  uint32_t &d,
-                  uint32_t e,
-                  uint32_t f,
-                  uint32_t g,
-                  uint32_t &h,
-                  uint32_t k,
-                  uint32_t w) {
+SHA256_CONSTEXPR_VOID void inline Round(uint32_t a,
+                                        uint32_t b,
+                                        uint32_t c,
+                                        uint32_t& d,
+                                        uint32_t e,
+                                        uint32_t f,
+                                        uint32_t g,
+                                        uint32_t& h,
+                                        uint32_t k,
+                                        uint32_t w) {
     uint32_t t1 = h + Sigma1(e) + Ch(e, f, g) + k + w;
     uint32_t t2 = Sigma0(a) + Maj(a, b, c);
     d += t1;
@@ -49,7 +66,7 @@ void inline Round(uint32_t a,
 }
 
 /** Initialize SHA-256 state. */
-constexpr void inline Initialize(uint32_t *s) {
+SHA256_CONSTEXPR_VOID void inline Initialize(uint32_t* s) {
     s[0] = 0x6a09e667ul;
     s[1] = 0xbb67ae85ul;
     s[2] = 0x3c6ef372ul;

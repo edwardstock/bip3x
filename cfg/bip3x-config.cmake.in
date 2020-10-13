@@ -1,0 +1,16 @@
+set(BIP3X_VERSION @PROJECT_VERSION@)
+
+@PACKAGE_INIT@
+
+set_and_check(BIP3X_INCLUDE_DIR "@PACKAGE_INSTALL_INCLUDE_DIR@")
+set_and_check(BIP3X_LIB_DIR "@PACKAGE_INSTALL_LIB_DIR@")
+set(BIP3X_LIBRARIES "@INSTALL_TARGETS@")
+
+if("@HAS_TARGET_DEPS@" STREQUAL "1")
+	include(CMakeFindDependencyMacro)
+
+@targets_deps_joined@
+
+endif()
+
+include("@PACKAGE_INSTALL_CMAKE_DIR@/@PROJECT_NAME@-targets.cmake")

@@ -8,6 +8,12 @@
 
 #include <cstring>
 
+#if defined(__GNUC__) && (__GNUC__ < 5)
+#define SHA512_CONSTEXPR_VOID
+#else
+#define SHA512_CONSTEXPR_VOID constexpr
+#endif
+
 // Internal implementation code.
 namespace {
 /// Internal SHA-512 implementation.
@@ -24,20 +30,24 @@ constexpr uint64_t inline Sigma0(uint64_t x) {
 constexpr uint64_t inline Sigma1(uint64_t x) {
     return (x >> 14u | x << 50u) ^ (x >> 18u | x << 46u) ^ (x >> 41u | x << 23u);
 }
-constexpr uint64_t inline sigma0(uint64_t x) { return (x >> 1u | x << 63u) ^ (x >> 8u | x << 56u) ^ (x >> 7u); }
-constexpr uint64_t inline sigma1(uint64_t x) { return (x >> 19u | x << 45u) ^ (x >> 61u | x << 3u) ^ (x >> 6u); }
+constexpr uint64_t inline sigma0(uint64_t x) {
+    return (x >> 1u | x << 63u) ^ (x >> 8u | x << 56u) ^ (x >> 7u);
+}
+constexpr uint64_t inline sigma1(uint64_t x) {
+    return (x >> 19u | x << 45u) ^ (x >> 61u | x << 3u) ^ (x >> 6u);
+}
 
 /** One round of SHA-512. */
-constexpr void inline Round(uint64_t a,
-                            uint64_t b,
-                            uint64_t c,
-                            uint64_t &d,
-                            uint64_t e,
-                            uint64_t f,
-                            uint64_t g,
-                            uint64_t &h,
-                            uint64_t k,
-                            uint64_t w) {
+SHA512_CONSTEXPR_VOID void inline Round(uint64_t a,
+                                        uint64_t b,
+                                        uint64_t c,
+                                        uint64_t& d,
+                                        uint64_t e,
+                                        uint64_t f,
+                                        uint64_t g,
+                                        uint64_t& h,
+                                        uint64_t k,
+                                        uint64_t w) {
     uint64_t t1 = h + Sigma1(e) + Ch(e, f, g) + k + w;
     uint64_t t2 = Sigma0(a) + Maj(a, b, c);
     d += t1;
@@ -45,7 +55,7 @@ constexpr void inline Round(uint64_t a,
 }
 
 /** Initialize SHA-256 state. */
-constexpr void inline Initialize(uint64_t *s) {
+SHA512_CONSTEXPR_VOID void inline Initialize(uint64_t* s) {
     s[0] = 0x6a09e667f3bcc908ull;
     s[1] = 0xbb67ae8584caa73bull;
     s[2] = 0x3c6ef372fe94f82bull;

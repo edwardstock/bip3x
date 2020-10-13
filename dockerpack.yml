@@ -1,0 +1,147 @@
+checkout: git clone --recursive https://github.com/edwardstock/bip3x.git .
+debug: true
+commands:
+  init_centos:
+    steps:
+      - run: bash cfg/add_repo.sh centos
+      - run: yum -y update
+      - run: yum -y install toolboxpp-devel java-1.8.0-openjdk-devel
+
+  init_fedora:
+    steps:
+      - run: bash cfg/add_repo.sh fedora
+      - run: dnf -y update
+      - run: dnf -y install toolboxpp-devel java-1.8.0-openjdk-devel
+
+  init_deb:
+    steps:
+      - run: bash cfg/add_repo.sh debian
+      - run: apt -y install apt-transport-https
+      - run: apt -y update
+      - run: apt -yq install libtoolboxpp-dev default-jdk
+
+  test:
+    steps:
+      - run: rm -rf _build
+      - run: sh .circleci/test.sh
+
+  build_and_package:
+    steps:
+      - run: bash cfg/package_make.sh -t package
+      - run: bash _build/package_upload.sh -t bintray
+
+  make_project:
+    steps:
+      - test
+      - build_and_package
+
+jobs:
+  centos_el7:
+    image: docker.edwardstock.com/gcc_dev_el7:latest
+    env:
+      BINTRAY_USER: edwardstock
+      BINTRAY_API_KEY: $ENV
+    steps:
+      - init_centos
+      - make_project
+
+  centos_el8:
+    image: docker.edwardstock.com/gcc_dev_el8:latest
+    env:
+      BINTRAY_USER: edwardstock
+      BINTRAY_API_KEY: $ENV
+    steps:
+      - init_centos
+      - make_project
+
+  fedora_fc32:
+    image: docker.edwardstock.com/gcc_dev_fc32:latest
+    env:
+      BINTRAY_USER: edwardstock
+      BINTRAY_API_KEY: $ENV
+    steps:
+      - init_fedora
+      - make_project
+
+  fedora_fc33:
+    image: docker.edwardstock.com/gcc_dev_fc33:latest
+    env:
+      BINTRAY_USER: edwardstock
+      BINTRAY_API_KEY: $ENV
+    steps:
+      - init_fedora
+      - make_project
+
+  fedora_fc34:
+    image: docker.edwardstock.com/gcc_dev_fc34:latest
+    env:
+      BINTRAY_USER: edwardstock
+      BINTRAY_API_KEY: $ENV
+    steps:
+      - init_fedora
+      - make_project
+
+  debian_jessie:
+    image: docker.edwardstock.com/gcc_dev_debian_jessie:latest
+    env:
+      BINTRAY_USER: edwardstock
+      BINTRAY_API_KEY: $ENV
+    steps:
+      - init_deb
+      - make_project
+
+  debian_stretch:
+    image: docker.edwardstock.com/gcc_dev_debian_stretch:latest
+    env:
+      BINTRAY_USER: edwardstock
+      BINTRAY_API_KEY: $ENV
+    steps:
+      - init_deb
+      - make_project
+
+  debian_buster:
+    image: docker.edwardstock.com/gcc_dev_debian_buster:latest
+    env:
+      BINTRAY_USER: edwardstock
+      BINTRAY_API_KEY: $ENV
+    steps:
+      - init_deb
+      - make_project
+
+  ubuntu_xenial:
+    image: docker.edwardstock.com/gcc_dev_ubuntu_xenial:latest
+    env:
+      BINTRAY_USER: edwardstock
+      BINTRAY_API_KEY: $ENV
+    steps:
+      - init_deb
+      - make_project
+
+  ubuntu_bionic:
+    image: docker.edwardstock.com/gcc_dev_ubuntu_bionic:latest
+    env:
+      BINTRAY_USER: edwardstock
+      BINTRAY_API_KEY: $ENV
+    steps:
+      - init_deb
+      - make_project
+
+  ubuntu_focal:
+    image: docker.edwardstock.com/gcc_dev_ubuntu_focal:latest
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      BINTRAY_USER: edwardstock
+      BINTRAY_API_KEY: $ENV
+    steps:
+      - init_deb
+      - make_project
+
+  ubuntu_groovy:
+    image: docker.edwardstock.com/gcc_dev_ubuntu_groovy:latest
+    env:
+      BINTRAY_USER: edwardstock
+      BINTRAY_API_KEY: $ENV
+    steps:
+      - init_deb
+      - make_project
+

@@ -1,3 +1,9 @@
+## 2.1.0
+- Removed submodules as dependencies (except gtest) as it leads to version incompatibility
+- CMake install config and targets
+- Packaging config
+- Adopted for old GCC < 5
+
 ## 2.0.1
  - Updated toolbox to 3.1.1
 

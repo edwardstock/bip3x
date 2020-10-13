@@ -1,10 +1,21 @@
 cmake_minimum_required(VERSION 3.4)
-project(bip39
-        VERSION 2.0.1
+project(bip3x
+        VERSION 2.1.0
         DESCRIPTION "Native BIP39 Mnemonic implementation (with JNI and pure C bindings)"
         LANGUAGES CXX)
 
+set(LIB_NAME_MAIN bip39)
+set(LIB_NAME_C cbip39)
+set(LIB_NAME_JNI bip39_jni)
+
+cmake_policy(SET CMP0087 NEW)
+
+include(GNUInstallDirs)
 set(CMAKE_CXX_STANDARD 14)
+
+if (NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE Release)
+endif ()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY lib)
@@ -45,19 +56,9 @@ else ()
 endif ()
 
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 include(ConanInit)
 include(conan_fallback)
-
-if (ENABLE_CONAN)
-	add_conan_remote(bincrafters https://api.bintray.com/conan/bincrafters/public-conan)
-	add_conan_remote(edwardstock https://api.bintray.com/conan/edwardstock/conan-public)
-	conan_init()
-else ()
-	conan_fallback(NAME toolbox PROPERTIES
-	               ENABLE_SHARED OFF
-	               ENABLE_TEST OFF)
-endif ()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -183,38 +184,38 @@ configure_file(
 	${CMAKE_CURRENT_SOURCE_DIR}/src/bindings/cbip39_config.h
 )
 
+set(INSTALL_TARGETS ${LIB_NAME_MAIN})
 
 if (ENABLE_SHARED)
 	message(STATUS "Build bip39 shared libs")
-	add_library(${PROJECT_NAME} SHARED ${SOURCES})
+	add_library(${LIB_NAME_MAIN} SHARED ${SOURCES})
+	set_property(TARGET ${LIB_NAME_MAIN} PROPERTY SOVERSION ${PROJECT_VERSION_MAJOR})
 else ()
 	message(STATUS "Build bip39 static libs")
-	add_library(${PROJECT_NAME} STATIC ${SOURCES})
+	add_library(${LIB_NAME_MAIN} STATIC ${SOURCES})
 endif ()
 
-target_link_libraries(${PROJECT_NAME} CONAN_PKG::toolbox)
+if (ENABLE_CONAN)
+	add_conan_remote(bincrafters https://api.bintray.com/conan/bincrafters/public-conan)
+	add_conan_remote(edwardstock https://api.bintray.com/conan/edwardstock/conan-public)
+	conan_init()
+else ()
+	# toolbox
+	find_package(Toolbox 3.2.1 REQUIRED)
+	set_target_properties(toolbox::toolbox PROPERTIES IMPORTED_GLOBAL TRUE)
+	add_library(CONAN_PKG::toolbox ALIAS toolbox::toolbox)
+endif ()
+
+target_link_libraries(${LIB_NAME_MAIN} CONAN_PKG::toolbox)
 
 if (MSVC)
-	set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY LINK_FLAGS /version:${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR})
+	set_property(TARGET ${LIB_NAME_MAIN} APPEND PROPERTY LINK_FLAGS /version:${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
 endif ()
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LANGUAGE CXX)
+set_target_properties(${LIB_NAME_MAIN} PROPERTIES LANGUAGE CXX)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs)
-
-install(
-	TARGETS bip39
-	RUNTIME DESTINATION bin
-	LIBRARY DESTINATION lib
-	ARCHIVE DESTINATION lib
-	COMPONENT main
-)
-
-install(
-	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/bip3x
-	DESTINATION include
-	COMPONENT main)
 
 # Pure C
 if (ENABLE_BIP39_C)
@@ -233,29 +234,26 @@ if (ENABLE_BIP39_C)
 	    )
 
 	if (ENABLE_SHARED)
-		add_library(cbip39 SHARED ${BIP39_C_SOURCES})
+		add_library(${LIB_NAME_C} SHARED ${BIP39_C_SOURCES})
+		set_property(TARGET ${LIB_NAME_C} PROPERTY SOVERSION ${PROJECT_VERSION_MAJOR})
 	else ()
-		add_library(cbip39 STATIC ${BIP39_C_SOURCES})
+		add_library(${LIB_NAME_C} STATIC ${BIP39_C_SOURCES})
 	endif ()
 	# link toolbox again, as we don't link main library, only using sources directly
-	target_link_libraries(cbip39 CONAN_PKG::toolbox)
+	target_link_libraries(${LIB_NAME_C} CONAN_PKG::toolbox)
 
-	set_target_properties(cbip39 PROPERTIES
+	set_target_properties(${LIB_NAME_C} PROPERTIES
 	                      PUBLIC_HEADER "${BIP39_C_HEADERS}"
 	                      LANGUAGE C99)
 
-	target_include_directories(cbip39 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-	target_include_directories(cbip39 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libs)
-	target_include_directories(cbip39 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/bindings)
 
-	install(
-		TARGETS cbip39
-		RUNTIME DESTINATION bin
-		LIBRARY DESTINATION lib
-		ARCHIVE DESTINATION lib
-		PUBLIC_HEADER DESTINATION include
-		COMPONENT c-binding
-	)
+	target_include_directories(${LIB_NAME_C} PUBLIC
+	                           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/bindings>
+	                           $<INSTALL_INTERFACE:src/bindings>
+	                           )
+	target_include_directories(${LIB_NAME_C} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+	list(APPEND INSTALL_TARGETS ${LIB_NAME_C})
 endif ()
 
 # Android/JAVA
@@ -263,31 +261,26 @@ if (ENABLE_BIP39_JNI)
 	if (ANDROID_PLATFORM)
 		add_definitions(-D__ANDROID__)
 		if (ENABLE_SHARED)
-			add_library(${PROJECT_NAME}_jni SHARED ${JNI_SOURCES})
+			add_library(${LIB_NAME_JNI} SHARED ${JNI_SOURCES})
 		else ()
-			add_library(${PROJECT_NAME}_jni STATIC ${JNI_SOURCES})
+			add_library(${LIB_NAME_JNI} STATIC ${JNI_SOURCES})
 		endif ()
-		target_link_libraries(${PROJECT_NAME}_jni ${PROJECT_NAME})
+		target_link_libraries(${LIB_NAME_JNI} ${LIB_NAME_MAIN})
 	else ()
 		find_package(JNI)
 		if (JNI_FOUND)
 			if (ENABLE_SHARED)
-				add_library(${PROJECT_NAME}_jni SHARED ${JNI_SOURCES})
+				add_library(${LIB_NAME_JNI} SHARED ${JNI_SOURCES})
+				set_property(TARGET ${LIB_NAME_JNI} PROPERTY SOVERSION ${PROJECT_VERSION_MAJOR})
 			else ()
-				add_library(${PROJECT_NAME}_jni STATIC ${JNI_SOURCES})
+				add_library(${LIB_NAME_JNI} STATIC ${JNI_SOURCES})
 			endif ()
-			target_link_libraries(${PROJECT_NAME}_jni ${PROJECT_NAME})
-			target_link_libraries(${PROJECT_NAME}_jni ${JAVA_JVM_LIBRARY})
-			target_include_directories(${PROJECT_NAME}_jni PRIVATE ${JNI_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/libs)
+			target_link_libraries(${LIB_NAME_JNI} ${LIB_NAME_MAIN})
+			target_link_libraries(${LIB_NAME_JNI} CONAN_PKG::toolbox)
+			target_link_libraries(${LIB_NAME_JNI} ${JAVA_JVM_LIBRARY})
+			target_include_directories(${LIB_NAME_JNI} PRIVATE ${JNI_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 
-			install(
-				TARGETS ${PROJECT_NAME}_jni
-				RUNTIME DESTINATION bin
-				LIBRARY DESTINATION lib
-				ARCHIVE DESTINATION lib
-				PUBLIC_HEADER DESTINATION include
-				COMPONENT jni-binding
-			)
+			list(APPEND INSTALL_TARGETS ${LIB_NAME_JNI})
 		else ()
 			message(STATUS "JNI not found")
 		endif ()
@@ -296,23 +289,30 @@ endif ()
 
 if (${RUN})
 	add_executable(bip39dev src/main.cpp)
-	target_link_libraries(bip39dev ${PROJECT_NAME})
+	target_link_libraries(bip39dev ${LIB_NAME_MAIN})
 	#	target_compile_options(bip39dev PUBLIC -fsanitize=address -m64 -pipe -ffunction-sections -fdata-sections  -O0 -g -fno-omit-frame-pointer)
 endif ()
 
 if (ENABLE_PVS)
 	include(cmake/PVS-Studio.cmake)
 
-	pvs_studio_add_target(TARGET ${PROJECT_NAME}.analyze ALL
+	pvs_studio_add_target(TARGET ${LIB_NAME_MAIN}.analyze ALL
 	                      OUTPUT FORMAT errorfile
 	                      CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/pvs.cfg
-	                      ANALYZE ${PROJECT_NAME}
+	                      ANALYZE ${LIB_NAME_MAIN} ${LIB_NAME_C}
 	                      LOG target_main.err)
 endif ()
 
 
 if (ENABLE_TEST)
-	conan_fallback(NAME gtest LOCAL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/gtest/googletest/include)
+	if (NOT ENABLE_CONAN)
+		if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/libs/gtest/")
+			message(FATAL_ERROR "Unable to build test target as gtest not found in ${CMAKE_CURRENT_SOURCE_DIR}/libs. Please try to update git submodules.")
+		endif ()
+		add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/gtest)
+		add_library(CONAN_PKG::gtest ALIAS gtest)
+	endif ()
+
 	set(gtest_force_shared_crt ${ENABLE_SHARED} CACHE BOOL "" FORCE)
 
 	if (MSVC)
@@ -339,10 +339,10 @@ if (ENABLE_TEST)
 	endif ()
 
 	add_executable(${PROJECT_TEST_NAME} ${TEST_SOURCES})
-	target_link_libraries(${PROJECT_TEST_NAME} ${PROJECT_NAME})
+	target_link_libraries(${PROJECT_TEST_NAME} ${LIB_NAME_MAIN})
 
 	if (ENABLE_BIP39_C)
-		target_link_libraries(${PROJECT_TEST_NAME} cbip39)
+		target_link_libraries(${PROJECT_TEST_NAME} ${LIB_NAME_C})
 		target_include_directories(${PROJECT_TEST_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/bindings)
 	endif ()
 
@@ -357,5 +357,7 @@ if (ENABLE_TEST)
 	endif ()
 
 endif ()
+
+include(package)
 
 

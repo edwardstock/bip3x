@@ -1,7 +1,3 @@
-
 [submodule "libs/gtest"]
 	path = libs/gtest
 	url = https://github.com/google/googletest.git
-[submodule "libs/toolbox"]
-	path = libs/toolbox
-	url = https://github.com/edwardstock/toolbox.git
