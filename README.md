@@ -1,7 +1,7 @@
-# native-bip39 (with java bindings)
+# bip3x (with java bindings)
 Bip39 mnemonic C++ implementation. Contains java bindings.
 
-[![CircleCI](https://circleci.com/gh/edwardstock/native-bip39.svg?style=svg)](https://circleci.com/gh/edwardstock/native-bip39)    [ ![Download](https://api.bintray.com/packages/edwardstock/conan-public/bip39:edwardstock/images/download.svg) ](https://bintray.com/edwardstock/conan-public/bip39:edwardstock/)
+[![CircleCI](https://circleci.com/gh/edwardstock/bip3x.svg?style=svg)](https://circleci.com/gh/edwardstock/bip3x)    [ ![Download](https://api.bintray.com/packages/edwardstock/conan-public/bip39:edwardstock/images/download.svg) ](https://bintray.com/edwardstock/conan-public/bip39:edwardstock/)
 
 
 
@@ -26,8 +26,8 @@ cmake ../ -DCMAKE_BUILD_TYPE=Release -DENABLE_SHARED=On -DENABLE_BIP39_JNI=On -D
 make
 ```
 * Pickup lib files:
-  * libbip39.[a | so | dylib] 
-  * libbip39_jni.[so | dylib] 
+  * libbip39.\[a | so | dylib\]
+  * libbip39_jni.\[so | dylib\]
   
 ### Cross-compile for Windows under mingw64
 * Setup mingw64 for linux or macOS

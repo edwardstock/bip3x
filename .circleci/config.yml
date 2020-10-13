@@ -2,8 +2,8 @@ version: 2.1
 commands:
   do_all:
     steps:
-      - run: cp -r /tmp/_circleci_local_build_repo/* ~/project/
-      - run: cp -r /tmp/_circleci_local_build_repo/.circleci ~/project/
+#      - run: cp -r /tmp/_circleci_local_build_repo/* ~/project/
+      #      - run: cp -r /tmp/_circleci_local_build_repo/.circleci ~/project/
       - run: sudo apt update
       - run: sudo apt -y install default-jdk
       - run: conan remote add -f edwardstock https://api.bintray.com/conan/edwardstock/conan-public
@@ -15,8 +15,8 @@ commands:
 
   do_all_centos:
     steps:
-      - run: cp -r /tmp/_circleci_local_build_repo/* ~/project/
-      - run: cp -r /tmp/_circleci_local_build_repo/.circleci ~/project/
+      #      - run: cp -r /tmp/_circleci_local_build_repo/* ~/project/
+      #      - run: cp -r /tmp/_circleci_local_build_repo/.circleci ~/project/
       - run: yum -y install java-1.8.0-openjdk-devel
       - run: conan remote add -f edwardstock https://api.bintray.com/conan/edwardstock/conan-public
       - run: conan user -p $BINTRAY_API_KEY -r edwardstock edwardstock
