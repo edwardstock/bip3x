@@ -57,8 +57,11 @@ endif ()
 
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules)
-include(ConanInit)
-include(conan_fallback)
+
+if (ENABLE_CONAN)
+	include(ConanInit)
+	include(conan_fallback)
+endif ()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
