@@ -202,14 +202,7 @@ if (ENABLE_CONAN)
 	add_conan_remote(bincrafters https://api.bintray.com/conan/bincrafters/public-conan)
 	add_conan_remote(edwardstock https://api.bintray.com/conan/edwardstock/conan-public)
 	conan_init()
-else ()
-	# toolbox
-	find_package(Toolbox 3.2.1 REQUIRED)
-	set_target_properties(toolbox::toolbox PROPERTIES IMPORTED_GLOBAL TRUE)
-	add_library(CONAN_PKG::toolbox ALIAS toolbox::toolbox)
 endif ()
-
-target_link_libraries(${LIB_NAME_MAIN} CONAN_PKG::toolbox)
 
 if (MSVC)
 	set_property(TARGET ${LIB_NAME_MAIN} APPEND PROPERTY LINK_FLAGS /version:${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
@@ -242,9 +235,6 @@ if (ENABLE_BIP39_C)
 	else ()
 		add_library(${LIB_NAME_C} STATIC ${BIP39_C_SOURCES})
 	endif ()
-	# link toolbox again, as we don't link main library, only using sources directly
-	target_link_libraries(${LIB_NAME_C} CONAN_PKG::toolbox)
-
 	set_target_properties(${LIB_NAME_C} PROPERTIES
 	                      PUBLIC_HEADER "${BIP39_C_HEADERS}"
 	                      LANGUAGE C99)
@@ -279,7 +269,6 @@ if (ENABLE_BIP39_JNI)
 				add_library(${LIB_NAME_JNI} STATIC ${JNI_SOURCES})
 			endif ()
 			target_link_libraries(${LIB_NAME_JNI} ${LIB_NAME_MAIN})
-			target_link_libraries(${LIB_NAME_JNI} CONAN_PKG::toolbox)
 			target_link_libraries(${LIB_NAME_JNI} ${JAVA_JVM_LIBRARY})
 			target_include_directories(${LIB_NAME_JNI} PRIVATE ${JNI_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 
