@@ -50,7 +50,7 @@ while (("$#")); do
     fi
     ;;
   -o | --options)
-    if [ -n "$2" ] && [ ${2:0:1} != "-" ]; then
+    if [ -n "$2" ]; then
       CMAKE_OPTS=$2
       shift 2
     else
@@ -77,6 +77,10 @@ else
   cpusCnt=$(lscpu | grep -E '^CPU\(' | awk '{print $2}') # cpus count
   tpcpu=$(lscpu | grep -E '^Thread' | awk '{print $4}')  # threads per core
   threadCount=$((cpusCnt * tpcpu))
+
+  if ((threadCount <= 0)); then
+    threadCount=2
+  fi
 fi
 
 if [ "${TYPE}" == "" ]; then
