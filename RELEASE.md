@@ -1,3 +1,6 @@
+## 2.1.1
+- Fixed mnemonic generation for MinGW
+
 ## 2.1.0
 - Removed submodules as dependencies (except gtest) as it leads to version incompatibility
 - CMake install config and targets

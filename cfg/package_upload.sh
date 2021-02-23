@@ -8,7 +8,6 @@ if [ "${DRY_RUN}" != "" ]; then
 else
   DRY_RUN=""
 fi
-
 BUILD_ROOT="@CMAKE_BINARY_DIR@"
 
 function usage() {
@@ -107,6 +106,8 @@ elif [ "${TYPE}" == "bintray" ]; then
   if [ ! -f "/usr/bin/jfrog" ] && [ ! -f "/usr/local/bin/jfrog" ]; then
     if [ ! -f "/tmp/jfrog_cli" ]; then
       curl -Lso /tmp/jfrog_cli https://jfrog.bintray.com/jfrog-cli-go/1.39.5/jfrog-cli-linux-amd64/jfrog
+    fi
+    if [ ! -f "${JFROG_BIN}" ]; then
       cp /tmp/jfrog_cli ${JFROG_BIN}
       chmod +x ${JFROG_BIN}
     fi

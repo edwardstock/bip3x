@@ -10,6 +10,7 @@
 #include "bip3x/PCGRand.hpp"
 
 #include <toolbox/strings.hpp>
+#include <chrono>
 
 std::vector<std::string> bip3x::Bip39Mnemonic::getLanguages() {
     int sz = bip39_get_languages_size();
@@ -38,9 +39,15 @@ std::vector<std::string> bip3x::Bip39Mnemonic::getWordsFromLanguage(const char* 
 }
 
 bip3x::Bip39Mnemonic::MnemonicResult bip3x::Bip39Mnemonic::generate(const char* lang, size_t entropy) {
-    std::random_device dev;
-    PCGRand rand(dev);
     std::uniform_int_distribution<> udist(0, 255);
+
+#ifdef __MINGW32__
+    auto duration = std::chrono::high_resolution_clock::now().time_since_epoch();
+    static std::mt19937 rand(std::chrono::duration_cast<std::chrono::microseconds>(duration).count());
+#else
+    static std::random_device dev;
+    static PCGRand rand(dev);
+#endif
 
     bytes_data bts(entropy);
     for (size_t i = 0; i < entropy; ++i) {
