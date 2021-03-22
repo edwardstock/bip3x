@@ -9,6 +9,7 @@ set(LIB_NAME_C cbip39)
 set(LIB_NAME_JNI bip39_jni)
 
 cmake_policy(SET CMP0087 NEW)
+cmake_policy(SET CMP0074 NEW)
 
 include(GNUInstallDirs)
 set(CMAKE_CXX_STANDARD 14)
@@ -57,8 +58,10 @@ endif ()
 
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules)
-include(ConanInit)
-include(conan_fallback)
+if (ENABLE_CONAN)
+	include(ConanInit)
+	include(conan_fallback)
+endif ()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
