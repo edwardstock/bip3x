@@ -25,4 +25,4 @@ conan create . edwardstock/latest -s build_type=Release --build=missing -o enabl
 conan create . edwardstock/latest -s build_type=Debug --build=missing -o enableC=False -o enableJNI=True -o shared=True
 conan create . edwardstock/latest -s build_type=Release --build=missing -o enableC=False -o enableJNI=True -o shared=True
 
-rem conan upload bip39/%VERS%@edwardstock/latest --all -r=edwardstock
+conan upload bip39/%VERS%@edwardstock/latest --all -r=edwardstock

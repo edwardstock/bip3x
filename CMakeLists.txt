@@ -201,7 +201,7 @@ if (ENABLE_CONAN)
 	conan_init()
 else ()
 	# toolbox
-	find_package(Toolbox 3.2.1 REQUIRED)
+	find_package(Toolbox 3.2.2 REQUIRED)
 	set_target_properties(toolbox::toolbox PROPERTIES IMPORTED_GLOBAL TRUE)
 	add_library(CONAN_PKG::toolbox ALIAS toolbox::toolbox)
 endif ()
