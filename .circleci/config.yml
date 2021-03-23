@@ -26,12 +26,6 @@ commands:
       - run: bash .circleci/deploy.sh
 
 jobs:
-  gcc-4_8_5:
-    docker:
-      - image: docker.edwardstock.com/gcc_dev_el7
-    steps:
-      - do_all_centos
-
   gcc-5:
     docker:
       - image: conanio/gcc5
