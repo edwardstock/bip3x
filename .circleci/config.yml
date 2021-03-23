@@ -91,9 +91,6 @@ workflows:
   version: 2.1
   build_and_test:
     jobs:
-      - gcc-4_8_5:
-          context:
-            - remote_tokens
       - gcc-5:
           context:
             - remote_tokens
