@@ -75,6 +75,7 @@ jobs:
   fedora_fc34:
     image: docker.edwardstock.com/gcc_dev_fc34:latest
     env:
+      CXXFLAGS: "-Wno-maybe-uninitialized"
       BINTRAY_USER: edwardstock
       BINTRAY_API_KEY: $ENV
     steps:
