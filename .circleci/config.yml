@@ -6,8 +6,8 @@ commands:
       #      - run: cp -r /tmp/_circleci_local_build_repo/.circleci ~/project/
       - run: sudo apt update
       - run: sudo apt -y install default-jdk
-      - run: conan remote add -f edwardstock https://api.bintray.com/conan/edwardstock/conan-public
-      - run: conan user -p $BINTRAY_API_KEY -r edwardstock edwardstock
+      - run: conan remote add -f edwardstock https://edwardstock.jfrog.io/artifactory/api/conan/conan
+      - run: conan user -p $ARTIFACTORY_API_KEY -r edwardstock info@edwardstock.com
       - run: git clone --recursive https://github.com/edwardstock/bip3x.git .
       - run: bash .circleci/test.sh
       - run: bash .circleci/setup.sh
@@ -18,8 +18,8 @@ commands:
       #      - run: cp -r /tmp/_circleci_local_build_repo/* ~/project/
       #      - run: cp -r /tmp/_circleci_local_build_repo/.circleci ~/project/
       - run: yum -y install java-1.8.0-openjdk-devel
-      - run: conan remote add -f edwardstock https://api.bintray.com/conan/edwardstock/conan-public
-      - run: conan user -p $BINTRAY_API_KEY -r edwardstock edwardstock
+      - run: conan remote add -f edwardstock https://edwardstock.jfrog.io/artifactory/api/conan/conan
+      - run: conan user -p $ARTIFACTORY_API_KEY -r edwardstock info@edwardstock.com
       - run: git clone --recursive https://github.com/edwardstock/bip3x.git .
       - run: bash .circleci/test.sh
       - run: bash .circleci/setup.sh
