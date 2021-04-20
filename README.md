@@ -1,7 +1,7 @@
 # bip3x (with java bindings)
 Bip39 mnemonic C++ implementation. Contains java bindings.
 
-[![CircleCI](https://circleci.com/gh/edwardstock/bip3x.svg?style=svg)](https://circleci.com/gh/edwardstock/bip3x)    [ ![Download](https://api.bintray.com/packages/edwardstock/conan-public/bip39:edwardstock/images/download.svg) ](https://bintray.com/edwardstock/conan-public/bip39:edwardstock/)
+[![CircleCI](https://circleci.com/gh/edwardstock/bip3x.svg?style=svg)](https://circleci.com/gh/edwardstock/bip3x)    [ ![Download](https://img.shields.io/badge/Download-Artifactory:Latest-green) ](https://bintray.com/edwardstock/conan-public/bip39:edwardstock/)
 
 
 

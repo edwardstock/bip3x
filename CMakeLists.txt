@@ -199,8 +199,7 @@ else ()
 endif ()
 
 if (ENABLE_CONAN)
-	add_conan_remote(bincrafters https://api.bintray.com/conan/bincrafters/public-conan)
-	add_conan_remote(edwardstock https://api.bintray.com/conan/edwardstock/conan-public)
+	add_conan_remote(edwardstock https://edwardstock.jfrog.io/artifactory/api/conan/conan)
 	conan_init()
 else ()
 	# toolbox
