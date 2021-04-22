@@ -4,13 +4,13 @@ REPO_TYPE=$1
 
 case "${REPO_TYPE}" in
 centos | fedora)
-  cat <<REPO >/etc/yum.repos.d/bintray-edwardstock.repo
+  cat <<REPO >/etc/yum.repos.d/edwardstock.repo
 [edwardstock]
 name=edwardstock
-baseurl=https://edwardstock.jfrog.io/artifactory/rhel/
+baseurl=https://edwardstock.jfrog.io/artifactory/rhel/${REPO_TYPE}/\$releasever/\$basearch
 enabled=1
 gpgcheck=0
-gpgkey=https://edwardstock.jfrog.io/artifactory/rhel/repodata/repomd.xml.key
+gpgkey=https://edwardstock.jfrog.io/artifactory/rhel/${REPO_TYPE}/\$releasever/\$basearch/repodata/repomd.xml.key
 repo_gpgcheck=1
 REPO
   ;;

@@ -2,6 +2,7 @@ checkout: git clone --recursive https://github.com/edwardstock/bip3x.git .
 commands:
   init_centos:
     steps:
+      - run: yum -y update
       - run: bash cfg/add_repo.sh centos
       - run: yum -y update
       - run: yum -y install toolboxpp-devel java-1.8.0-openjdk-devel

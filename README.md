@@ -29,10 +29,10 @@ Steps:
 ```ini
 [edwardstock]
 name=edwardstock
-baseurl=https://edwardstock.jfrog.io/artifactory/rhel/
+baseurl=https://edwardstock.jfrog.io/artifactory/rhel/[centos or fedora]/\$releasever/\$basearch
 enabled=1
 gpgcheck=0
-gpgkey=https://edwardstock.jfrog.io/artifactory/rhel/repodata/repomd.xml.key
+gpgkey=https://edwardstock.jfrog.io/artifactory/rhel/[centos or fedora]/\$releasever/\$basearch/repodata/repomd.xml.key
 repo_gpgcheck=1
 ```
 
