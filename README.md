@@ -14,6 +14,52 @@ Logic almost completely taken from bitcoin-js library for generating mnemonic ph
 * Generate random mnemonic ([PCG](http://www.pcg-random.org/) generator)
 * Create root and extended bip* standard keys using some derivation path
 
+## Install using RPM package
+
+Supported distributions:
+
+- centos 7, 8
+- fedora 32-34
+
+Steps:
+
+* Create `edwardstock.repo` file inside `/etc/yum.repos.d`
+* Add below to this file
+
+```ini
+[edwardstock]
+name=edwardstock
+baseurl=https://edwardstock.jfrog.io/artifactory/rhel/
+enabled=1
+gpgcheck=0
+gpgkey=https://edwardstock.jfrog.io/artifactory/rhel/repodata/repomd.xml.key
+repo_gpgcheck=1
+```
+
+* Update repository `yum -y update` or `dnf update`
+* Install lib `yum install bip3x-devel`
+
+## Install using DEB package
+
+Supported distributions:
+
+- debian: stretch, buster
+- ubuntu: xenial, bionic, focal, groovy
+
+```bash
+echo "deb https://edwardstock.jfrog.io/artifactory/debian {distribution} main" | sudo tee -a /etc/apt/sources.list
+curl -s https://edwardstock.jfrog.io/artifactory/api/gpg/key/public | sudo apt-key add -
+apt update && apt install libbip3x-dev
+```
+
+<br/><br/>
+After installing package from repository, you can use cmake-find module to find library:
+```cmake
+find_package(bip3x 2.1.0 REQUIRED)
+target_link_libraries(MY_PROJECT bip3x::bip39)
+```
+
+
 ## Build native JNI libs
 * Install cmake (if not installed yet)
 * Install Oracle JDK or OpenJDK (not tested yet)

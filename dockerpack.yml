@@ -1,5 +1,4 @@
 checkout: git clone --recursive https://github.com/edwardstock/bip3x.git .
-debug: true
 commands:
   init_centos:
     steps:

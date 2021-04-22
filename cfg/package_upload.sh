@@ -3,11 +3,7 @@
 set -e
 
 TYPE=""
-if [ "${DRY_RUN}" != "" ]; then
-  DRY_RUN="1"
-else
-  DRY_RUN=""
-fi
+DRY_RUN=""
 BUILD_ROOT="@CMAKE_BINARY_DIR@"
 
 function usage() {
@@ -78,7 +74,7 @@ if [ "${TYPE}" == "github" ]; then
   # github upload
 
   if [ ! -f "/tmp/ghr.tar.gz" ]; then
-    curl -Lso /tmp/ghr.tar.gz "https://github.com/tcnksm/ghr/releases/download/v0.12.2/ghr_v0.12.2_linux_amd64.tar.gz"
+    curl -Lso /tmp/ghr.tar.gz "https://github.com/tcnksm/ghr/releases/download/v0.13.0/ghr_v0.13.0_linux_amd64.tar.gz"
   fi
 
   GHR_BIN=${BUILD_ROOT}/ghr
@@ -100,33 +96,25 @@ if [ "${TYPE}" == "github" ]; then
 
   ${GHR_BIN} -replace @PROJECT_VERSION@ ${BUILD_ROOT}/@UPLOAD_FILE_NAME@
 
-elif [ "${TYPE}" == "bintray" ]; then
+elif [ "${TYPE}" == "bintray" ] || [ "${TYPE}" == "artifactory" ]; then
   JFROG_BIN=${BUILD_ROOT}/jfrog
 
   if [ ! -f "/usr/bin/jfrog" ] && [ ! -f "/usr/local/bin/jfrog" ]; then
     if [ ! -f "/tmp/jfrog_cli" ]; then
-      curl -Lso /tmp/jfrog_cli https://jfrog.bintray.com/jfrog-cli-go/1.39.5/jfrog-cli-linux-amd64/jfrog
-    fi
-    if [ ! -f "${JFROG_BIN}" ]; then
-      cp /tmp/jfrog_cli ${JFROG_BIN}
+      curl -fL https://getcli.jfrog.io | sh
+      cp jfrog ${JFROG_BIN}
       chmod +x ${JFROG_BIN}
     fi
   else
     JFROG_BIN=$(which jfrog)
   fi
 
-  #1. configure
-  ${JFROG_BIN} bt c --user $BINTRAY_USER --key $BINTRAY_API_KEY --licenses MIT
-
-  #2. create package if not exists
-  ${JFROG_BIN} bt pc --vcs-url @CPACK_PACKAGE_VCS_URL@ ${BINTRAY_USER}/@REPO_NAME@/@PROJECT_NAME@ >/dev/null 2>&1 || true
-
-  #3. upload
+  # upload
   if [ "${DRY_RUN}" == "1" ]; then
-    echo ${JFROG_BIN} bt upload --publish --override @JFROG_OPTIONS@ "${BUILD_ROOT}/@UPLOAD_FILE_NAME@" "${BINTRAY_USER}/@REPO_NAME@/@PROJECT_NAME@/@PROJECT_VERSION@" "@TARGET_PATH@"
+    echo JFROG_CLI_OFFER_CONFIG=false ${JFROG_BIN} rt upload @JFROG_OPTIONS@ "${BUILD_ROOT}/@UPLOAD_FILE_NAME@" "@TARGET_PATH@"
     exit 0
   fi
 
-  ${JFROG_BIN} bt upload --publish --override @JFROG_OPTIONS@ "${BUILD_ROOT}/@UPLOAD_FILE_NAME@" "${BINTRAY_USER}/@REPO_NAME@/@PROJECT_NAME@/@PROJECT_VERSION@" "@TARGET_PATH@"
+  JFROG_CLI_OFFER_CONFIG=false ${JFROG_BIN} rt upload @JFROG_OPTIONS@ "${BUILD_ROOT}/@UPLOAD_FILE_NAME@" "@TARGET_PATH@"
 
 fi
