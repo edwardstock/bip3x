@@ -15,8 +15,7 @@ commands:
 
   init_deb:
     steps:
-      - run: apt -y update
-      - run: apt -y install apt-transport-https
+      - run: apt -y update && apt -y install apt-transport-https
       - run: bash cfg/add_repo.sh debian
       - run: apt -y update
       - run: apt -yq install libtoolboxpp-dev default-jdk
