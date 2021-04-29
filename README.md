@@ -136,7 +136,10 @@ int main(int argc, char** argv) {
     HDKey bip32RootKey = HDKeyEncoder::makeBip32RootKey(seed);
     
     // and, finally derive keys
-    HDKey ethereumKey = HDKeyEncoder::makeExtendedKey(bip32RootKey, "m/44'/60'/0'/0");
+    // copy key to leave root key
+    HDKey ethereumKey = bip32RootKey;
+    // makeExtendedKey modifies source key
+    HDKeyEncoder::makeExtendedKey(ethereumKey, "m/44'/60'/0'/0");
 
     // extended private key
     std::cout << ethereumKey.extPrivateKey.toString() << std::endl;
