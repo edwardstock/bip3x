@@ -1,16 +1,22 @@
-/*! 
+/*!
  * bip39. 2018
- * 
+ *
  * \author Eduard Maximovich <edward.vstock@gmail.com>
  * \link https://github.com/edwardstock
  */
 
 #include "bip3x/Bip39Mnemonic.h"
 
-#include "bip3x/PCGRand.hpp"
+#include "bip3x/bip39_core.h"
 
-#include <toolbox/strings.hpp>
+#ifdef USE_OPENSSL_RANDOM
+#include <openssl/rand.h>
+#else
+#include "bip3x/PCGRand.hpp"
+#endif
+
 #include <chrono>
+#include <toolbox/strings.hpp>
 
 std::vector<std::string> bip3x::Bip39Mnemonic::getLanguages() {
     int sz = bip39_get_languages_size();
@@ -39,6 +45,12 @@ std::vector<std::string> bip3x::Bip39Mnemonic::getWordsFromLanguage(const char* 
 }
 
 bip3x::Bip39Mnemonic::MnemonicResult bip3x::Bip39Mnemonic::generate(const char* lang, size_t entropy) {
+#ifdef USE_OPENSSL_RANDOM
+    bytes_data bts(entropy);
+    RAND_bytes(bts.data(), (int) entropy);
+
+    return encodeBytes(bts.cdata(), lang, entropy);
+#else
     std::uniform_int_distribution<> udist(0, 255);
 
 #ifdef __MINGW32__
@@ -55,6 +67,8 @@ bip3x::Bip39Mnemonic::MnemonicResult bip3x::Bip39Mnemonic::generate(const char* 
     }
 
     return encodeBytes(bts.cdata(), lang, entropy);
+
+#endif
 }
 
 bip3x::Bip39Mnemonic::MnemonicResult bip3x::Bip39Mnemonic::encodeBytes(const uint8_t* src,
@@ -70,7 +84,7 @@ bip3x::Bip39Mnemonic::MnemonicResult bip3x::Bip39Mnemonic::encodeBytes(const uin
     struct words* wordList[1];
     bip39_get_wordlist(lang, wordList);
 
-    char *output[1];
+    char* output[1];
     bool encRes = bip39_mnemonic_from_bytes(wordList[0], src, entropy, output) == MINTER_OK;
 
     if (!encRes) {

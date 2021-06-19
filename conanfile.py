@@ -1,5 +1,6 @@
 import os
-from conans import ConanFile, CMake, tools
+
+from conans import ConanFile, CMake
 
 
 def get_version():
@@ -25,9 +26,11 @@ class Bip39Conan(ConanFile):
         "shared": [True, False],
         "enableJNI": [True, False],
         "enableC": [True, False],
+        "with_openssl_rand": [True, False]
     }
     default_options = {
         "shared": False,
+        "with_openssl_rand": False,
         "enableJNI": False,
         "enableC": False,
         "toolbox:shared": False,
@@ -50,7 +53,7 @@ class Bip39Conan(ConanFile):
     default_channel = "latest"
 
     requires = (
-        "toolbox/3.2.2@edwardstock/latest"
+        "toolbox/3.2.3@edwardstock/latest"
     )
     build_requires = (
         "gtest/1.8.1",
@@ -65,6 +68,9 @@ class Bip39Conan(ConanFile):
         if self.settings.compiler == "Visual Studio":
             del self.settings.compiler.runtime
 
+        if self.options.with_openssl_rand:
+            self.requires.add("openssl/1.1.1k")
+
     def build(self):
         cmake = CMake(self)
         opts = {
@@ -72,7 +78,8 @@ class Bip39Conan(ConanFile):
             'CMAKE_BUILD_TYPE': 'Release',
             'ENABLE_BIP39_C': 'Off',
             'ENABLE_BIP39_JNI': 'Off',
-            'ENABLE_SHARED': 'Off'
+            'ENABLE_SHARED': 'Off',
+            'USE_OPENSSL_RANDOM': 'Off'
         }
 
         if self.options.shared:
@@ -83,6 +90,9 @@ class Bip39Conan(ConanFile):
 
         if self.options.enableC:
             opts['ENABLE_BIP39_C'] = 'On'
+
+        if self.options.with_openssl_rand:
+            opts["USE_OPENSSL_RANDOM"] = 'On'
 
         opts['CMAKE_BUILD_TYPE'] = self.settings.get_safe("build_type")
 

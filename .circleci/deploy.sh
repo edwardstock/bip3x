@@ -6,7 +6,7 @@ CONAN_PROJECT_NAME="bip39"
 CONAN_REPO="edwardstock"
 CONAN_REPO_TAG="latest"
 # only boolean options supported
-BUILD_OPTIONS=(shared enableJNI enableC)
+BUILD_OPTIONS=(shared enableJNI enableC with_openssl_rand)
 
 ###### END PROJECT CONFIG ##############
 

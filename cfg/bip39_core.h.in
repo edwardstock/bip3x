@@ -44,5 +44,6 @@
 #define MINTER_ERROR  -1 /** General error */
 #define MINTER_EINVAL -2 /** Invalid argument */
 #define MINTER_ENOMEM -3 /** malloc() failed */
+#cmakedefine USE_OPENSSL_RANDOM
 
 #endif //MINTER_BIP39_CORE_H

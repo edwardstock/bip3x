@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 project(bip3x
-        VERSION 2.1.1
+        VERSION 2.2.0
         DESCRIPTION "Native BIP39 Mnemonic implementation (with JNI and pure C bindings)"
         LANGUAGES CXX)
 
@@ -28,6 +28,15 @@ set(ENABLE_TEST OFF CACHE BOOL "Compile unit google tests")
 set(ENABLE_BIP39_JNI ON CACHE BOOL "Enable compiling for android/jre")
 set(ENABLE_BIP39_C ON CACHE BOOL "Enable compiling pure C for other language bindings")
 set(ENABLE_CONAN ON CACHE BOOL "Enable conan dependencies instead of system")
+option(USE_OPENSSL_RANDOM OFF "Use OpenSSL random for mnemonic generation")
+
+if (MINGW AND NOT USE_OPENSSL_RANDOM)
+	message(WARNING "You're using MinGW without OpenSSL random generator. Be carefully, it's not secure. Consider to use -DUSE_OPENSSL_RANDOM=On and install OpenSSL >= 1.0.0")
+endif ()
+
+if (USE_OPENSSL_RANDOM)
+	list(APPEND CONAN_OPTS "with_openssl_rand=True")
+endif ()
 
 if (CYGWIN AND ENABLE_CONAN)
 	message(FATAL_ERROR "Conan does not support Cygwin binaries")
@@ -46,6 +55,7 @@ if (MSVC)
 	string(REGEX REPLACE "\\/W3" " " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 	add_compile_options(/wd4146)
 	add_compile_options(/wd4251)
+	add_compile_options(/wd4838)
 elseif (MINGW)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wno-unknown-pragmas")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra -pedantic")
@@ -206,9 +216,18 @@ else ()
 	find_package(Toolbox 3.2.2 REQUIRED)
 	set_target_properties(toolbox::toolbox PROPERTIES IMPORTED_GLOBAL TRUE)
 	add_library(CONAN_PKG::toolbox ALIAS toolbox::toolbox)
+
 endif ()
 
 target_link_libraries(${LIB_NAME_MAIN} CONAN_PKG::toolbox)
+if (USE_OPENSSL_RANDOM)
+	if (ENABLE_CONAN)
+		target_link_libraries(${LIB_NAME_MAIN} CONAN_PKG::openssl)
+	else ()
+		find_package(OpenSSL 1.0.0 REQUIRED)
+		target_link_libraries(${LIB_NAME_MAIN} OpenSSL::Crypto)
+	endif ()
+endif ()
 
 if (MSVC)
 	set_property(TARGET ${LIB_NAME_MAIN} APPEND PROPERTY LINK_FLAGS /version:${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})

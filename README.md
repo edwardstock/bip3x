@@ -55,7 +55,7 @@ apt update && apt install libbip3x-dev
 <br/><br/>
 After installing package from repository, you can use cmake-find module to find library:
 ```cmake
-find_package(bip3x 2.1.0 REQUIRED)
+find_package(bip3x 2.2.0 REQUIRED)
 target_link_libraries(MY_PROJECT bip3x::bip39)
 ```
 
@@ -69,7 +69,7 @@ target_link_libraries(MY_PROJECT bip3x::bip39)
 mkdir build && cd build
 cmake ../ -DCMAKE_BUILD_TYPE=Release -DENABLE_SHARED=On -DENABLE_BIP39_JNI=On -DENABLE_BIP39_C=Off -DENABLE_TEST=Off
 
-make
+make -j 4
 ```
 * Pickup lib files:
   * libbip39.\[a | so | dylib\]
@@ -78,6 +78,8 @@ make
 ### Cross-compile for Windows under mingw64
 * Setup mingw64 for linux or macOS
 * Setup Windows JDK (or just copy from windows machine to somewhere path)
+* **IMPORTANT:** using c++ (mt19937, and PCGRand not works properly too) random generator is not secure.
+  Use `-DUSE_OPENSSL_RANDOM=On` while configuring to use OpenSSL random generator.
 * Build
 ```bash
 mkdir build && cd build
