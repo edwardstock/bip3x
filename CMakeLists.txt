@@ -263,6 +263,14 @@ if (ENABLE_BIP39_C)
 	# link toolbox again, as we don't link main library, only using sources directly
 	target_link_libraries(${LIB_NAME_C} CONAN_PKG::toolbox)
 
+	if (USE_OPENSSL_RANDOM)
+		if (ENABLE_CONAN)
+			target_link_libraries(${LIB_NAME_C} CONAN_PKG::openssl)
+		else ()
+			target_link_libraries(${LIB_NAME_C} OpenSSL::Crypto)
+		endif ()
+	endif ()
+
 	set_target_properties(${LIB_NAME_C} PROPERTIES
 	                      PUBLIC_HEADER "${BIP39_C_HEADERS}"
 	                      LANGUAGE C99)
