@@ -19,18 +19,16 @@ execute_process(
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(ConanInit)
 
-if(ENABLE_CONAN_BUILD)
-add_conan_remote(bincrafters https://api.bintray.com/conan/bincrafters/public-conan)
-add_conan_remote(edwardstock https://api.bintray.com/conan/edwardstock/conan-public)
-conan_init()
-endif()
+if (ENABLE_CONAN_BUILD)
+	add_conan_remote(edwardstock https://edwardstock.jfrog.io/artifactory/api/conan/conan)
+	conan_init()
+endif ()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -pedantic")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -g0 -O2")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c99-extensions -Wno-unused-function -Wno-unused-const-variable")
-
 
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/configure.cmake)
@@ -49,19 +47,19 @@ endif ()
 if (APPLE)
 	set(CMAKE_MACOSX_RPATH OFF)
 	#	# use, i.e. don't skip the full RPATH for the build tree
-#	set(CMAKE_SKIP_BUILD_RPATH FALSE)
-#
-#	# when building, don't use the install RPATH already
-#	# (but later on when installing)
-#	set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-#
-#	set(CMAKE_BUILD_RPATH "${CMAKE_BINARY_DIR}/lib")
-#	set(CMAKE_INSTALL_RPATH "${CMAKE_BUILD_RPATH}")
-#	message(STATUS "@rpath: ${CMAKE_BUILD_RPATH}")
-#
-#	# add the automatically determined parts of the RPATH
-#	# which point to directories outside the build tree to the install RPATH
-#	set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+	#	set(CMAKE_SKIP_BUILD_RPATH FALSE)
+	#
+	#	# when building, don't use the install RPATH already
+	#	# (but later on when installing)
+	#	set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+	#
+	#	set(CMAKE_BUILD_RPATH "${CMAKE_BINARY_DIR}/lib")
+	#	set(CMAKE_INSTALL_RPATH "${CMAKE_BUILD_RPATH}")
+	#	message(STATUS "@rpath: ${CMAKE_BUILD_RPATH}")
+	#
+	#	# add the automatically determined parts of the RPATH
+	#	# which point to directories outside the build tree to the install RPATH
+	#	set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 
 	# the RPATH to be used when installing, but only if it's not a system directory

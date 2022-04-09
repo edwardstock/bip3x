@@ -1,4 +1,5 @@
 import os
+
 from conans import ConanFile, CMake, tools
 
 
@@ -48,7 +49,7 @@ class Bip39Conan(ConanFile):
     default_channel = "latest"
 
     build_requires = (
-        "gtest/1.8.1@bincrafters/stable",
+        "gtest/1.11.0",
     )
 
     def source(self):
