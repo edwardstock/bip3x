@@ -56,7 +56,7 @@ class Bip39Conan(ConanFile):
         "toolbox/3.2.3@edwardstock/latest"
     )
     build_requires = (
-        "gtest/1.8.1",
+        "gtest/1.11.0",
     )
 
     def source(self):

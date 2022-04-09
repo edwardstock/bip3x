@@ -55,7 +55,7 @@ apt update && apt install libbip3x-dev
 <br/><br/>
 After installing package from repository, you can use cmake-find module to find library:
 ```cmake
-find_package(bip3x 2.2.0 REQUIRED)
+find_package(bip3x 2.2.1 REQUIRED)
 target_link_libraries(MY_PROJECT bip3x::bip39)
 ```
 

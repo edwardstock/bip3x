@@ -1,3 +1,7 @@
+## 2.2.1
+
+- Using gtest 1.11.0
+
 ## 2.2.0
 
 - Updated toolbox to latest version

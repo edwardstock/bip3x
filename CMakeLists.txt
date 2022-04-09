@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 project(bip3x
-        VERSION 2.2.0
+        VERSION 2.2.1
         DESCRIPTION "Native BIP39 Mnemonic implementation (with JNI and pure C bindings)"
         LANGUAGES CXX)
 
