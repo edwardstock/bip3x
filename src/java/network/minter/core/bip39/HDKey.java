@@ -26,9 +26,6 @@
 
 package network.minter.core.bip39;
 
-import network.minter.core.crypto.PrivateKey;
-import network.minter.core.crypto.PublicKey;
-
 /**
  * native-bip39. 2018
  *
@@ -109,14 +106,6 @@ public final class HDKey {
 
     public String getExtPrivateKeyString() {
         return bytesToString(getExtPrivateKeyBytes(), 111);
-    }
-
-    public PrivateKey getPrivateKey() {
-        return new PrivateKey(getPrivateKeyBytes(), true);
-    }
-
-    public PublicKey getPublicKey() {
-        return new PublicKey(getPublicKeyBytes());
     }
 
     public String getExtPublicKeyString() {

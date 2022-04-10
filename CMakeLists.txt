@@ -13,7 +13,7 @@ option(ENABLE_GO "Enable compiling pure C for golang bindings" ON)
 option(ENABLE_CONAN_BUILD "Enable conan dependencies" ON)
 
 execute_process(
-	COMMAND bash -c "echo ${CMAKE_PROJECT_VERSION} > ${CMAKE_CURRENT_SOURCE_DIR}/version"
+	COMMAND bash -c "echo ${CMAKE_PROJECT_VERSION} > ${CMAKE_CURRENT_SOURCE_DIR}/version.info"
 )
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)

@@ -31,8 +31,7 @@ import java.nio.ByteOrder;
 
 import javax.annotation.Nonnull;
 
-import static network.minter.core.internal.common.Preconditions.checkNotNull;
-import static network.minter.core.internal.common.Preconditions.firstNonNull;
+import static network.minter.core.bip39.Utils.checkNotNull;
 
 /**
  * native-bip39. 2018
@@ -134,7 +133,7 @@ public final class NativeBip39 {
         buff.rewind();
         buff.put(input);
 
-        return ((MnemonicResult) bip39EncodeBytes(buff, firstNonNull(language, LANG_DEFAULT), entropy));
+        return ((MnemonicResult) bip39EncodeBytes(buff, Utils.firstNonNull(language, LANG_DEFAULT), entropy));
     }
 
     public static boolean validateMnemonic(String mnemonic, String language) {
@@ -142,7 +141,7 @@ public final class NativeBip39 {
             return false;
         }
 
-        return bip39ValidateMnemonic(mnemonic, firstNonNull(language, LANG_DEFAULT));
+        return bip39ValidateMnemonic(mnemonic, Utils.firstNonNull(language, LANG_DEFAULT));
     }
 
     public static byte[] mnemonicToBip39Seed(String mnemonic) {

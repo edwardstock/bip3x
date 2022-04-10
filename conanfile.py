@@ -4,7 +4,7 @@ from conans import ConanFile, CMake, tools
 
 
 def get_version():
-    with open(os.path.join(os.path.dirname(__file__), 'version'), 'r') as f:
+    with open(os.path.join(os.path.dirname(__file__), 'version.info'), 'r') as f:
         content = f.read()
         try:
             content = content.decode()
@@ -32,7 +32,7 @@ class Bip39Conan(ConanFile):
         "enableJNI": False,
         "enableCGO": False,
     }
-    exports = "version"
+    exports = "version.info"
     exports_sources = (
         "cmake/*",
         "include/*",

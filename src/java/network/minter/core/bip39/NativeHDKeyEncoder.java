@@ -31,7 +31,7 @@ import java.nio.ByteOrder;
 
 import javax.annotation.Nonnull;
 
-import static network.minter.core.internal.common.Preconditions.checkNotNull;
+import static network.minter.core.bip39.Utils.checkNotNull;
 
 /**
  * native-bip39. 2018
