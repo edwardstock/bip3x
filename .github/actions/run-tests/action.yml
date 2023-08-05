@@ -33,12 +33,12 @@ runs:
         mkdir -p ${{ github.workspace }}/${{ inputs.build-dir }}
         echo "work-dir=${{ github.workspace }}/${{ inputs.build-dir }}" >> $GITHUB_OUTPUT
     - name: Configure project with tests (conan build)
-      if: ${{ inputs.conan-enabled }}
+      if: ${{ inputs.conan-enabled == 'true' }}
       working-directory: ${{ steps.create-test-env.outputs.work-dir }} # using output variable
       shell: bash
       run: cmake .. -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=modules/conan_provider.cmake -DCMAKE_BUILD_TYPE=Debug ${{ inputs.cmake-args }}
     - name: Configure project with tests
-      if: ${{ !inputs.conan-enabled }}
+      if: ${{ inputs.conan-enabled == 'false' }}
       working-directory: ${{ steps.create-test-env.outputs.work-dir }} # using output variable
       shell: bash
       run: cmake .. -DCMAKE_BUILD_TYPE=Debug ${{ inputs.cmake-args }}

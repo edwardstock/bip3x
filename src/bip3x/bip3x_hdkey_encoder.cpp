@@ -1,10 +1,3 @@
-/*!
- * bip39. 2018
- *
- * \author Eduard Maximovich <edward.vstock@gmail.com>
- * \link https://github.com/edwardstock
- */
-
 #include "bip3x/bip3x_hdkey_encoder.h"
 
 #include "bip3x/crypto/base58.h"
@@ -23,15 +16,18 @@ bip3x::bytes_64 bip3x::bip3x_hdkey_encoder::make_bip39_seed(const std::string& m
     bip3x_mnemonic::words_to_seed(mnemonic_words.c_str(), out.data(), &n);
     return out;
 }
-bip3x::bytes_64 bip3x::bip3x_hdkey_encoder::make_bip39_seed(const std::vector<std::string>& mnemonic_words) {
+bip3x::bytes_64
+bip3x::bip3x_hdkey_encoder::make_bip39_seed(const std::vector<std::string>& mnemonic_words) {
     return make_bip39_seed(toolbox::strings::glue(" ", mnemonic_words));
 }
 
-bip3x::hdkey bip3x::bip3x_hdkey_encoder::make_bip32_root_key(const char* mnemonic, btc_network net) {
+bip3x::hdkey
+bip3x::bip3x_hdkey_encoder::make_bip32_root_key(const char* mnemonic, btc_network net) {
     return make_bip32_root_key(make_bip39_seed(mnemonic), net);
 }
 
-bip3x::hdkey bip3x::bip3x_hdkey_encoder::make_bip32_root_key(const bytes_64& seed, btc_network net) {
+bip3x::hdkey
+bip3x::bip3x_hdkey_encoder::make_bip32_root_key(const bytes_64& seed, btc_network net) {
     hdkey out;
 
     out = from_seed(seed);
@@ -44,7 +40,9 @@ bip3x::hdkey bip3x::bip3x_hdkey_encoder::make_bip32_root_key(const bytes_64& see
     return out;
 }
 
-bip3x::hdkey bip3x::bip3x_hdkey_encoder::make_extended_key(const bip3x::hdkey& root_key, const bip3x::derivation_path& derivation) {
+bip3x::hdkey bip3x::bip3x_hdkey_encoder::make_extended_key(
+    const bip3x::hdkey& root_key, const bip3x::derivation_path& derivation
+) {
     hdkey out = root_key;
     extend_key(out, derivation.path);
     return out;
@@ -136,9 +134,8 @@ void bip3x::bip3x_hdkey_encoder::derive_path(hdkey& key, const std::string& path
         if (hardened) {
             const std::string tmp(bit.begin(), bit.end() - 1);
             if (tmp.length() == 1 && tmp[0] == 'm') {
-                throw std::invalid_argument(
-                    "Derivation path has wrong format: only digit segments can be hardened; remove apostrophe from m'/"
-                );
+                throw std::invalid_argument("Derivation path has wrong format: only digit segments "
+                                            "can be hardened; remove apostrophe from m'/");
             }
             index = str_to_uint32_t(tmp);
         } else {
@@ -189,7 +186,9 @@ void bip3x::bip3x_hdkey_encoder::fill_public_key(hdkey& key) {
         ecdsa_get_public_key33(key.curve->params, key.private_key.cdata(), key.public_key.data());
     }
 }
-void bip3x::bip3x_hdkey_encoder::serialize(bip3x::hdkey& key, uint32_t fingerprint, uint32_t version, bool publicKey) {
+void bip3x::bip3x_hdkey_encoder::serialize(
+    bip3x::hdkey& key, uint32_t fingerprint, uint32_t version, bool publicKey
+) {
     bytes_data data(78);
     data.write(0, version);
     data.write(4, key.depth);

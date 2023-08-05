@@ -27,14 +27,18 @@ option(bip3x_BUILD_C_BINDINGS "Additionally build C library" OFF)
 option(bip3x_USE_OPENSSL_RANDOM "Use openssl random number generator" OFF)
 
 
-if (NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE Release)
+if (bip3x_BUILD_SHARED_LIBS)
+	add_definitions(-DBIP3X_EXPORTS)
+else ()
+	set(bip3x_BUILT_AS_STATIC 1)
 endif ()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY lib)
-set(CMAKE_PDB_OUTPUT_DIRECTORY lib)
+if (NOT WIN32)
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin)
+	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY lib)
+	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY lib)
+	set(CMAKE_PDB_OUTPUT_DIRECTORY lib)
+endif ()
 
 if (MINGW AND NOT bip3x_USE_OPENSSL_RANDOM)
 	message(WARNING "You're using MinGW without OpenSSL random generator. Be carefully, it's not secure. Consider to use -Dbip3x_USE_OPENSSL_RANDOM=On and install OpenSSL >= 1.0.0")
@@ -94,7 +98,7 @@ configure_file(
 )
 
 configure_file(
-	${CMAKE_CURRENT_LIST_DIR}/cfg/cbip39_config.h.in
+	${CMAKE_CURRENT_LIST_DIR}/cfg/cbip39_config.in.h
 	${CMAKE_CURRENT_LIST_DIR}/include/cbip3x/cbip3x_config.h
 )
 

@@ -1,8 +1,3 @@
-//
-// MinterWallet. 2018
-// Eduard Maximovich <edward.vstock@gmail.com>
-//
-
 #include "nobject.h"
 
 #include <string>

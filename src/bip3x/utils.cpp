@@ -1,11 +1,3 @@
-/**
- * bip39. 2018
- * utils.cpp
- *
- * @author Eduard Maximovich <edward.vstock@gmail.com>
- * @link https://github.com/edwardstock
- */
-
 #include "bip3x/details/utils.h"
 
 #include <limits>

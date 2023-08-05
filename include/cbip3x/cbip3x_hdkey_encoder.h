@@ -1,12 +1,3 @@
-/*!
- * bip39.
- * hdkey_encoder.h
- *
- * \date 2019
- * \author Eduard Maximovich (edward.vstock@gmail.com)
- * \link   https://github.com/edwardstock
- */
-
 #ifndef BIP39_CBIP39_HDKEY_ENCODER_H
 #define BIP39_CBIP39_HDKEY_ENCODER_H
 
@@ -29,9 +20,10 @@ typedef struct minter_hdkey {
     uint32_t fingerprint;
 } minter_hdkey;
 
-BIP39_API void encoder_make_bip32_root_key(const struct bip3x_data64* seed, struct minter_hdkey* hdkey);
-BIP39_API void encoder_extend_key(struct minter_hdkey* hdkey, const char* derivation_path);
-BIP39_API void free_hdkey(struct minter_hdkey* key);
+BIP3X_CORE_API void
+encoder_make_bip32_root_key(const struct bip3x_data64* seed, struct minter_hdkey* hdkey);
+BIP3X_CORE_API void encoder_extend_key(struct minter_hdkey* hdkey, const char* derivation_path);
+BIP3X_CORE_API void free_hdkey(struct minter_hdkey* key);
 
 #ifdef __cplusplus
 }

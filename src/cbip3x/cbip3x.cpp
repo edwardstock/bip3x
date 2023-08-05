@@ -1,12 +1,3 @@
-/*!
- * bip39.
- * bip39.cpp
- *
- * \date 2019
- * \author Eduard Maximovich (edward.vstock@gmail.com)
- * \link   https://github.com/edwardstock
- */
-
 #include "cbip3x/cbip3x.h"
 
 #include "bip3x/bip3x_mnemonic.h"
@@ -67,7 +58,9 @@ bip3x_mnemonic_result* copy_mnemonic(bip3x::bip3x_mnemonic::mnemonic_result&& re
     }
 
     switch (res.status) {
-        case bip3x::bip3x_mnemonic::mnemonic_status::ok: out->status = bip3x_mnemonic_status::Ok; break;
+        case bip3x::bip3x_mnemonic::mnemonic_status::ok:
+            out->status = bip3x_mnemonic_status::Ok;
+            break;
         case bip3x::bip3x_mnemonic::mnemonic_status::unknown_error:
             out->status = bip3x_mnemonic_status::UnknownError;
             break;

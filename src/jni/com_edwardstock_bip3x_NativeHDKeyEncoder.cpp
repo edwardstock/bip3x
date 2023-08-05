@@ -60,7 +60,9 @@ JNIEXPORT jobject JNICALL Java_com_edwardstock_bip3x_NativeHDKeyEncoder_encoderM
         return nullptr;
     }
     if (nets == nullptr) {
-        env->ThrowNew(env->FindClass("java/lang/NullPointerException"), "Failed to get int array elements");
+        env->ThrowNew(
+            env->FindClass("java/lang/NullPointerException"), "Failed to get int array elements"
+        );
         return nullptr;
     }
 

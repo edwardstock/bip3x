@@ -254,7 +254,7 @@ function (conan_version_check)
 	endif ()
 
 	if (CONAN_VERSION_CHECK_CURRENT VERSION_LESS CONAN_VERSION_CHECK_MINIMUM)
-		message(FATAL_ERROR "CMake-Conan: Conan version must be ${CONAN_VERSION_CHECK_MINIMUM} or later")
+		message(FATAL_ERROR "CMake-Conan: Conan version must be ${CONAN_VERSION_CHECK_MINIMUM} or later; given: ${CONAN_VERSION_CHECK_CURRENT}")
 	endif ()
 endfunction ()
 

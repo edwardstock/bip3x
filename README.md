@@ -11,12 +11,14 @@ Logic almost completely taken from bitcoin-js library for generating mnemonic ph
 
 ## Features
 * Generate random mnemonic ([PCG](http://www.pcg-random.org/) generator)
-* Create root and extended bip* standard keys using some derivation path
+* Create root and extended bip* standard keys using derivation path
+* Get ETH-like address from private key (requires exactly private key, because it requires to get uncompressed public key)
+* Simple message signing with private key (verify method is not implemented yet)
 
 ## Build native JNI libs
 * Install cmake (if not installed yet)
 * Install Oracle JDK or OpenJDK (not tested yet)
-* Set environment variable: JAVA_HOME=/path/to/jdk
+* Set environment variable: `JAVA_HOME=/path/to/jdk` OR cmake prefix path like this: `-DCMAKE_PREFIX_PATH="/Users/JohnDoe/.sdkman/candidates/java/17.0.6-amzn"`
 * Build
 ```bash
 mkdir build && cd build
@@ -32,7 +34,7 @@ make -j 4
 * Setup mingw64 for linux or macOS
 * Setup Windows JDK (or just copy from windows machine to somewhere path)
 * **IMPORTANT:** using c++ (mt19937, and PCGRand not works properly too) random generator is not secure.
-  Use `-DUSE_OPENSSL_RANDOM=On` while configuring to use OpenSSL random generator.
+  Use `-Dbip3x_USE_OPENSSL_RANDOM=On` while configuring to use OpenSSL random generator.
 * Build
 ```bash
 mkdir build && cd build
@@ -49,71 +51,10 @@ make
   * libbip3x.dll.a
   * libbip3x_jni.dll
   * libbip3x_jni.dll.a
-  
-
-### Build under the Windows
-**Requirements**
-* CMake for Windows
-* Visual Studio (at least community edition), tested only version 2019
-* Visual Studio C++ compiler
-* To build tests, you could install Conan (`-DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=modules/conan_provider.cmake`) OR using out-of-box fetchcontent
-
-Step-by-step:
-```bash
-cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="D:\path\you\want\to\install\libs"
-cmake --build .
-cmake --build . --target install
-```
-
-Then pick-up lib files and headers from **D:\path\you\want\to\install\libs**
-
 
 
 ## Examples
-### C++
-```c++
-#include <bip3x/utils.h>
-#include <bip3x/bip3x_mnemonic.h>
-#include <bip3x/HDKeyEncoder.h>
-#include <iostream>
-
-using namespace bip3x;
-
-int main(int argc, char** argv) {
-    // create random words
-    bip3x_mnemonic::MnemonicResult encodedMnemonic = bip3x_mnemonic::generate();
-    std::cout << encodedMnemonic.words << std::endl;
-    
-    // create mnemonic seed
-    bytes_64 seed = HDKeyEncoder::make_bip39_seed(encodedMnemonic.words);
-    
-    // create root key from mnemonic seed
-    HDKey bip32RootKey = HDKeyEncoder::makeBip32RootKey(seed);
-    
-    // and, finally derive keys
-    // copy key to leave root key
-    HDKey ethereumKey = bip32RootKey;
-    // make_extended_key modifies source key
-    HDKeyEncoder::make_extended_key(ethereumKey, "m/44'/60'/0'/0");
-
-    // extended private key
-    std::cout << ethereumKey.ext_private_key.toString() << std::endl;
-    
-    // private key
-    std::cout << ethereumKey.private_key.toString() << std::endl;
-    
-    // extended public key
-    std::cout << ethereumKey.ext_public_key.toString() << std::endl;
-    
-    // public key
-    std::cout << ethereumKey.public_key.toString() << std::endl;
-    
-    // et cetera..
-
-    // the end.
-    return 0;
-}
-```
+[see exmaple.cpp file](example/example.cpp)
 
 
 ### Java
@@ -196,8 +137,3 @@ target_link_libraries(bip39)
 ```
 
 * Done!
-
-
-
-## Documentation
-TBD (see [src/main.cpp](https://github.com/edwardstock/bip3x/blob/master/src/main.cpp) for simple examples)

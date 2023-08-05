@@ -1,7 +1,7 @@
+#include <bip3x/bip3x_crypto.h>
 #include <bip3x/bip3x_hdkey_encoder.h>
 #include <bip3x/bip3x_mnemonic.h>
 #include <bip3x/details/utils.h>
-#include <bip3x/bip3x_crypto.h>
 #include <gtest/gtest.h>
 #include <iostream>
 
@@ -19,7 +19,9 @@ TEST(Mnemonic, PrivateKeyFromMnemonic) {
     bytes_64 seed;
     size_t written;
     bip3x_mnemonic::words_to_seed(
-        "lock silly satisfy version solution bleak rain candy phone loan powder dose", seed.data(), &written
+        "lock silly satisfy version solution bleak rain candy phone loan powder dose",
+        seed.data(),
+        &written
     );
     hdkey key = make_root_key(seed);
     extend_key(key);
@@ -28,7 +30,6 @@ TEST(Mnemonic, PrivateKeyFromMnemonic) {
 
     ASSERT_STREQ(expected_pk, key.private_key.to_hex().c_str());
 }
-
 
 TEST(Mnemonic, Check3GeneratedMnemonicsAreDifferent) {
     bip3x::bip3x_mnemonic::mnemonic_result m1 = bip3x_mnemonic::generate();
@@ -50,13 +51,20 @@ TEST(Crypto, SigningMessage) {
 
     auto result = bip3x::sign_message(message, private_key);
 
-    ASSERT_STREQ("0ae77a1bcaaf0e28519a06221bc3d74a27ffd7fb1ffca6760b84b579184f0b45", result.r.to_hex().c_str());
-    ASSERT_STREQ("552c5491a59d18b81fa4882725c019a0351d0f3e03bd70d23c25390daf13e6eb", result.s.to_hex().c_str());
+    ASSERT_STREQ(
+        "0ae77a1bcaaf0e28519a06221bc3d74a27ffd7fb1ffca6760b84b579184f0b45",
+        result.r.to_hex().c_str()
+    );
+    ASSERT_STREQ(
+        "552c5491a59d18b81fa4882725c019a0351d0f3e03bd70d23c25390daf13e6eb",
+        result.s.to_hex().c_str()
+    );
     ASSERT_STREQ("1b", result.v.to_hex().c_str());
 }
 
 TEST(Crypto, GetEthAddress) {
-    std::string mnemonic = "vague soft expose improve gaze kitten pass point select access battle wish";
+    std::string mnemonic =
+        "vague soft expose improve gaze kitten pass point select access battle wish";
 
     auto seed = bip3x_hdkey_encoder::make_bip39_seed(mnemonic);
     hdkey rootKey = bip3x::bip3x_hdkey_encoder::make_bip32_root_key(seed);

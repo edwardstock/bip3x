@@ -1,36 +1,37 @@
-/**
- * bip39. 2018
- * bip39_core.h
- *
- * @author Eduard Maximovich <edward.vstock@gmail.com>
- * @link https://github.com/edwardstock
- */
-
 #pragma once
 
 #include <cstddef>
 #include <cstdint>
 
-#cmakedefine BIP39_SHARED
-#cmakedefine BIP39_EXPORTING
+#cmakedefine BIP3X_EXPORTING 1
+#cmakedefine BIP3X_EXPORT_SHARED 1
+#cmakedefine BIP3X_BUILT_AS_STATIC
+#define BIP3X_C extern "C"
 
-#ifdef BIP39_SHARED
-#  ifdef BIP3X_EXPORTING
-#   if _MSC_VER
-#       define BIP3X_CORE_API __declspec(dllexport)
-#   else
-#       define BIP3X_CORE_API __attribute__((visibility("default")))
-#   endif
-#  else
-#   if _MSC_VER
-#       define BIP3X_CORE_API __declspec(dllimport)
-#   else
-#       define BIP3X_CORE_API
-#   endif
-#  endif
+#ifdef BIP3X_BUILT_AS_STATIC
+#define BIP3X_CORE_API
+#define BIP3X_NO_EXPORT
+#else
+#ifndef BIP3X_CORE_API
+#if _MSC_VER
+#ifdef BIP3X_EXPORTS
+#define BIP3X_CORE_API __declspec(dllexport)
+#else
+#define BIP3X_CORE_API __declspec(dllimport)
+#endif
+#else
+#ifdef BIP3X_EXPORTS
+#define BIP3X_CORE_API __attribute__((visibility("default")))
 #else
 #define BIP3X_CORE_API
-#endif // BIP39_SHARED
+#endif
+#endif
+#endif
+
+#ifndef BIP3X_NO_EXPORT
+#define BIP3X_NO_EXPORT
+#endif
+#endif
 
 #if defined(WIN32) && !defined(bzero)
 #include <cstring>

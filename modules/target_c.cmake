@@ -2,13 +2,14 @@ set(C_HEADERS
     include/cbip3x/cbip3x_config.h
     include/cbip3x/cbip3x.h
     include/cbip3x/cbip3x_hdkey_encoder.h
-    )
+)
 set(C_SOURCES
     src/cbip3x/cbip3x.cpp
     src/cbip3x/cbip3x_hdkey_encoder.cpp
-    )
+)
 
 if (bip3x_BUILD_SHARED_LIBS)
+	message(STATUS "Build C shared library")
 	add_library(${LIB_NAME_C} SHARED ${SOURCES} ${C_SOURCES} ${C_HEADERS})
 	set_property(TARGET ${LIB_NAME_C} PROPERTY SOVERSION ${PROJECT_VERSION_MAJOR})
 else ()
@@ -28,7 +29,7 @@ endif ()
 target_include_directories(${LIB_NAME_C} PUBLIC
                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                            $<INSTALL_INTERFACE:include>
-                           )
+)
 target_include_directories(${LIB_NAME_C} PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 ## INSTALL CONFIG

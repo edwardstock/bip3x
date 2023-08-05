@@ -13,7 +13,8 @@ TEST(IssueTest, No11) {
     } catch (const std::exception& e) {
         thrown = true;
         ASSERT_STREQ(
-            "Derivation path has wrong format: only digit segments can be hardened; remove apostrophe from m'/",
+            "Derivation path has wrong format: only digit segments can be hardened; remove "
+            "apostrophe from m'/",
             e.what()
         );
     }

@@ -1,9 +1,11 @@
 name: Build & Test
 
 on:
-  push:
-    branches:
-      - master
+  pull_request:
+#on:
+#  push:
+#    branches:
+#      - master
 
 jobs:
   build-and-test-linux-gcc:
@@ -22,6 +24,12 @@ jobs:
           version: ${{ matrix.gcc }}
           platform: x64
 
+      - name: Setup JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto' # See 'Supported distributions' for available options
+          java-version: '17'
+
       - name: Setup Python
         uses: ./.github/actions/setup-python
 
@@ -36,5 +44,5 @@ jobs:
       - name: Build deploy artifacts
         run: $(which python3) ${{ github.workspace }}/deploy.py build
 
-      - name: Upload deploy artifacts
-        run: $(which python3) ./deploy.py upload
+#      - name: Upload deploy artifacts
+#        run: $(which python3) ./deploy.py upload

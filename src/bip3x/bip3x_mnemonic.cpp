@@ -1,12 +1,6 @@
-/*!
- * bip39. 2018
- *
- * \author Eduard Maximovich <edward.vstock@gmail.com>
- * \link https://github.com/edwardstock
- */
+#include "bip3x/bip3x_mnemonic.h"
 
 #include "bip3x/bip3x_config.h"
-#include "bip3x/bip3x_mnemonic.h"
 
 #ifdef USE_OPENSSL_RANDOM
 #include <openssl/rand.h>
@@ -16,6 +10,7 @@
 
 #include "../details/bip39.h"
 #include "../details/wordlist.h"
+
 #include <chrono>
 #include <toolbox/strings.hpp>
 
@@ -45,7 +40,8 @@ std::vector<std::string> bip3x::bip3x_mnemonic::get_words_for_language(const cha
     return wordsList;
 }
 
-bip3x::bip3x_mnemonic::mnemonic_result bip3x::bip3x_mnemonic::generate(const char* lang, size_t entropy) {
+bip3x::bip3x_mnemonic::mnemonic_result
+bip3x::bip3x_mnemonic::generate(const char* lang, size_t entropy) {
 #ifdef USE_OPENSSL_RANDOM
     bytes_data bts(entropy);
     RAND_bytes(bts.data(), (int) entropy);
@@ -56,7 +52,8 @@ bip3x::bip3x_mnemonic::mnemonic_result bip3x::bip3x_mnemonic::generate(const cha
 
 #ifdef __MINGW32__
     auto duration = std::chrono::high_resolution_clock::now().time_since_epoch();
-    static std::mt19937 rand(std::chrono::duration_cast<std::chrono::microseconds>(duration).count());
+    static std::mt19937 rand(std::chrono::duration_cast<std::chrono::microseconds>(duration).count()
+    );
 #else
     static std::random_device dev;
     static PCGRand rand(dev);
@@ -100,7 +97,8 @@ bip3x::bip3x_mnemonic::encode_bytes(const uint8_t* src, const char* lang, size_t
 
     return result;
 }
-bip3x::bytes_data bip3x::bip3x_mnemonic::decode_mnemonic(const char* mnemonic, const char* lang, size_t entropy) {
+bip3x::bytes_data
+bip3x::bip3x_mnemonic::decode_mnemonic(const char* mnemonic, const char* lang, size_t entropy) {
     struct words* wordList[1];
     bip39_get_wordlist(lang, wordList);
 
@@ -113,7 +111,8 @@ bip3x::bytes_data bip3x::bip3x_mnemonic::decode_mnemonic(const char* mnemonic, c
 
     size_t written = 0;
 
-    bool decRes = bip39_mnemonic_to_bytes(wordList[0], mnemonic, data.data(), entropy, &written) == BIP3X_OK;
+    bool decRes =
+        bip39_mnemonic_to_bytes(wordList[0], mnemonic, data.data(), entropy, &written) == BIP3X_OK;
     if (decRes) {
         return data;
     }

@@ -1,12 +1,3 @@
-/*!
- * bip39.
- * hdkey_encoder.cpp
- *
- * \date 2019
- * \author Eduard Maximovich (edward.vstock@gmail.com)
- * \link   https://github.com/edwardstock
- */
-
 #include "cbip3x/cbip3x_hdkey_encoder.h"
 
 #include "bip3x/bip3x_hdkey_encoder.h"
