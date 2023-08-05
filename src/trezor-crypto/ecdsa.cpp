@@ -799,8 +799,8 @@ int ecdsa_sign_digest(const ecdsa_curve *curve, const uint8_t *priv_key, const u
 
 		// check if the signature is acceptable or retry
 		if (is_canonical && !is_canonical(by, sig)) {
-			continue;
-		}
+            continue;
+        }
 
 		if (pby) {
 			*pby = by;

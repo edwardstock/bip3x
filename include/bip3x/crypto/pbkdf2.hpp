@@ -24,7 +24,7 @@
 #ifndef __PBKDF2_H__
 #define __PBKDF2_H__
 
-#include "bip3x/bip39_core.h"
+#include "bip3x/bip3x_config.h"
 #include "sha2.hpp"
 
 typedef struct _PBKDF2_HMAC_SHA256_CTX {
@@ -43,14 +43,14 @@ typedef struct _PBKDF2_HMAC_SHA512_CTX {
 	char first;
 } PBKDF2_HMAC_SHA512_CTX;
 
-BIP39_CORE_API void pbkdf2_hmac_sha256_Init(PBKDF2_HMAC_SHA256_CTX *pctx, const uint8_t *pass, int passlen, const uint8_t *salt, int saltlen);
-BIP39_CORE_API void pbkdf2_hmac_sha256_Update(PBKDF2_HMAC_SHA256_CTX *pctx, uint32_t iterations);
-BIP39_CORE_API void pbkdf2_hmac_sha256_Final(PBKDF2_HMAC_SHA256_CTX *pctx, uint8_t *key);
-BIP39_CORE_API void pbkdf2_hmac_sha256(const uint8_t *pass, int passlen, const uint8_t *salt, int saltlen, uint32_t iterations, uint8_t *key);
+BIP3X_CORE_API void pbkdf2_hmac_sha256_Init(PBKDF2_HMAC_SHA256_CTX *pctx, const uint8_t *pass, int passlen, const uint8_t *salt, int saltlen);
+BIP3X_CORE_API void pbkdf2_hmac_sha256_Update(PBKDF2_HMAC_SHA256_CTX *pctx, uint32_t iterations);
+BIP3X_CORE_API void pbkdf2_hmac_sha256_Final(PBKDF2_HMAC_SHA256_CTX *pctx, uint8_t *key);
+BIP3X_CORE_API void pbkdf2_hmac_sha256(const uint8_t *pass, int passlen, const uint8_t *salt, int saltlen, uint32_t iterations, uint8_t *key);
 
-BIP39_CORE_API void pbkdf2_hmac_sha512_Init(PBKDF2_HMAC_SHA512_CTX *pctx, const uint8_t *pass, int passlen, const uint8_t *salt, int saltlen);
-BIP39_CORE_API void pbkdf2_hmac_sha512_Update(PBKDF2_HMAC_SHA512_CTX *pctx, uint32_t iterations);
-BIP39_CORE_API void pbkdf2_hmac_sha512_Final(PBKDF2_HMAC_SHA512_CTX *pctx, uint8_t *key);
-BIP39_CORE_API void pbkdf2_hmac_sha512(const uint8_t *pass, int passlen, const uint8_t *salt, int saltlen, uint32_t iterations, uint8_t *key);
+BIP3X_CORE_API void pbkdf2_hmac_sha512_Init(PBKDF2_HMAC_SHA512_CTX *pctx, const uint8_t *pass, int passlen, const uint8_t *salt, int saltlen);
+BIP3X_CORE_API void pbkdf2_hmac_sha512_Update(PBKDF2_HMAC_SHA512_CTX *pctx, uint32_t iterations);
+BIP3X_CORE_API void pbkdf2_hmac_sha512_Final(PBKDF2_HMAC_SHA512_CTX *pctx, uint8_t *key);
+BIP3X_CORE_API void pbkdf2_hmac_sha512(const uint8_t *pass, int passlen, const uint8_t *salt, int saltlen, uint32_t iterations, uint8_t *key);
 
 #endif

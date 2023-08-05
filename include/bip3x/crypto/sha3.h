@@ -20,7 +20,7 @@
 #ifndef __SHA3_H__
 #define __SHA3_H__
 
-#include "bip3x/bip39_core.h"
+#include "bip3x/bip3x_config.h"
 #include "options.h"
 
 #include <cstdint>
@@ -63,12 +63,12 @@ typedef struct SHA3_CTX
 
 /* methods for calculating the hash function */
 
-BIP39_CORE_API void sha3_224_Init(SHA3_CTX *ctx);
-BIP39_CORE_API void sha3_256_Init(SHA3_CTX *ctx);
-BIP39_CORE_API void sha3_384_Init(SHA3_CTX *ctx);
-BIP39_CORE_API void sha3_512_Init(SHA3_CTX *ctx);
-BIP39_CORE_API void sha3_Update(SHA3_CTX *ctx, const unsigned char* msg, size_t size);
-BIP39_CORE_API void sha3_Final(SHA3_CTX *ctx, unsigned char* result);
+BIP3X_CORE_API void sha3_224_Init(SHA3_CTX *ctx);
+BIP3X_CORE_API void sha3_256_Init(SHA3_CTX *ctx);
+BIP3X_CORE_API void sha3_384_Init(SHA3_CTX *ctx);
+BIP3X_CORE_API void sha3_512_Init(SHA3_CTX *ctx);
+BIP3X_CORE_API void sha3_Update(SHA3_CTX *ctx, const unsigned char* msg, size_t size);
+BIP3X_CORE_API void sha3_Final(SHA3_CTX *ctx, unsigned char* result);
 
 #if USE_KECCAK
 #define keccak_224_Init sha3_224_Init
@@ -76,13 +76,13 @@ BIP39_CORE_API void sha3_Final(SHA3_CTX *ctx, unsigned char* result);
 #define keccak_384_Init sha3_384_Init
 #define keccak_512_Init sha3_512_Init
 #define keccak_Update sha3_Update
-BIP39_CORE_API void keccak_Final(SHA3_CTX *ctx, unsigned char* result);
-BIP39_CORE_API void keccak_256(const unsigned char* data, size_t len, unsigned char* digest);
-BIP39_CORE_API void keccak_512(const unsigned char* data, size_t len, unsigned char* digest);
+BIP3X_CORE_API void keccak_Final(SHA3_CTX *ctx, unsigned char* result);
+BIP3X_CORE_API void keccak_256(const unsigned char* data, size_t len, unsigned char* digest);
+BIP3X_CORE_API void keccak_512(const unsigned char* data, size_t len, unsigned char* digest);
 #endif
 
-BIP39_CORE_API void sha3_256(const unsigned char* data, size_t len, unsigned char* digest);
-BIP39_CORE_API void sha3_512(const unsigned char* data, size_t len, unsigned char* digest);
+BIP3X_CORE_API void sha3_256(const unsigned char* data, size_t len, unsigned char* digest);
+BIP3X_CORE_API void sha3_512(const unsigned char* data, size_t len, unsigned char* digest);
 
 #ifdef __cplusplus
 } /* extern "C" */

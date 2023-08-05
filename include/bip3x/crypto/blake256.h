@@ -31,7 +31,7 @@
 #ifndef __BLAKE256_H__
 #define __BLAKE256_H__
 
-#include "bip3x/bip39_core.h"
+#include "bip3x/bip3x_config.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -46,10 +46,10 @@ typedef struct {
   uint8_t buf[64];
 } BLAKE256_CTX;
 
-BIP39_CORE_API void blake256_Init(BLAKE256_CTX *);
-BIP39_CORE_API void blake256_Update(BLAKE256_CTX *, const uint8_t *, size_t);
-BIP39_CORE_API void blake256_Final(BLAKE256_CTX *, uint8_t *);
+BIP3X_CORE_API void blake256_Init(BLAKE256_CTX *);
+BIP3X_CORE_API void blake256_Update(BLAKE256_CTX *, const uint8_t *, size_t);
+BIP3X_CORE_API void blake256_Final(BLAKE256_CTX *, uint8_t *);
 
-BIP39_CORE_API void blake256(const uint8_t *, size_t, uint8_t *);
+BIP3X_CORE_API void blake256(const uint8_t *, size_t, uint8_t *);
 
 #endif /* __BLAKE256_H__ */

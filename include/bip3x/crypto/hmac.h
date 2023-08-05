@@ -24,7 +24,7 @@
 #ifndef __HMAC_H__
 #define __HMAC_H__
 
-#include "bip3x/bip39_core.h"
+#include "bip3x/bip3x_config.h"
 #include "sha2.hpp"
 
 #include <cstdint>
@@ -39,16 +39,16 @@ typedef struct _HMAC_SHA512_CTX {
     trezor::SHA512_CTX ctx;
 } HMAC_SHA512_CTX;
 
-BIP39_CORE_API void hmac_sha256_Init(HMAC_SHA256_CTX *hctx, const uint8_t *key, const uint32_t keylen);
-BIP39_CORE_API void hmac_sha256_Update(HMAC_SHA256_CTX *hctx, const uint8_t *msg, const uint32_t msglen);
-BIP39_CORE_API void hmac_sha256_Final(HMAC_SHA256_CTX *hctx, uint8_t *hmac);
-BIP39_CORE_API void hmac_sha256(const uint8_t *key, const uint32_t keylen, const uint8_t *msg, const uint32_t msglen, uint8_t *hmac);
-BIP39_CORE_API void hmac_sha256_prepare(const uint8_t *key, const uint32_t keylen, uint32_t *opad_digest, uint32_t *ipad_digest);
+BIP3X_CORE_API void hmac_sha256_Init(HMAC_SHA256_CTX *hctx, const uint8_t *key, const uint32_t keylen);
+BIP3X_CORE_API void hmac_sha256_Update(HMAC_SHA256_CTX *hctx, const uint8_t *msg, const uint32_t msglen);
+BIP3X_CORE_API void hmac_sha256_Final(HMAC_SHA256_CTX *hctx, uint8_t *hmac);
+BIP3X_CORE_API void hmac_sha256(const uint8_t *key, const uint32_t keylen, const uint8_t *msg, const uint32_t msglen, uint8_t *hmac);
+BIP3X_CORE_API void hmac_sha256_prepare(const uint8_t *key, const uint32_t keylen, uint32_t *opad_digest, uint32_t *ipad_digest);
 
-BIP39_CORE_API void hmac_sha512_Init(HMAC_SHA512_CTX *hctx, const uint8_t *key, const uint32_t keylen);
-BIP39_CORE_API void hmac_sha512_Update(HMAC_SHA512_CTX *hctx, const uint8_t *msg, const uint32_t msglen);
-BIP39_CORE_API void hmac_sha512_Final(HMAC_SHA512_CTX *hctx, uint8_t *hmac);
-BIP39_CORE_API void hmac_sha512(const uint8_t *key, const uint32_t keylen, const uint8_t *msg, const uint32_t msglen, uint8_t *hmac);
-BIP39_CORE_API void hmac_sha512_prepare(const uint8_t *key, const uint32_t keylen, uint64_t *opad_digest, uint64_t *ipad_digest);
+BIP3X_CORE_API void hmac_sha512_Init(HMAC_SHA512_CTX *hctx, const uint8_t *key, const uint32_t keylen);
+BIP3X_CORE_API void hmac_sha512_Update(HMAC_SHA512_CTX *hctx, const uint8_t *msg, const uint32_t msglen);
+BIP3X_CORE_API void hmac_sha512_Final(HMAC_SHA512_CTX *hctx, uint8_t *hmac);
+BIP3X_CORE_API void hmac_sha512(const uint8_t *key, const uint32_t keylen, const uint8_t *msg, const uint32_t msglen, uint8_t *hmac);
+BIP3X_CORE_API void hmac_sha512_prepare(const uint8_t *key, const uint32_t keylen, uint64_t *opad_digest, uint64_t *ipad_digest);
 
 #endif

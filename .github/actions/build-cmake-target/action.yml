@@ -1,0 +1,37 @@
+name: "Build CMake target"
+description: "Build and run project target"
+
+inputs:
+  build-dir:
+    required: false
+    description: "Build directory"
+    default: "_build"
+  build-type:
+    required: false
+    description: "CMake build type"
+    default: "Release"
+  args:
+    required: false
+    description: "Extra cmake arguments"
+    default: ""
+  target:
+    required: true
+    description: "CMake target name"
+
+runs:
+  using: composite
+  steps:
+    - name: Create build environment
+      shell: bash
+      id: create-build-env # adding an id for this step to reference it later
+      run: |
+        mkdir -p ${{ github.workspace }}/${{ inputs.build-dir }}
+        echo "work-dir=${{ github.workspace }}/${{ inputs.build-dir }}" >> $GITHUB_OUTPUT
+    - name: Configure
+      working-directory: ${{ steps.create-build-env.outputs.work-dir }} # using output variable
+      shell: bash
+      run: cmake .. -DCMAKE_BUILD_TYPE=${{ inputs.build-type }} ${{ inputs.args }}
+    - name: Build target
+      working-directory: ${{ steps.create-build-env.outputs.work-dir }} # using output variable
+      shell: bash
+      run: cmake --build . --target ${{ inputs.target }}

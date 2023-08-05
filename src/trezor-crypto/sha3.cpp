@@ -28,7 +28,7 @@
 #define I64(x) x##LL
 #define ROTL64(qword, n) ((qword) << (n) ^ ((qword) >> (64 - (n))))
 #define le2me_64(x) (x)
-#define IS_ALIGNED_64(p) (0 == (7 & ((const char*) (p) - (const char*) 0)))
+#define IS_ALIGNED_64(p) (0 == (7 & (uintptr_t)(p)))
 #define me64_to_le_str(to, from, length) memcpy((to), (from), (length))
 
 /* constants */

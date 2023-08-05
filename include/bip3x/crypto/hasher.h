@@ -23,7 +23,7 @@
 #ifndef __HASHER_H__
 #define __HASHER_H__
 
-#include "bip3x/bip39_core.h"
+#include "bip3x/bip3x_config.h"
 #include "blake256.h"
 #include "sha2.hpp"
 #include "sha3.h"
@@ -49,11 +49,11 @@ typedef struct {
     } ctx;
 } Hasher;
 
-BIP39_CORE_API void hasher_Init(Hasher *hasher, HasherType type);
-BIP39_CORE_API void hasher_Reset(Hasher *hasher);
-BIP39_CORE_API void hasher_Update(Hasher *hasher, const uint8_t *data, size_t length);
-BIP39_CORE_API void hasher_Final(Hasher *hasher, uint8_t hash[HASHER_DIGEST_LENGTH]);
+BIP3X_CORE_API void hasher_Init(Hasher *hasher, HasherType type);
+BIP3X_CORE_API void hasher_Reset(Hasher *hasher);
+BIP3X_CORE_API void hasher_Update(Hasher *hasher, const uint8_t *data, size_t length);
+BIP3X_CORE_API void hasher_Final(Hasher *hasher, uint8_t hash[HASHER_DIGEST_LENGTH]);
 
-BIP39_CORE_API void hasher_Raw(HasherType type, const uint8_t *data, size_t length, uint8_t hash[HASHER_DIGEST_LENGTH]);
+BIP3X_CORE_API void hasher_Raw(HasherType type, const uint8_t *data, size_t length, uint8_t hash[HASHER_DIGEST_LENGTH]);
 
 #endif

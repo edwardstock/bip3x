@@ -24,7 +24,7 @@
 #ifndef __RAND_H__
 #define __RAND_H__
 
-#include "bip3x/bip39_core.h"
+#include "bip3x/bip3x_config.h"
 
 #include <cstdint>
 #include <cstdlib>
@@ -35,10 +35,10 @@
 #define ATTR_WEAK __attribute__((weak))
 #endif
 
-BIP39_CORE_API uint32_t random32(void);
-BIP39_CORE_API void random_buffer(uint8_t *buf, size_t len);
+BIP3X_CORE_API uint32_t random32(void);
+BIP3X_CORE_API void random_buffer(uint8_t *buf, size_t len);
 
-BIP39_CORE_API uint32_t random_uniform(uint32_t n);
-BIP39_CORE_API void random_permute(char *buf, size_t len);
+BIP3X_CORE_API uint32_t random_uniform(uint32_t n);
+BIP3X_CORE_API void random_permute(char *buf, size_t len);
 
 #endif

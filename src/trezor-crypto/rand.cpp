@@ -25,7 +25,7 @@
 
 #ifndef RAND_PLATFORM_INDEPENDENT
 
-#include "bip3x/PCGRand.hpp"
+#include "bip3x/details/PCGRand.hpp"
 
 #include <cstdio>
 #include <ctime>

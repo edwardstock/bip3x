@@ -24,7 +24,7 @@
 #ifndef __BIP39_H__
 #define __BIP39_H__
 
-#include "bip3x/bip39_core.h"
+#include "bip3x/bip3x_config.h"
 
 #include <cstdint>
 

@@ -24,7 +24,7 @@
 #ifndef __SECP256K1_H__
 #define __SECP256K1_H__
 
-#include "bip3x/bip39_core.h"
+#include "bip3x/bip3x_config.h"
 #include "ecdsa.h"
 
 #include <cstdint>
@@ -39,7 +39,7 @@ typedef struct {
   HasherType hasher_pubkey;
 } curve_info;
 
-BIP39_CORE_API extern const ecdsa_curve secp256k1;
-BIP39_CORE_API extern const curve_info secp256k1_info;
+BIP3X_CORE_API extern const ecdsa_curve secp256k1;
+BIP3X_CORE_API extern const curve_info secp256k1_info;
 
 #endif

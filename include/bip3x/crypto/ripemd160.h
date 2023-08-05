@@ -1,7 +1,7 @@
 #ifndef __RIPEMD160_H__
 #define __RIPEMD160_H__
 
-#include "bip3x/bip39_core.h"
+#include "bip3x/bip3x_config.h"
 
 #include <cstdint>
 
@@ -14,9 +14,9 @@ typedef struct _RIPEMD160_CTX {
     uint8_t buffer[RIPEMD160_BLOCK_LENGTH];   /*!< data block being processed */
 } RIPEMD160_CTX;
 
-BIP39_CORE_API void ripemd160_Init(RIPEMD160_CTX *ctx);
-BIP39_CORE_API void ripemd160_Update(RIPEMD160_CTX *ctx, const uint8_t *input, uint32_t ilen);
-BIP39_CORE_API void ripemd160_Final(RIPEMD160_CTX *ctx, uint8_t output[RIPEMD160_DIGEST_LENGTH]);
-BIP39_CORE_API void ripemd160(const uint8_t *msg, uint32_t msg_len, uint8_t hash[RIPEMD160_DIGEST_LENGTH]);
+BIP3X_CORE_API void ripemd160_Init(RIPEMD160_CTX *ctx);
+BIP3X_CORE_API void ripemd160_Update(RIPEMD160_CTX *ctx, const uint8_t *input, uint32_t ilen);
+BIP3X_CORE_API void ripemd160_Final(RIPEMD160_CTX *ctx, uint8_t output[RIPEMD160_DIGEST_LENGTH]);
+BIP3X_CORE_API void ripemd160(const uint8_t *msg, uint32_t msg_len, uint8_t hash[RIPEMD160_DIGEST_LENGTH]);
 
 #endif

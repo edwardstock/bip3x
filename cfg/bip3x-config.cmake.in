@@ -9,7 +9,7 @@ set(BIP3X_LIBRARIES "@INSTALL_TARGETS@")
 if("@HAS_TARGET_DEPS@" STREQUAL "1")
 	include(CMakeFindDependencyMacro)
 
-@targets_deps_joined@
+    find_dependency(toolbox)
 
 endif()
 

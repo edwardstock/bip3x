@@ -26,7 +26,7 @@
 #define __RFC6979_H__
 
 #include "bignum.h"
-#include "bip3x/bip39_core.h"
+#include "bip3x/bip3x_config.h"
 
 #include <cstdint>
 
@@ -35,8 +35,8 @@ typedef struct {
 	uint8_t v[32], k[32];
 } rfc6979_state;
 
-BIP39_CORE_API void init_rfc6979(const uint8_t *priv_key, const uint8_t *hash, rfc6979_state *rng);
-BIP39_CORE_API void generate_rfc6979(uint8_t rnd[32], rfc6979_state *rng);
-BIP39_CORE_API void generate_k_rfc6979(bignum256 *k, rfc6979_state *rng);
+BIP3X_CORE_API void init_rfc6979(const uint8_t *priv_key, const uint8_t *hash, rfc6979_state *rng);
+BIP3X_CORE_API void generate_rfc6979(uint8_t rnd[32], rfc6979_state *rng);
+BIP3X_CORE_API void generate_k_rfc6979(bignum256 *k, rfc6979_state *rng);
 
 #endif
