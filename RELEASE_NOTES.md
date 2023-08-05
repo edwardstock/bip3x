@@ -1,15 +1,20 @@
 ## 3.0.0
-- Upgraded conan to 2.0
-- CI: github actions
-- Refactored project structure: moved all non-public not required sources to src
-- Changed style from camelCase to snake_case
-- Updated example (src/example.cpp)
-- Added a few friendly functions for basic operations:
-  - Message signer: `bip3x::ecdsa_recoverable_signature bip3x::sign_message(const bytes_data& message, const bytes_32& private_key)`
-  - ETH-address extractor: `bip3x::get_eth_address(const bytes_32& private_key)`
-  - Private key from mnemonic: `bytes_32 mnemonic_to_private_key(const std::string& mnemonic_words, const derivation_path& derivation = "m/44'/0'/0'/0/0")`
-- Updated JNI code and converted it to Kotlin
-- Reverted logic to return new hdkey from `make_extended_key` function, and added `extend_key` which mutates passed hdkey
+
+- Upgraded Conan to version 2.0.
+- Introduced Continuous Integration with GitHub Actions.
+- Refactored the project structure to enhance readability and maintainability:
+    - Moved all non-public sources to `src`.
+    - Switched naming convention from CamelCase to snake_case.
+- Updated example usage in `example/example.cpp`.
+- Introduced several utility functions for basic operations:
+    - `bip3x::ecdsa_recoverable_signature bip3x::sign_message(const bytes_data& message, const bytes_32& private_key)`:
+      To sign a message.
+    - `bip3x::get_eth_address(const bytes_32& private_key)`: To extract the Ethereum address.
+  - `bytes_32 bip3x::mnemonic_to_private_key(const std::string& mnemonic_words, const derivation_path& derivation = "m/44'/0'/0'/0/0")`:
+      To derive a private key from a mnemonic.
+- Updated the JNI code and converted it to Kotlin for improved interoperability.
+- Reverted the logic to return a new HDKey from `make_extended_key` function for consistency.
+- Fixed issues with building Windows DLLs.
 
 ## 2.3.0
 - Updated openssl to 3.1.1
