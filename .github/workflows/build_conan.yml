@@ -1,11 +1,9 @@
 name: Build & Test
 
 on:
-  pull_request:
-#on:
-#  push:
-#    branches:
-#      - master
+  push:
+    branches:
+      - master
 
 jobs:
   build-and-test-linux-gcc:
@@ -44,5 +42,5 @@ jobs:
       - name: Build deploy artifacts
         run: $(which python3) ${{ github.workspace }}/deploy.py build
 
-#      - name: Upload deploy artifacts
-#        run: $(which python3) ./deploy.py upload
+      - name: Upload deploy artifacts
+        run: $(which python3) ./deploy.py upload
