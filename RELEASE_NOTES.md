@@ -13,7 +13,8 @@
   - `bytes_32 bip3x::mnemonic_to_private_key(const std::string& mnemonic_words, const derivation_path& derivation = "m/44'/0'/0'/0/0")`:
       To derive a private key from a mnemonic.
 - Updated the JNI code and converted it to Kotlin for improved interoperability.
-- Reverted the logic to return a new HDKey from `make_extended_key` function for consistency.
+- Reverted the logic to return a new HDKey from `make_extended_key` function for consistency and added
+  function `extend_key` which mutates original `hdkey`
 - Fixed issues with building Windows DLLs.
 
 ## 2.3.0
