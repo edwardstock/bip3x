@@ -1,18 +1,13 @@
 set(JNI_SOURCES
-    src/jni/com_edwardstock_bip3x_NativeBip39.h
-    src/jni/com_edwardstock_bip3x_NativeBip39.cpp
-    src/jni/com_edwardstock_bip3x_NativeHDKeyEncoder.h
-    src/jni/com_edwardstock_bip3x_NativeHDKeyEncoder.cpp
+    src/jni/com_edwardstock_bip3x_BIP3X.h
+    src/jni/com_edwardstock_bip3x_BIP3X.cpp
+    src/jni/com_edwardstock_bip3x_HDKeyEncoder.h
+    src/jni/com_edwardstock_bip3x_HDKeyEncoder.cpp
     src/jni/nobject.h
     src/jni/nobject.cpp
 )
-
-if (bip3x_BUILD_SHARED_LIBS)
-	message(STATUS "Build JNI shared library")
-	add_library(${LIB_NAME_JNI} SHARED ${JNI_SOURCES})
-else ()
-	add_library(${LIB_NAME_JNI} STATIC ${JNI_SOURCES})
-endif ()
+# jni should be always shared
+add_library(${LIB_NAME_JNI} SHARED ${JNI_SOURCES})
 
 if (ANDROID_PLATFORM)
 	add_definitions(-D__ANDROID__)

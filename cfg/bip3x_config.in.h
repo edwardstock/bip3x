@@ -3,9 +3,6 @@
 #include <cstddef>
 #include <cstdint>
 
-#cmakedefine BIP3X_EXPORTING 1
-#cmakedefine BIP3X_EXPORT_SHARED 1
-#cmakedefine BIP3X_BUILT_AS_STATIC
 #define BIP3X_C extern "C"
 
 #ifdef BIP3X_BUILT_AS_STATIC

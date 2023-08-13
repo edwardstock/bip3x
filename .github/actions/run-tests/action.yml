@@ -36,7 +36,7 @@ runs:
       if: ${{ inputs.conan-enabled == 'true' }}
       working-directory: ${{ steps.create-test-env.outputs.work-dir }} # using output variable
       shell: bash
-      run: cmake .. -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=modules/conan_provider.cmake -DCMAKE_BUILD_TYPE=Debug ${{ inputs.cmake-args }}
+      run: cmake .. -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=cmake/conan_provider.cmake -DCMAKE_BUILD_TYPE=Debug ${{ inputs.cmake-args }}
     - name: Configure project with tests
       if: ${{ inputs.conan-enabled == 'false' }}
       working-directory: ${{ steps.create-test-env.outputs.work-dir }} # using output variable

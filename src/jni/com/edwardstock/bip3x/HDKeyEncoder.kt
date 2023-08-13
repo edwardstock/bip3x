@@ -3,7 +3,7 @@ package com.edwardstock.bip3x
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-object NativeHDKeyEncoder {
+object HDKeyEncoder {
     const val ETH_DERIVATION_PATH = "m/44'/60'/0'/0/0"
 
     val MAIN_NET = BTCNetwork(

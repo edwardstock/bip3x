@@ -41,7 +41,7 @@ class Bip3xConan(ConanFile):
     }
     exports = "version.info"
     exports_sources = (
-        "modules/*",
+        "cmake/*",
         "include/*",
         "cfg/*",
         "tests/*",

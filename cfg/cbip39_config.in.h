@@ -1,9 +1,5 @@
-#ifndef BIP39_BIP39_CONFIG_H_IN
-#define BIP39_BIP39_CONFIG_H_IN
+#pragma once
 
-#cmakedefine BIP3X_EXPORTING 1
-#cmakedefine BIP3X_EXPORT_SHARED 1
-#cmakedefine BIP3X_BUILT_AS_STATIC
 #define BIP3X_C extern "C"
 
 #ifdef BIP3X_BUILT_AS_STATIC
@@ -45,5 +41,3 @@ typedef struct bip3x_data64 { uint8_t data[64]; } bip3x_data64;
 typedef struct bip3x_data33 { uint8_t data[33]; } bip3x_data33;
 typedef struct bip3x_data32 { uint8_t data[32]; } bip3x_data32;
 typedef struct bip3x_bip32_key { uint8_t data[112]; } bip3x_bip32_key;
-
-#endif //BIP39_BIP39_CONFIG_H_IN

@@ -11,7 +11,6 @@ set(C_SOURCES
 if (bip3x_BUILD_SHARED_LIBS)
 	message(STATUS "Build C shared library")
 	add_library(${LIB_NAME_C} SHARED ${SOURCES} ${C_SOURCES} ${C_HEADERS})
-	set_property(TARGET ${LIB_NAME_C} PROPERTY SOVERSION ${PROJECT_VERSION_MAJOR})
 else ()
 	add_library(${LIB_NAME_C} STATIC ${SOURCES} ${C_SOURCES} ${C_HEADERS})
 endif ()

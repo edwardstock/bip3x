@@ -1,28 +1,28 @@
-#include "com_edwardstock_bip3x_NativeBip39.h"
+#include "com_edwardstock_bip3x_BIP3X.h"
 
 #include <bip3x/bip3x_crypto.h>
 #include <bip3x/bip3x_mnemonic.h>
 #include <jni.h>
 
 JNIEXPORT jobjectArray JNICALL
-Java_com_edwardstock_bip3x_NativeBip39_00024Companion_bip39GetLanguages(JNIEnv* env, jobject) {
-    const auto langs = bip3x::bip3x_mnemonic::get_supported_languages();
+Java_com_edwardstock_bip3x_BIP3X_00024Companion_bip3xGetLanguages(JNIEnv* env, jobject) {
+    const auto all_languages = bip3x::bip3x_mnemonic::get_supported_languages();
 
     jobjectArray langArr = env->NewObjectArray(
-        static_cast<jsize>(langs.size()), env->FindClass("java/lang/String"), nullptr
+        static_cast<jsize>(all_languages.size()), env->FindClass("java/lang/String"), nullptr
     );
-    for (size_t i = 0; i < langs.size(); i++) {
-        env->SetObjectArrayElement(langArr, i, env->NewStringUTF(langs[i].c_str()));
+    for (size_t i = 0; i < all_languages.size(); i++) {
+        env->SetObjectArrayElement(langArr, (jsize) i, env->NewStringUTF(all_languages[i].c_str()));
     }
 
     return langArr;
 }
 
 JNIEXPORT jobjectArray JNICALL
-Java_com_edwardstock_bip3x_NativeBip39_00024Companion_bip39GetWordsFromLanguage(
+Java_com_edwardstock_bip3x_BIP3X_00024Companion_bip3xGetWordsFromLanguage(
     JNIEnv* env, jobject, jstring language_
 ) {
-    const char* language = env->GetStringUTFChars(language_, 0);
+    const char* language = env->GetStringUTFChars(language_, JNI_FALSE);
 
     const std::vector<std::string> words = bip3x::bip3x_mnemonic::get_words_for_language(language);
 
@@ -39,12 +39,11 @@ Java_com_edwardstock_bip3x_NativeBip39_00024Companion_bip39GetWordsFromLanguage(
     return wordsArr;
 }
 
-JNIEXPORT jboolean JNICALL
-Java_com_edwardstock_bip3x_NativeBip39_00024Companion_bip39ValidateMnemonic(
+JNIEXPORT jboolean JNICALL Java_com_edwardstock_bip3x_BIP3X_00024Companion_bip3xValidateMnemonic(
     JNIEnv* env, jobject, jstring mnemonic_, jstring language_
 ) {
-    const char* mnemonic = env->GetStringUTFChars(mnemonic_, 0);
-    const char* language = env->GetStringUTFChars(language_, 0);
+    const char* mnemonic = env->GetStringUTFChars(mnemonic_, JNI_FALSE);
+    const char* language = env->GetStringUTFChars(language_, JNI_FALSE);
 
     bool res = bip3x::bip3x_mnemonic::validate_words(language, mnemonic);
 
@@ -53,7 +52,7 @@ Java_com_edwardstock_bip3x_NativeBip39_00024Companion_bip39ValidateMnemonic(
     return static_cast<jboolean>(res ? 1 : 0);
 }
 
-JNIEXPORT jobject JNICALL Java_com_edwardstock_bip3x_NativeBip39_00024Companion_bip39EncodeBytes(
+JNIEXPORT jobject JNICALL Java_com_edwardstock_bip3x_BIP3X_00024Companion_bip3xEncodeBytes(
     JNIEnv* env, jobject, jobject input, jstring language_, jint entropy
 ) {
 
@@ -68,7 +67,9 @@ JNIEXPORT jobject JNICALL Java_com_edwardstock_bip3x_NativeBip39_00024Companion_
     jclass mrClass = env->FindClass("com/edwardstock/bip3x/MnemonicResult");
     jobject mrObj = env->AllocObject(mrClass);
     env->SetIntField(mrObj, env->GetFieldID(mrClass, "status", "I"), static_cast<jint>(out.status));
-    env->SetIntField(mrObj, env->GetFieldID(mrClass, "len", "I"), static_cast<jint>(out.len));
+    env->SetIntField(
+        mrObj, env->GetFieldID(mrClass, "wordsCount", "I"), static_cast<jint>(out.len)
+    );
     env->SetObjectField(
         mrObj,
         env->GetFieldID(mrClass, "mnemonic", "Ljava/lang/String;"),
@@ -78,10 +79,10 @@ JNIEXPORT jobject JNICALL Java_com_edwardstock_bip3x_NativeBip39_00024Companion_
     return mrObj;
 }
 
-JNIEXPORT jobject JNICALL Java_com_edwardstock_bip3x_NativeBip39_00024Companion_bip39Generate(
+JNIEXPORT jobject JNICALL Java_com_edwardstock_bip3x_BIP3X_00024Companion_bip3xGenerate(
     JNIEnv* env, jobject, jstring language_, jint entropy
 ) {
-    const char* language = env->GetStringUTFChars(language_, 0);
+    const char* language = env->GetStringUTFChars(language_, JNI_FALSE);
     const bip3x::bip3x_mnemonic::mnemonic_result out =
         bip3x::bip3x_mnemonic::generate(language, static_cast<size_t>(entropy));
 
@@ -96,24 +97,22 @@ JNIEXPORT jobject JNICALL Java_com_edwardstock_bip3x_NativeBip39_00024Companion_
     return mrObj;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_com_edwardstock_bip3x_NativeBip39_00024Companion_bip39WordsToSeed(
+JNIEXPORT jbyteArray JNICALL Java_com_edwardstock_bip3x_BIP3X_00024Companion_bip3xWordsToSeed(
     JNIEnv* env, jobject, jstring mnemonic_
 ) {
     const char* mnemonic = env->GetStringUTFChars(mnemonic_, JNI_FALSE);
 
-    bip3x::bytes_data tmp(64);
-    size_t written;
-    bip3x::bip3x_mnemonic::words_to_seed(mnemonic, tmp.data(), &written);
+    auto seed = bip3x::bip3x_hdkey_encoder::make_bip39_seed(mnemonic);
 
     env->ReleaseStringUTFChars(mnemonic_, mnemonic);
 
     jbyteArray out = env->NewByteArray(64);
-    env->SetByteArrayRegion(out, 0, 64, (jbyte*) (tmp.cdata()));
+    env->SetByteArrayRegion(out, 0, 64, (jbyte*) (seed.cdata()));
 
     return out;
 }
 
-JNIEXPORT jstring JNICALL Java_com_edwardstock_bip3x_NativeBip39_00024Companion_bip39GetEthAddress(
+JNIEXPORT jstring JNICALL Java_com_edwardstock_bip3x_BIP3X_00024Companion_bip3xGetEthAddress(
     JNIEnv* env, jobject, jbyteArray private_key_
 ) {
     jsize private_key_len = env->GetArrayLength(private_key_);
@@ -126,7 +125,7 @@ JNIEXPORT jstring JNICALL Java_com_edwardstock_bip3x_NativeBip39_00024Companion_
     return env->NewStringUTF(address.c_str());
 }
 
-JNIEXPORT jbyteArray JNICALL Java_com_edwardstock_bip3x_NativeBip39_00024Companion_bip39SignMessage(
+JNIEXPORT jbyteArray JNICALL Java_com_edwardstock_bip3x_BIP3X_00024Companion_bip3xSignMessage(
     JNIEnv* env, jobject, jbyteArray private_key_, jbyteArray message_
 ) {
 

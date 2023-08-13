@@ -67,8 +67,8 @@ TEST(Crypto, GetEthAddress) {
         "vague soft expose improve gaze kitten pass point select access battle wish";
 
     auto seed = bip3x_hdkey_encoder::make_bip39_seed(mnemonic);
-    hdkey rootKey = bip3x::bip3x_hdkey_encoder::make_bip32_root_key(seed);
-    hdkey ext_key = bip3x::bip3x_hdkey_encoder::make_extended_key(rootKey, "m/44'/60'/0'/0/0");
+    hdkey root_key = bip3x::bip3x_hdkey_encoder::make_bip32_root_key(seed);
+    hdkey ext_key = bip3x::bip3x_hdkey_encoder::make_extended_key(root_key, "m/44'/60'/0'/0/0");
 
     auto private_key = ext_key.private_key;
 

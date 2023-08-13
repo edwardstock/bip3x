@@ -26,18 +26,17 @@ option(bip3x_BUILD_JNI_BINDINGS "Additionally build JNI shared library" OFF)
 option(bip3x_BUILD_C_BINDINGS "Additionally build C library" OFF)
 option(bip3x_USE_OPENSSL_RANDOM "Use openssl random number generator" OFF)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
-if (bip3x_BUILD_SHARED_LIBS)
-	add_definitions(-DBIP3X_EXPORTS)
-else ()
-	set(bip3x_BUILT_AS_STATIC 1)
+add_definitions(-DBIP3X_EXPORTS)
+if (NOT bip3x_BUILD_SHARED_LIBS)
+	add_definitions(-DBIP3X_BUILT_AS_STATIC)
 endif ()
 
 if (NOT WIN32)
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin)
 	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY lib)
 	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY lib)
-	set(CMAKE_PDB_OUTPUT_DIRECTORY lib)
 endif ()
 
 if (MINGW AND NOT bip3x_USE_OPENSSL_RANDOM)
@@ -59,29 +58,8 @@ endif ()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cfg/version.info.in ${CMAKE_CURRENT_SOURCE_DIR}/version.info @ONLY NEWLINE_STYLE UNIX)
 
-if (MSVC)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W2 /MP")
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /DEBUG /Od")
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2")
-	string(REGEX REPLACE "\\/W3" " " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-	add_compile_options(/wd4146)
-	add_compile_options(/wd4251)
-	add_compile_options(/wd4838)
-elseif (MINGW)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wno-unknown-pragmas")
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra -pedantic")
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -g0 -O2")
-else ()
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-shift-count-overflow -fPIC -Wno-c99-extensions")
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra -pedantic -Wunused-function")
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -g0 -O2")
-endif ()
-
-
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/modules)
-if (ENABLE_CONAN)
-	include(ConanInit)
-endif ()
+# compiler flags
+include(compiler_flags)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -95,13 +73,16 @@ endif ()
 configure_file(
 	${CMAKE_CURRENT_LIST_DIR}/cfg/bip3x_config.in.h
 	${CMAKE_CURRENT_LIST_DIR}/include/bip3x/bip3x_config.h
+	NEWLINE_STYLE UNIX
 )
 
 configure_file(
 	${CMAKE_CURRENT_LIST_DIR}/cfg/cbip39_config.in.h
 	${CMAKE_CURRENT_LIST_DIR}/include/cbip3x/cbip3x_config.h
+	NEWLINE_STYLE UNIX
 )
 
+## SOURCES BEGIN
 set(BTC_SRC)
 set(BTC_HEADERS)
 
@@ -202,19 +183,22 @@ set(SOURCES
     src/details/wordlists/spanish.cpp
     src/bip3x/bip3x_crypto.cpp
 )
+## SOURCES END
 
+
+# Add target
 if (bip3x_BUILD_SHARED_LIBS)
-	message(STATUS "Build bip39 shared libs")
+	message(STATUS "Build shared libs")
 	add_library(${LIB_NAME_MAIN} SHARED ${SOURCES})
-	set_property(TARGET ${LIB_NAME_MAIN} PROPERTY SOVERSION ${PROJECT_VERSION_MAJOR})
 else ()
-	message(STATUS "Build bip39 static libs")
+	message(STATUS "Build static libs")
 	add_library(${LIB_NAME_MAIN} STATIC ${SOURCES})
 endif ()
 target_include_directories(${LIB_NAME_MAIN} PUBLIC
                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                            $<INSTALL_INTERFACE:include>
 )
+set_target_properties(${LIB_NAME_MAIN} PROPERTIES LANGUAGE CXX)
 
 if (CMAKE_CONAN_BUILD)
 	find_package(toolbox CONFIG REQUIRED)
@@ -234,6 +218,7 @@ else ()
 endif ()
 
 target_link_libraries(${LIB_NAME_MAIN} toolbox::toolbox)
+
 if (bip3x_USE_OPENSSL_RANDOM)
 	if (CMAKE_CONAN_BUILD)
 		find_package(OpenSSL CONFIG REQUIRED)
@@ -244,21 +229,15 @@ if (bip3x_USE_OPENSSL_RANDOM)
 	endif ()
 endif ()
 
-if (MSVC)
-	set_property(TARGET ${LIB_NAME_MAIN} APPEND PROPERTY LINK_FLAGS /version:${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
-endif ()
-
-set_target_properties(${LIB_NAME_MAIN} PROPERTIES LANGUAGE CXX)
-
 
 # Pure C
 if (bip3x_BUILD_C_BINDINGS)
-	include(${CMAKE_CURRENT_SOURCE_DIR}/modules/target_c.cmake)
+	include(target_c)
 endif ()
 
 # Android/JAVA
 if (bip3x_BUILD_JNI_BINDINGS)
-	include(${CMAKE_CURRENT_SOURCE_DIR}/modules/target_jni.cmake)
+	include(target_jni)
 endif ()
 
 if (bip3x_BUILD_EXAMPLE)
@@ -268,65 +247,7 @@ endif ()
 
 
 if (bip3x_BUILD_TESTS)
-	if (NOT CMAKE_CONAN_BUILD)
-		fetchcontent_declare(
-			GTest
-			GIT_REPOSITORY https://github.com/google/googletest.git
-			GIT_TAG v1.13.0
-		)
-		set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
-		set(gtest_force_shared_crt ${bip3x_BUILD_SHARED_LIBS} CACHE BOOL "" FORCE)
-		fetchcontent_makeavailable(GTest)
-	else ()
-		message(STATUS "Finding gtest...")
-		find_package(GTest CONFIG REQUIRED)
-	endif ()
-
-	if (MSVC)
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++14")
-	elseif (APPLE)
-		add_definitions(-DGTEST_USE_OWN_TR1_TUPLE)
-		add_definitions(-D__GLIBCXX__)
-	endif ()
-
-	include(GoogleTest)
-
-	# main test
-	set(PROJECT_TEST_NAME "${PROJECT_NAME}-test")
-	enable_testing()
-
-	set(TEST_SOURCES
-	    tests/main.cpp
-	    tests/minter_cxx_test.cpp
-	    tests/issue_11_test.cpp)
-
-	if (bip3x_BUILD_C_BINDINGS)
-		set(TEST_SOURCES ${TEST_SOURCES}
-		    tests/minter_cc_test.cpp)
-	endif ()
-
-	add_executable(${PROJECT_TEST_NAME} ${TEST_SOURCES})
-	target_link_libraries(${PROJECT_TEST_NAME} ${LIB_NAME_MAIN})
-
-	if (bip3x_BUILD_C_BINDINGS)
-		target_link_libraries(${PROJECT_TEST_NAME} ${LIB_NAME_C})
-		target_include_directories(${PROJECT_TEST_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/cbip3x)
-	endif ()
-
-	if (CMAKE_CONAN_BUILD)
-		target_link_libraries(${PROJECT_NAME}-test GTest::GTest)
-	else ()
-		target_link_libraries(${PROJECT_NAME}-test gtest)
-	endif ()
-	target_include_directories(${PROJECT_TEST_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)
-	target_include_directories(${PROJECT_TEST_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/libs)
-	gtest_add_tests(TARGET ${PROJECT_TEST_NAME})
-
-	if (bip3x_ENABLE_SANITIZER)
-		target_link_libraries(${PROJECT_TEST_NAME} asan)
-		target_compile_options(${PROJECT_TEST_NAME} PUBLIC -fsanitize=address -m64 -pipe -ffunction-sections -fdata-sections -O0 -g -fno-omit-frame-pointer)
-	endif ()
-
+	include(target_test)
 endif ()
 
 include(package)

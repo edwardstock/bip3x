@@ -1,7 +1,7 @@
 package com.edwardstock.bip3x
 
 
-data class EcdsaRecoverableSignature(
+data class ECDSASignatureRecoverable(
     val r: ByteArray,
     val s: ByteArray,
     val v: ByteArray
@@ -11,7 +11,7 @@ data class EcdsaRecoverableSignature(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is EcdsaRecoverableSignature) return false
+        if (other !is ECDSASignatureRecoverable) return false
 
         if (!r.contentEquals(other.r)) return false
         if (!s.contentEquals(other.s)) return false

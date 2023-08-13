@@ -103,15 +103,16 @@ android {
  ```
  
 * Initialize it
+
 ```java
-import com.edwardstock.bip3x.NativeBip39
+import com.edwardstock.bip3x.BIP3X
 
 class Main {
     public static int main(String[] args) {
-        NativeBip39.init();
-        
-        if(!NativeBip39.isEnabled()) {
-            throw new RuntimeException(NativeBip39.getError());
+        BIP3X.init();
+
+        if (!BIP3X.isEnabled()) {
+            throw new RuntimeException(BIP3X.getError());
         }
     }
 }
