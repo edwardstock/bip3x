@@ -1,0 +1,19 @@
+name: "Setup Conan"
+description: "Upgrade pip, install conan, setup remote and login to artifactory"
+
+inputs:
+  artifactory_api_key:
+    required: true
+    description: "Artifactory API key"
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Conan
+      shell: bash
+      run: |
+        pip install --upgrade pip
+        pip install conan
+        conan profile detect --force
+        conan remote add edwardstock https://conan.edwardstock.com/artifactory/api/conan/conan-local
+        conan remote login -p ${{ inputs.artifactory_api_key }} edwardstock admin

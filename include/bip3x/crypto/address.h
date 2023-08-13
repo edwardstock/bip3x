@@ -24,17 +24,17 @@
 #ifndef __ADDRESS_H__
 #define __ADDRESS_H__
 
-#include "bip3x/bip39_core.h"
+#include "bip3x/bip3x_config.h"
 #include "options.h"
 
 #include <cstddef>
 #include <cstdint>
 
-BIP39_CORE_API size_t address_prefix_bytes_len(uint32_t address_type);
-BIP39_CORE_API void address_write_prefix_bytes(uint32_t address_type, uint8_t *out);
-BIP39_CORE_API bool address_check_prefix(const uint8_t *addr, uint32_t address_type);
+BIP3X_CORE_API size_t address_prefix_bytes_len(uint32_t address_type);
+BIP3X_CORE_API void address_write_prefix_bytes(uint32_t address_type, uint8_t *out);
+BIP3X_CORE_API bool address_check_prefix(const uint8_t *addr, uint32_t address_type);
 #if USE_ETHEREUM
-BIP39_CORE_API void ethereum_address_checksum(const uint8_t *addr, char *address);
+BIP3X_CORE_API void ethereum_address_checksum(const uint8_t *addr, char *address);
 #endif
 
 #endif

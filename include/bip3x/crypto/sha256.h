@@ -5,14 +5,14 @@
 #ifndef BITCOIN_CRYPTO_SHA256_H
 #define BITCOIN_CRYPTO_SHA256_H
 
-#include "bip3x/bip39_core.h"
+#include "bip3x/bip3x_config.h"
 
 #include <cstdint>
 #include <cstdlib>
 #include <string>
 
 /** A hasher class for SHA-256. */
-class BIP39_CORE_API CSHA256
+class BIP3X_CORE_API CSHA256
 {
 private:
     uint32_t s[8];
@@ -31,6 +31,6 @@ public:
 /** Autodetect the best available SHA256 implementation.
  *  Returns the name of the implementation.
  */
-BIP39_CORE_API std::string SHA256AutoDetect();
+BIP3X_CORE_API std::string SHA256AutoDetect();
 
 #endif // BITCOIN_CRYPTO_SHA256_H

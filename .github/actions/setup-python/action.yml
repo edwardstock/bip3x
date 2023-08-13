@@ -1,0 +1,10 @@
+name: "Setup Python 3.11"
+description: "Install python 3.11"
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11

@@ -5,13 +5,13 @@
 #ifndef BITCOIN_CRYPTO_SHA512_H
 #define BITCOIN_CRYPTO_SHA512_H
 
-#include "bip3x/bip39_core.h"
+#include "bip3x/bip3x_config.h"
 
 #include <stdint.h>
 #include <stdlib.h>
 
 /** A hasher class for SHA-512. */
-class BIP39_CORE_API CSHA512
+class BIP3X_CORE_API CSHA512
 {
 private:
     uint64_t s[8];

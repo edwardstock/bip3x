@@ -1,7 +1,6 @@
-/cmake-build-*
+cmake-build-*
 /build
 _build
-_build*
 /build_*
 output
 .idea
@@ -10,6 +9,7 @@ venv
 tools/openssl*
 tools/arm*
 tools/OpenSSL_*
-src/bindings/cbip39_config.h
-include/bip3x/bip39_core.h
-src/bindings/cbip39_config.h
+include/bip3x/bip3x_config.h
+include/cbip3x/cbip3x_config.h
+
+CMakeUserPresets.json

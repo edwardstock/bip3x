@@ -5,7 +5,7 @@
 #ifndef BITCOIN_CRYPTO_HMAC_SHA256_H
 #define BITCOIN_CRYPTO_HMAC_SHA256_H
 
-#include "bip3x/bip39_core.h"
+#include "bip3x/bip3x_config.h"
 #include "bip3x/crypto/hmac.h"
 #include "sha256.h"
 
@@ -13,7 +13,7 @@
 #include <stdlib.h>
 
 /** A hasher class for HMAC-SHA-256. */
-class BIP39_CORE_API CHMAC_SHA256 {
+class BIP3X_CORE_API CHMAC_SHA256 {
 private:
     HMAC_SHA256_CTX m_ctx;
 

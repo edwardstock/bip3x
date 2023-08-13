@@ -1,0 +1,52 @@
+name: "Run Tests"
+description: "Build and run project tests"
+
+inputs:
+  build-dir:
+    required: false
+    description: "Build directory"
+    default: "_test_build"
+  cmake-args:
+    required: false
+    description: "Test cmake arguments"
+    default: "-Dbip3x_BUILD_TESTS=On"
+  test-target:
+    required: false
+    description: "Test binary name"
+    default: "bip3x-test"
+  test-binary:
+    required: false
+    description: "Test binary name"
+    default: "bip3x-test"
+  conan-enabled:
+    required: false
+    description: "Enable conan"
+    default: "true"
+
+runs:
+  using: composite
+  steps:
+    - name: Create test environment
+      shell: bash
+      id: create-test-env # adding an id for this step to reference it later
+      run: |
+        mkdir -p ${{ github.workspace }}/${{ inputs.build-dir }}
+        echo "work-dir=${{ github.workspace }}/${{ inputs.build-dir }}" >> $GITHUB_OUTPUT
+    - name: Configure project with tests (conan build)
+      if: ${{ inputs.conan-enabled == 'true' }}
+      working-directory: ${{ steps.create-test-env.outputs.work-dir }} # using output variable
+      shell: bash
+      run: cmake .. -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=cmake/conan_provider.cmake -DCMAKE_BUILD_TYPE=Debug ${{ inputs.cmake-args }}
+    - name: Configure project with tests
+      if: ${{ inputs.conan-enabled == 'false' }}
+      working-directory: ${{ steps.create-test-env.outputs.work-dir }} # using output variable
+      shell: bash
+      run: cmake .. -DCMAKE_BUILD_TYPE=Debug ${{ inputs.cmake-args }}
+    - name: Build target
+      working-directory: ${{ steps.create-test-env.outputs.work-dir }} # using output variable
+      shell: bash
+      run: cmake --build . --target ${{ inputs.test-target }}
+    - name: Run tests
+      shell: bash
+      run: |
+        ${{ steps.create-test-env.outputs.work-dir }}/bin/${{ inputs.test-binary }}

@@ -25,7 +25,7 @@
 #define __ECDSA_H__
 
 #include "bignum.h"
-#include "bip3x/bip39_core.h"
+#include "bip3x/bip3x_config.h"
 #include "hasher.h"
 #include "options.h"
 
@@ -64,36 +64,36 @@ typedef struct {
 // (4 + 32 + 1 + 4 [checksum]) * 8 / log2(58) plus NUL.
 #define MAX_WIF_SIZE (57)
 
-BIP39_CORE_API void point_copy(const curve_point *cp1, curve_point *cp2);
-BIP39_CORE_API void point_add(const ecdsa_curve *curve, const curve_point *cp1, curve_point *cp2);
-BIP39_CORE_API void point_double(const ecdsa_curve *curve, curve_point *cp);
-BIP39_CORE_API void point_multiply(const ecdsa_curve *curve, const bignum256 *k, const curve_point *p, curve_point *res);
-BIP39_CORE_API void point_set_infinity(curve_point *p);
-BIP39_CORE_API int point_is_infinity(const curve_point *p);
-BIP39_CORE_API int point_is_equal(const curve_point *p, const curve_point *q);
-BIP39_CORE_API int point_is_negative_of(const curve_point *p, const curve_point *q);
-BIP39_CORE_API void scalar_multiply(const ecdsa_curve *curve, const bignum256 *k, curve_point *res);
-BIP39_CORE_API int ecdh_multiply(const ecdsa_curve *curve, const uint8_t *priv_key, const uint8_t *pub_key, uint8_t *session_key);
-BIP39_CORE_API void uncompress_coords(const ecdsa_curve *curve, uint8_t odd, const bignum256 *x, bignum256 *y);
-BIP39_CORE_API int ecdsa_uncompress_pubkey(const ecdsa_curve *curve, const uint8_t *pub_key, uint8_t *uncompressed);
+BIP3X_CORE_API void point_copy(const curve_point *cp1, curve_point *cp2);
+BIP3X_CORE_API void point_add(const ecdsa_curve *curve, const curve_point *cp1, curve_point *cp2);
+BIP3X_CORE_API void point_double(const ecdsa_curve *curve, curve_point *cp);
+BIP3X_CORE_API void point_multiply(const ecdsa_curve *curve, const bignum256 *k, const curve_point *p, curve_point *res);
+BIP3X_CORE_API void point_set_infinity(curve_point *p);
+BIP3X_CORE_API int point_is_infinity(const curve_point *p);
+BIP3X_CORE_API int point_is_equal(const curve_point *p, const curve_point *q);
+BIP3X_CORE_API int point_is_negative_of(const curve_point *p, const curve_point *q);
+BIP3X_CORE_API void scalar_multiply(const ecdsa_curve *curve, const bignum256 *k, curve_point *res);
+BIP3X_CORE_API int ecdh_multiply(const ecdsa_curve *curve, const uint8_t *priv_key, const uint8_t *pub_key, uint8_t *session_key);
+BIP3X_CORE_API void uncompress_coords(const ecdsa_curve *curve, uint8_t odd, const bignum256 *x, bignum256 *y);
+BIP3X_CORE_API int ecdsa_uncompress_pubkey(const ecdsa_curve *curve, const uint8_t *pub_key, uint8_t *uncompressed);
 
-BIP39_CORE_API int ecdsa_sign(const ecdsa_curve *curve, HasherType hasher_sign, const uint8_t *priv_key, const uint8_t *msg, uint32_t msg_len, uint8_t *sig, uint8_t *pby, int (*is_canonical)(uint8_t by, uint8_t sig[64]));
-BIP39_CORE_API int ecdsa_sign_digest(const ecdsa_curve *curve, const uint8_t *priv_key, const uint8_t *digest, uint8_t *sig, uint8_t *pby, int (*is_canonical)(uint8_t by, uint8_t sig[64]));
-BIP39_CORE_API void ecdsa_get_public_key33(const ecdsa_curve *curve, const uint8_t *priv_key, uint8_t *pub_key);
-BIP39_CORE_API void ecdsa_get_public_key65(const ecdsa_curve *curve, const uint8_t *priv_key, uint8_t *pub_key);
-BIP39_CORE_API void ecdsa_get_pubkeyhash(const uint8_t *pub_key, HasherType hasher_pubkey, uint8_t *pubkeyhash);
-BIP39_CORE_API void ecdsa_get_address_raw(const uint8_t *pub_key, uint32_t version, HasherType hasher_pubkey, uint8_t *addr_raw);
-BIP39_CORE_API void ecdsa_get_address(const uint8_t *pub_key, uint32_t version, HasherType hasher_pubkey, HasherType hasher_base58, char *addr, int addrsize);
-BIP39_CORE_API void ecdsa_get_address_segwit_p2sh_raw(const uint8_t *pub_key, uint32_t version, HasherType hasher_pubkey, uint8_t *addr_raw);
-BIP39_CORE_API void ecdsa_get_address_segwit_p2sh(const uint8_t *pub_key, uint32_t version, HasherType hasher_pubkey, HasherType hasher_base58, char *addr, int addrsize);
-BIP39_CORE_API void ecdsa_get_wif(const uint8_t *priv_key, uint32_t version, HasherType hasher_base58, char *wif, int wifsize);
+BIP3X_CORE_API int ecdsa_sign(const ecdsa_curve *curve, HasherType hasher_sign, const uint8_t *priv_key, const uint8_t *msg, uint32_t msg_len, uint8_t *sig, uint8_t *pby, int (*is_canonical)(uint8_t by, uint8_t sig[64]));
+BIP3X_CORE_API int ecdsa_sign_digest(const ecdsa_curve *curve, const uint8_t *priv_key, const uint8_t *digest, uint8_t *sig, uint8_t *pby, int (*is_canonical)(uint8_t by, uint8_t sig[64]));
+BIP3X_CORE_API void ecdsa_get_public_key33(const ecdsa_curve *curve, const uint8_t *priv_key, uint8_t *pub_key);
+BIP3X_CORE_API void ecdsa_get_public_key65(const ecdsa_curve *curve, const uint8_t *priv_key, uint8_t *pub_key);
+BIP3X_CORE_API void ecdsa_get_pubkeyhash(const uint8_t *pub_key, HasherType hasher_pubkey, uint8_t *pubkeyhash);
+BIP3X_CORE_API void ecdsa_get_address_raw(const uint8_t *pub_key, uint32_t version, HasherType hasher_pubkey, uint8_t *addr_raw);
+BIP3X_CORE_API void ecdsa_get_address(const uint8_t *pub_key, uint32_t version, HasherType hasher_pubkey, HasherType hasher_base58, char *addr, int addrsize);
+BIP3X_CORE_API void ecdsa_get_address_segwit_p2sh_raw(const uint8_t *pub_key, uint32_t version, HasherType hasher_pubkey, uint8_t *addr_raw);
+BIP3X_CORE_API void ecdsa_get_address_segwit_p2sh(const uint8_t *pub_key, uint32_t version, HasherType hasher_pubkey, HasherType hasher_base58, char *addr, int addrsize);
+BIP3X_CORE_API void ecdsa_get_wif(const uint8_t *priv_key, uint32_t version, HasherType hasher_base58, char *wif, int wifsize);
 
-BIP39_CORE_API int ecdsa_address_decode(const char *addr, uint32_t version, HasherType hasher_base58, uint8_t *out);
-BIP39_CORE_API int ecdsa_read_pubkey(const ecdsa_curve *curve, const uint8_t *pub_key, curve_point *pub);
-BIP39_CORE_API int ecdsa_validate_pubkey(const ecdsa_curve *curve, const curve_point *pub);
-BIP39_CORE_API int ecdsa_verify(const ecdsa_curve *curve, HasherType hasher_sign, const uint8_t *pub_key, const uint8_t *sig, const uint8_t *msg, uint32_t msg_len);
-BIP39_CORE_API int ecdsa_verify_digest(const ecdsa_curve *curve, const uint8_t *pub_key, const uint8_t *sig, const uint8_t *digest);
-BIP39_CORE_API int ecdsa_verify_digest_recover(const ecdsa_curve *curve, uint8_t *pub_key, const uint8_t *sig, const uint8_t *digest, int recid);
-BIP39_CORE_API int ecdsa_sig_to_der(const uint8_t *sig, uint8_t *der);
+BIP3X_CORE_API int ecdsa_address_decode(const char *addr, uint32_t version, HasherType hasher_base58, uint8_t *out);
+BIP3X_CORE_API int ecdsa_read_pubkey(const ecdsa_curve *curve, const uint8_t *pub_key, curve_point *pub);
+BIP3X_CORE_API int ecdsa_validate_pubkey(const ecdsa_curve *curve, const curve_point *pub);
+BIP3X_CORE_API int ecdsa_verify(const ecdsa_curve *curve, HasherType hasher_sign, const uint8_t *pub_key, const uint8_t *sig, const uint8_t *msg, uint32_t msg_len);
+BIP3X_CORE_API int ecdsa_verify_digest(const ecdsa_curve *curve, const uint8_t *pub_key, const uint8_t *sig, const uint8_t *digest);
+BIP3X_CORE_API int ecdsa_verify_digest_recover(const ecdsa_curve *curve, uint8_t *pub_key, const uint8_t *sig, const uint8_t *digest, int recid);
+BIP3X_CORE_API int ecdsa_sig_to_der(const uint8_t *sig, uint8_t *der);
 
 #endif

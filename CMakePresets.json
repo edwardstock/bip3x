@@ -1,0 +1,63 @@
+{
+  "version": 5,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 24,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "description": "Default build using system libraries and fetched dependencies",
+      "cacheVariables": {
+        "bip3x_BUILD_TESTS": "On",
+        "bip3x_BUILD_JNI_BINDINGS": "On",
+        "bip3x_BUILD_C_BINDINGS": "On"
+      }
+    },
+    {
+      "name": "default-conan",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "cmake/conan_provider.cmake",
+        "bip3x_BUILD_TESTS": "On",
+        "bip3x_BUILD_JNI_BINDINGS": "On",
+        "bip3x_BUILD_C_BINDINGS": "On"
+      }
+    },
+    {
+      "name": "default-conan-openssl",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "cmake/conan_provider.cmake",
+        "bip3x_BUILD_TESTS": "On",
+        "bip3x_BUILD_JNI_BINDINGS": "On",
+        "bip3x_BUILD_C_BINDINGS": "On",
+        "bip3x_USE_OPENSSL_RANDOM": "On"
+      }
+    },
+    {
+      "name": "vcpkg-openssl",
+      "generator": "Ninja",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "bip3x_BUILD_TESTS": "On",
+        "bip3x_BUILD_JNI_BINDINGS": "On",
+        "bip3x_BUILD_C_BINDINGS": "On",
+        "bip3x_USE_OPENSSL_RANDOM": "On"
+      }
+    },
+    {
+      "name": "vcpkg-openssl-shared",
+      "generator": "Ninja",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "bip3x_BUILD_TESTS": "On",
+        "bip3x_BUILD_JNI_BINDINGS": "On",
+        "bip3x_BUILD_SHARED_LIBS": "On",
+        "bip3x_BUILD_C_BINDINGS": "On",
+        "bip3x_USE_OPENSSL_RANDOM": "On"
+      }
+    }
+  ]
+}

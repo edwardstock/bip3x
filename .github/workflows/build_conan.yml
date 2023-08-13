@@ -1,0 +1,46 @@
+name: Build & Test
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-test-linux-gcc:
+    name: Build Conan Packages with GCC
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        gcc: [ 7, 8, 9, 10, 11 ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: lukka/get-cmake@latest
+
+      - name: Set up GCC
+        uses: egor-tensin/setup-gcc@v1
+        with:
+          version: ${{ matrix.gcc }}
+          platform: x64
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto' # See 'Supported distributions' for available options
+          java-version: '17'
+
+      - name: Setup Python
+        uses: ./.github/actions/setup-python
+
+      - name: Setup Conan
+        uses: ./.github/actions/setup-conan
+        with:
+          artifactory_api_key: ${{ secrets.ARTIFACTORY_API_KEY }}
+
+      - name: Run Tests
+        uses: ./.github/actions/run-tests
+
+      - name: Build deploy artifacts
+        run: $(which python3) ${{ github.workspace }}/deploy.py build
+
+      - name: Upload deploy artifacts
+        run: $(which python3) ./deploy.py upload

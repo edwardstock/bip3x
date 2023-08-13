@@ -1,10 +1,11 @@
 import os
 
-from conans import ConanFile, CMake
+from conan import ConanFile
+from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake
 
 
 def get_version():
-    with open(os.path.join(os.path.dirname(__file__), 'version'), 'r') as f:
+    with open(os.path.join(os.path.dirname(__file__), 'version.info'), 'r') as f:
         content = f.read()
         try:
             content = content.decode()
@@ -13,31 +14,34 @@ def get_version():
         return content.strip()
 
 
-class Bip39Conan(ConanFile):
-    name = "bip39"
+# noinspection PyCallingNonCallable
+class Bip3xConan(ConanFile):
+    name = "bip3x"
     version = get_version()
     license = "MIT"
     author = "Eduard Maximovich edward.vstock@gmail.com"
     url = "https://github.com/edwardstock/bip3x"
     description = "Bip39 mnemonic C++ implementation. Contains java and pure C bindings."
-    topics = ("bip39", "bip39-mnemonic", "bip44", "bip39-java")
+    topics = ("bip39", "bip39-mnemonic", "bip44", "bip39-java", "mnemonic-jni")
     settings = "os", "compiler", "build_type", "arch"
     options = {
         "shared": [True, False],
-        "enableJNI": [True, False],
-        "enableC": [True, False],
-        "with_openssl_rand": [True, False]
+        "enable_jni": [True, False],
+        "enable_c": [True, False],
+        "with_openssl_rand": [True, False],
+        "with_tests": [True, False]
     }
     default_options = {
         "shared": False,
         "with_openssl_rand": False,
-        "enableJNI": False,
-        "enableC": False,
-        "toolbox:shared": False,
+        "enable_jni": False,
+        "enable_c": False,
+        "with_tests": False,
+        "toolbox/*:shared": False,
     }
-    exports = "version"
+    exports = "version.info"
     exports_sources = (
-        "modules/*",
+        "cmake/*",
         "include/*",
         "cfg/*",
         "tests/*",
@@ -48,78 +52,67 @@ class Bip39Conan(ConanFile):
         "LICENSE",
         "README.md",
     )
-    generators = "cmake"
+
     default_user = "edwardstock"
     default_channel = "latest"
 
     requires = (
-        "toolbox/3.2.3@edwardstock/latest"
+        "toolbox/3.4.0@edwardstock/latest"
     )
     build_requires = (
-        "gtest/1.11.0",
+        "gtest/1.13.0",
     )
 
-    def source(self):
-        if "CONAN_LOCAL" not in os.environ:
-            self.run("rm -rf *")
-            self.run("git clone --recursive https://github.com/edwardstock/bip3x.git .")
+    def generate(self):
+        # This generates "conan_toolchain.cmake" in self.generators_folder
+        tc = CMakeToolchain(self)
+        tc.generate()
 
-    def configure(self):
-        if self.settings.compiler == "Visual Studio":
-            del self.settings.compiler.runtime
+        # This generates "foo-config.cmake" and "bar-config.cmake" in self.generators_folder
+        deps = CMakeDeps(self)
+        deps.generate()
 
+    def requirements(self):
         if self.options.with_openssl_rand:
-            self.requires.add("openssl/1.1.1k")
+            self.requires("openssl/3.1.1")
+        if self.options.with_tests:
+            self.requires("gtest/1.13.0")
 
     def build(self):
         cmake = CMake(self)
         opts = {
-            'ENABLE_TEST': 'Off',
-            'CMAKE_BUILD_TYPE': 'Release',
-            'ENABLE_BIP39_C': 'Off',
-            'ENABLE_BIP39_JNI': 'Off',
-            'ENABLE_SHARED': 'Off',
-            'USE_OPENSSL_RANDOM': 'Off'
+            'bip3x_BUILD_TESTS': 'Off',
+            'bip3x_BUILD_C_BINDINGS': 'Off',
+            'bip3x_BUILD_JNI_BINDINGS': 'Off',
+            'bip3x_BUILD_SHARED_LIBS': 'Off',
+            'bip3x_USE_OPENSSL_RANDOM': 'Off'
         }
 
         if self.options.shared:
-            opts['ENABLE_SHARED'] = 'On'
+            opts['bip3x_BUILD_SHARED_LIBS'] = 'On'
 
-        if self.options.enableJNI:
-            opts['ENABLE_BIP39_JNI'] = 'On'
+        if self.options.enable_jni:
+            opts['bip3x_BUILD_JNI_BINDINGS'] = 'On'
 
-        if self.options.enableC:
-            opts['ENABLE_BIP39_C'] = 'On'
+        if self.options.enable_c:
+            opts['bip3x_BUILD_C_BINDINGS'] = 'On'
 
         if self.options.with_openssl_rand:
-            opts["USE_OPENSSL_RANDOM"] = 'On'
+            opts["bip3x_USE_OPENSSL_RANDOM"] = 'On'
 
-        opts['CMAKE_BUILD_TYPE'] = self.settings.get_safe("build_type")
-
-        cmake.configure(defs=opts)
-        if self.settings.compiler == "Visual Studio":
-            cmake.build(args=['--config', self.settings.get_safe("build_type")])
-        else:
-            cmake.build()
+        cmake.configure(variables=opts)
+        cmake.build()
 
     def package(self):
-        self.copy("*", dst="include", src="include", keep_path=True)
-        if self.options.enableC:
-            self.copy("*.h", dst="include", src="src/bindings", keep_path=True)
-            self.copy("*.hpp", dst="include", src="src/bindings", keep_path=True)
-
-        dir_types = ['bin', 'lib', 'Debug', 'Release', 'RelWithDebInfo', 'MinSizeRel']
-        file_types = ['lib', 'dll', 'dll.a', 'a', 'so', 'exp', 'pdb', 'ilk', 'dylib']
-
-        for dirname in dir_types:
-            for ftype in file_types:
-                self.copy("*." + ftype, src=dirname, dst="lib", keep_path=False)
+        cmake = CMake(self)
+        cmake.install()
 
     def package_info(self):
         self.cpp_info.includedirs = ['include']
-        self.cpp_info.libs = ['bip39']
-        if self.options.enableC:
-            self.cpp_info.libs.append('cbip39')
-
-        if self.options.enableJNI:
-            self.cpp_info.libs.append('bip39_jni')
+        self.cpp_info.bindirs = ["bin"]
+        self.cpp_info.libsdirs = ["lib", "lib/Debug", "lib/Release"]
+        self.cpp_info.libs = ["bip3x"]
+        if self.options.enable_c:
+            self.cpp_info.libs.append("cbip3x")
+        if self.options.enable_jni:
+            self.cpp_info.libs.append("bip3x_jni")
